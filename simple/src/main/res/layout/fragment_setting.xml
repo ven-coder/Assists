@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/et_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="#E1E1E1"
+                android:gravity="start"
+                android:hint="输入微博链接"
+                android:minHeight="100dp"
+                android:padding="10dp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_option"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="开启服务" />
+
+            <Button
+                android:id="@+id/btn_find"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="定位"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_collect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="收藏"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_praise"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="点赞"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="评论"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_forward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="转发"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <paths xmlns:android="http://schemas.android.com/apk/res/android">
+        <external-path
+            name="external_files"
+            path="" />
+        <path>
+            <root-path
+                name="root_path"
+                path="." />
+        </path>
+
+        <external-path
+            name="camera_photos"
+            path="" />
+
+        <external-path
+            name="external_storage_root"
+            path="." />
+        <grant-uri-permission
+            android:path="string"
+            android:pathPattern="string"
+            android:pathPrefix="string" />
+    </paths>
+</resources>

@@ -1,0 +1,57 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 33
+    defaultConfig {
+        applicationId "com.ven.assists.simple"
+        minSdkVersion 22
+        targetSdkVersion 33
+        versionCode 1
+        versionName "1.0.0"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        //数据库自动迁移空间配置
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        dataBinding true
+    }
+    viewBinding {
+        enabled = true
+    }
+
+    flavorDimensions "version"
+
+    productFlavors {
+        _default {
+            buildConfigField "String", "YM_CHANNEL", "\"default\""
+        }
+        _xiaomi {
+            buildConfigField "String", "YM_CHANNEL", "\"xiaomi\""
+        }
+    }
+}
+
+dependencies {
+    implementation project(':assists')
+    implementation project(':base')
+    implementation "androidx.room:room-runtime:2.4.3"
+    implementation 'androidx.room:room-ktx:2.4.3'
+    implementation 'com.github.mrmike:ok2curl:0.8.0'
+}

@@ -1,0 +1,75 @@
+apply plugin: "maven-publish"
+/**
+ * Reference doc:
+ * https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html#org.gradle.api.publish.maven.MavenPublication:artifact(java.lang.Object)
+ * https://docs.gradle.org/current/userguide/publishing_setup.html
+ * */
+afterEvaluate { project ->
+    if (plugins.hasPlugin('com.android.application') || plugins.hasPlugin('com.android.library')) {
+        /** Android doc*/
+        task androidJavadocs(type: Javadoc) {
+            failOnError false
+            source = android.sourceSets.main.java.source
+            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        }
+        /** Android doc jar*/
+        task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+            getArchiveClassifier().convention('javadoc')
+            getArchiveClassifier().set('javadoc')
+            from androidJavadocs.destinationDir
+        }
+        /** Android source jar*/
+        task androidSourcesJar(type: Jar) {
+            getArchiveClassifier().convention('sources')
+            getArchiveClassifier().set('sources')
+            from android.sourceSets.main.java.source
+        }
+    } else if (plugins.hasPlugin("java")) {
+        /** Java source jar*/
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            getArchiveClassifier().convention('sources')
+            getArchiveClassifier().set('sources')
+            from sourceSets.main.allSource
+        }
+        /** Java doc jar*/
+        task javadocJar(type: Jar, dependsOn: javadoc) {
+            getArchiveClassifier().convention('javadoc')
+            getArchiveClassifier().set('javadoc')
+            from javadoc.destinationDir
+        }
+    }
+
+    if (JavaVersion.current().isJava8Compatible()) {
+        allprojects {
+            tasks.withType(Javadoc) {
+                options.addStringOption('Xdoclint:none', '-quiet')
+            }
+        }
+    }
+    /** publish library with doc and source code */
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = GROUP_ID
+                artifactId = ARTIFACT_ID
+                version = VERSION
+                afterEvaluate {
+                    if (plugins.hasPlugin('com.android.application') || plugins.hasPlugin('com.android.library')) {
+                        from components.release
+                    } else if (plugins.hasPlugin("java")) {
+                        from components.java
+                    }
+                }
+                if (plugins.hasPlugin('com.android.application') || plugins.hasPlugin('com.android.library')) {
+                    artifact androidSourcesJar
+                    artifact androidJavadocsJar
+                } else if (plugins.hasPlugin("java")) {
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+
+            }
+        }
+    }
+
+}

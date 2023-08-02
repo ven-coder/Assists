@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<!--    <item-->
+<!--        android:id="@+id/web_parse"-->
+<!--        android:title="资源解析"-->
+<!--        app:showAsAction="always" />-->
+    <item
+        android:id="@+id/web_refresh"
+        android:title="刷新"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/web_computer"
+        android:title="电脑版"
+        app:showAsAction="always" />
+<!--    <item-->
+<!--        android:id="@+id/web_back"-->
+<!--        android:title="前进"-->
+<!--        app:showAsAction="never" />-->
+
+<!--    <item-->
+<!--        android:id="@+id/web_forward"-->
+<!--        android:title="后退"-->
+<!--        app:showAsAction="never" />-->
+<!--    <item-->
+<!--        android:id="@+id/switch_url"-->
+<!--        android:title="更换网址"-->
+<!--        app:showAsAction="never" />-->
+
+</menu>

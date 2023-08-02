@@ -1,0 +1,52 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionMenuTextColor">@color/colorPrimaryDark</item>
+        <item name="titleTextColor">@color/colorPrimaryDark</item>
+        <!--开启时的颜色-->
+        <item name="colorControlActivated">@color/colorAccent</item>
+
+    </style>
+
+    <style name="customDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowNoTitle">true</item>
+        <!--背景透明-->
+        <item name="android:windowIsTranslucent">true</item>
+        <!--是否有覆盖-->
+        <item name="android:windowContentOverlay">@null</item>
+        <!--是否浮动-->
+        <item name="android:windowIsFloating">false</item>
+        <!--边框-->
+        <item name="android:windowFrame">@null</item>
+        <!--背景：透明-->
+        <item name="android:windowBackground">@null</item>
+        <!-- 背景透明 -->
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+    <!--dialog样式的界面-->
+    <style name="dialog_style" parent="Theme.AppCompat.Light.Dialog">
+        <!--是否悬浮在activity上-->
+        <item name="android:windowIsFloating">true</item>
+        <!--透明是否-->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:background">@null</item>
+        <!--设置没有窗口标题、dialog标题等各种标题-->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:title">@null</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:dialogTitle">@null</item>
+        <!--点击 dialog Activity 周围是否关闭弹窗 true 关闭（默认为true） false 为不关闭-->
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <!--边框-->
+        <item name="android:windowFrame">@null</item>
+        <!--背景：透明-->
+        <item name="android:windowBackground">@null</item>
+        <!-- 背景透明 -->
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+</resources>
