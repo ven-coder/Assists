@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity(), Assists.ListenerManager.ServiceListene
     val viewBind: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater).apply {
             btnOption.setOnClickListener {
-                if (Assists.isAccessibilityServiceEnabled(this@MainActivity, AssistsService::javaClass.name)) {
+                if (Assists.isAccessibilityServiceEnabled()) {
                     OverManager.mainOver?.show()
                 } else {
                     Assists.openAccessibilitySetting()
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity(), Assists.ListenerManager.ServiceListene
     }
 
     private fun checkServiceEnable() {
-        if (Assists.isAccessibilityServiceEnabled(this, AssistsService::javaClass.name)) {
+        if (Assists.isAccessibilityServiceEnabled()) {
             viewBind.btnOption.text = "显示操作浮窗"
         } else {
             viewBind.btnOption.text = "开启服务"

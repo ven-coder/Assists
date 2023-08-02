@@ -11,12 +11,6 @@ android {
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        //数据库自动迁移空间配置
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
     }
     buildTypes {
         release {
@@ -54,4 +48,5 @@ dependencies {
     implementation "androidx.room:room-runtime:2.4.3"
     implementation 'androidx.room:room-ktx:2.4.3'
     implementation 'com.github.mrmike:ok2curl:0.8.0'
+//    implementation 'com.github.ven-coder:assists:1.0.0'
 }

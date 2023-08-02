@@ -1,5 +1,8 @@
 package com.ven.assist.step
 
+/**
+ * 步骤收集器
+ */
 class StepCollector(private val clazzName: String) {
 
     private val stepOperatorMap: HashMap<Int, StepOperator> = hashMapOf()
@@ -8,6 +11,11 @@ class StepCollector(private val clazzName: String) {
         stepOperatorMap[step]?.let { return it } ?: throw RuntimeException("The class $clazzName does not have an implementation logic for Step $step. / 类${clazzName}中的没有步骤${step}的实现逻辑")
     }
 
+    /**
+     * 单次步骤
+     * @param step  步骤序号
+     * @param next 步骤逻辑接口
+     */
     fun next(
         step: Int,
         next: (stepOperator: StepOperator) -> Unit
@@ -19,6 +27,12 @@ class StepCollector(private val clazzName: String) {
         return this
     }
 
+    /**
+     * 循环步骤
+     * @param step 步骤序号
+     * @param loopDuration 循环时长
+     * @param next 步骤逻辑接口，接口中需要返回[kotlin.Boolean]，false继续循环，true终止循环
+     */
     fun nextLoop(
         step: Int,
         loopDuration: Long = 5000,

@@ -1,12 +1,11 @@
 package com.ven.assist
 
-import android.content.Context
 import android.content.Intent
 import android.provider.Settings
 import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityManager
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
+import com.ven.assist.step.StepOperator
 
 object Assists {
     /**
@@ -41,13 +40,8 @@ object Assists {
     /**
      *检查无障碍服务是否开启
      */
-    fun isAccessibilityServiceEnabled(context: Context, serviceName: String): Boolean {
-        val am = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-        val enabledServices = Settings.Secure.getString(
-            context.contentResolver,
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-        )
-        return enabledServices?.contains(serviceName) == true
+    fun isAccessibilityServiceEnabled(): Boolean {
+        return service != null
     }
 
     /**
@@ -93,6 +87,8 @@ object Assists {
         interface StepListener {
             fun onStepStart() {}
             fun onStepStop() {}
+            fun onStep(step: StepOperator) {}
+            fun onLoop(step: StepOperator) {}
         }
 
         /**

@@ -31,7 +31,7 @@ class StepOperator(
                         Assists.ListenerManager.stepListener.forEach { it.onStepStop() }
                         return@runOnUiThreadDelayed
                     }
-                    it.invoke(this@StepOperator)
+                    onStep(it)
                 }, delay)
             } else {
                 ThreadUtils.runOnUiThreadDelayed({
@@ -47,7 +47,8 @@ class StepOperator(
                             loopSurplusTime = millisUntilFinished
                             loopSurplusSecond = millisUntilFinished / 1000f
                             if (StepManager.isStop) Assists.ListenerManager.stepListener.forEach { it.onStepStop() }
-                            if (it.invoke(this@StepOperator) || StepManager.isStop) {
+                            Assists.ListenerManager.stepListener.forEach { it.onLoop(this@StepOperator) }
+                            if (onStep(it) || StepManager.isStop) {
                                 cancel()
                                 loopDownTimer = null
                             }
@@ -56,7 +57,7 @@ class StepOperator(
                         override fun onFinish() {
                             loopSurplusTime = 0
                             loopSurplusSecond = 0f
-                            it.invoke(this@StepOperator)
+                            onStep(it)
                         }
 
                     }
@@ -66,5 +67,10 @@ class StepOperator(
         } ?: let {
             LogUtils.e("The execution logic for Step [$step] in the class [${clazzName}] has not been implemented. / 类[${clazzName}]中的步骤[${step}]未实现执行逻辑")
         }
+    }
+
+    private fun onStep(it: (stepOperator: StepOperator) -> Boolean): Boolean {
+        Assists.ListenerManager.stepListener.forEach { it.onStep(this) }
+        return it.invoke(this)
     }
 }
