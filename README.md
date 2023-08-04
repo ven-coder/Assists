@@ -1,9 +1,9 @@
 Assists
 ====
 
-<img align="right" height="256" src="https://raw.githubusercontent.com/kivy/kivy/master/kivy/data/logo/kivy-icon-256.png"/>
+<img align="right" height="150" src="https://raw.githubusercontent.com/ven-coder/assists/master/simple/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png"/>
 
-Innovative user interfaces made easy.
+使Android无障碍服务业务开发更加快速且易于维护。
 
 Kivy is an open source, cross-platform [Python](https://www.python.org)
 framework for the development of applications that make use of innovative,
