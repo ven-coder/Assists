@@ -29,11 +29,11 @@ allprojects {
 }
 ```
 
-2. 添加依赖到主模块的build.gradle中
+2. 添加依赖到主模块的build.gradle中，
 ```groovy
 dependencies {
 	//添加依赖
-    implementation 'com.github.ven-coder:assists:1.0.0'
+    implementation 'com.github.ven-coder:assists:1.0.1'
 }
 ```
 ### 主模块AndroidManifest.xml中注册服务
