@@ -1,9 +1,6 @@
-
-
 # Assists
 Android无障碍服务（AccessibilityService）开发框架，快速开发复杂自动化任务、远程协助、监听等
 ***
-
 ## Android无障碍服务能做什么
 利用Android无障碍服务可以开发一些Android系统内的自动化任务，比如经典的微信自动抢红包、支付宝蚂蚁森林自动浇水、芭芭农场自动施肥等
  
@@ -40,7 +37,7 @@ dependencies {
 }
 ```
 ### 主模块AndroidManifest.xml中注册服务
-
+一定要在主模块中注册服务，不然进程被杀服务也会自动被关闭需要再次开启
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -106,10 +103,12 @@ class OpenWechat:StepImpl {
 ```kotlin
 StepManager.register(OpenWechat::class.java)
 ```
-3. 开始执行`执行前请确保无障碍服务已开启`（开始执行请使用`beginExecute()`，后续的步骤执行请使用`execute()`方法）
+3. 开始执行（执行前请确保无障碍服务已开启，开始执行请使用`beginExecute()`，后续的步骤执行请使用`execute()`方法）
 
 ```kotlin
 //从步骤1开始执行
 StepManager.beginExecute(OpenWechat::class.java, 1)
 ```
-具体使用可以看我的[Demo](https://github.com/ven-coder/assists)
+**具体使用可以看我的[Demo](https://github.com/ven-coder/assists)**
+
+<img src="https://img-blog.csdnimg.cn/81d4d63470f9431f825aa7572d7abbdb.jpeg#pic_center" alt="图片描述" width="200" align="left">
