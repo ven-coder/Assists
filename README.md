@@ -110,5 +110,17 @@ StepManager.register(OpenWechat::class.java)
 StepManager.beginExecute(OpenWechat::class.java, 1)
 ```
 **具体使用可以看我的[Demo](https://github.com/ven-coder/assists)**
+<div align="left">
+<img src="https://img-blog.csdnimg.cn/81d4d63470f9431f825aa7572d7abbdb.jpeg#pic_center" alt="图片描述" width="200">
+	
+</div>
 
-<img src="https://img-blog.csdnimg.cn/81d4d63470f9431f825aa7572d7abbdb.jpeg#pic_center" alt="图片描述" width="200" align="left">
+### 交流群
+<div align="left">
+<img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat_group.jpg" width=250/>
+</div>
+
+### 个人微信
+<div align="left">
+<img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat.jpg" width=250/>
+</div>
