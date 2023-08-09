@@ -115,6 +115,7 @@ StepManager.beginExecute(OpenWechat::class.java, 1)
 	
 </div>
 
+## 有问题欢迎反馈交流
 ### 交流群
 <div align="left">
 <img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat_group.jpg" width=250/>
