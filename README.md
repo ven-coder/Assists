@@ -17,8 +17,8 @@ Android无障碍服务（AccessibilityService）开发框架，快速开发复�
 在这个框架下开发Android无障碍服务业务可以让你的业务开发更加快速、逻辑更加健壮且容易维护。
 
 ## 快速开始
-### 添加依赖
-1. 将JitPack仓库添加到根目录build.gradle文件中
+### 1. 添加依赖
+1.1 将JitPack仓库添加到根目录build.gradle文件中
 
 ```groovy
 allprojects {
@@ -29,14 +29,14 @@ allprojects {
 }
 ```
 
-2. 添加依赖到主模块的build.gradle中，
+1.2 添加依赖到主模块的build.gradle中，
 ```groovy
 dependencies {
 	//添加依赖
     implementation 'com.github.ven-coder:assists:1.0.1'
 }
 ```
-### 主模块AndroidManifest.xml中注册服务
+### 2. 主模块AndroidManifest.xml中注册服务
 一定要在主模块中注册服务，不然进程被杀服务也会自动被关闭需要再次开启
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -71,8 +71,8 @@ dependencies {
 
 </manifest>
 ```
-### 实现业务逻辑
-1. 继承```StepImpl```实现`onImpl(collector: StepCollector)`接口，通过```collector.next()```实现步骤逻辑
+### 3. 实现业务逻辑
+3.1 继承```StepImpl```实现`onImpl(collector: StepCollector)`接口，通过```collector.next()```实现步骤逻辑
 
 ```kotlin
 class OpenWechat:StepImpl {
@@ -98,12 +98,12 @@ class OpenWechat:StepImpl {
     }
 }
 ```
-2. 在执行前注册上面步骤实现类`OpenWechat`
+3.2 在执行前注册上面步骤实现类`OpenWechat`
 
 ```kotlin
 StepManager.register(OpenWechat::class.java)
 ```
-3. 开始执行（执行前请确保无障碍服务已开启，开始执行请使用`beginExecute()`，后续的步骤执行请使用`execute()`方法）
+3.3 开始执行（执行前请确保无障碍服务已开启，开始执行请使用`beginExecute()`，后续的步骤执行请使用`execute()`方法）
 
 ```kotlin
 //从步骤1开始执行
