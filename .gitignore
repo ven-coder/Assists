@@ -29,3 +29,5 @@ proguard/
 .idea
 build
 readme1.md
+/key.jks
+/simple/_default/release/output-metadata.json

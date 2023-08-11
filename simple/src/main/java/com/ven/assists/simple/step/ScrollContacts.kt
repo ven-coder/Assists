@@ -2,7 +2,6 @@ package com.ven.assists.simple.step
 
 import android.content.ComponentName
 import android.content.Intent
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.ven.assist.Assists
 import com.ven.assist.ext.click
@@ -47,7 +46,6 @@ class ScrollContacts : StepImpl {
             OverManager.log("滚动下一页：${step.data}")
             UIOperate.findByTags("android.widget.ListView").forEach {
                 val screen = it.getBoundsInScreen()
-                Log.d(Assists.Config.logTag, "${screen.left}/${screen.top}/${screen.right}/${screen.bottom}")
                 if (screen.left >= 0 && screen.left < UIOperate.getX(1080, 1080) &&
                     screen.right >= UIOperate.getX(1080, 1080)
                 ) {
@@ -60,6 +58,20 @@ class ScrollContacts : StepImpl {
                     return@next
                 }
 
+            }
+            UIOperate.findByTags("androidx.recyclerview.widget.RecyclerView").forEach {
+                val screen = it.getBoundsInScreen()
+                if (screen.left >= 0 && screen.left < UIOperate.getX(1080, 1080) &&
+                    screen.right >= UIOperate.getX(1080, 1080)
+                ) {
+                    it.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                    if (step.data as Int >= 5) {
+                        OverManager.log("停止滚动")
+                        return@next
+                    }
+                    StepManager.execute(this::class.java, Step.STEP_3, data = ((step.data as Int) + 1))
+                    return@next
+                }
             }
         }
     }
