@@ -112,19 +112,36 @@ StepManager.register(OpenWechat::class.java)
 //从步骤1开始执行
 StepManager.beginExecute(OpenWechat::class.java, 1)
 ```
-**具体使用可以看我的[Demo](https://github.com/ven-coder/assists)**
+## 示例&下载
+[&#9654;示例视频](https://www.youtube.com/embed/kNuw9sUsDKo)
+
+[&#128229;直接下载](https://www.pgyer.com/ceGb)或扫码下载
 <div align="left">
-<img src="https://img-blog.csdnimg.cn/81d4d63470f9431f825aa7572d7abbdb.jpeg#pic_center" alt="图片描述" width="200">
-	
+<img src="https://raw.githubusercontent.com/ven-coder/Assists/master/graphics/1691765846270.jpg" width=200/>
 </div>
 
 ## 有问题欢迎反馈交流
-### 交流群
-<div align="left">
-<img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat_group.jpg" width=250/>
+
+<style>
+.horizontal-container {
+    display: flex;
+}
+
+.horizontal-item {
+    flex: 1;
+    padding: 10px;
+}
+</style>
+
+
+<div class="horizontal-container">
+<div class="horizontal-item">
+<h4>交流群</h4>
+<img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat_group1.jpg" width=200/>
 </div>
 
-### 个人微信
-<div align="left">
-<img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat.jpg" width=250/>
+<div class="horizontal-item">
+<h4>个人微信</h4>
+<img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat1.jpg" width=200/>
+</div>
 </div>
