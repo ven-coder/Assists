@@ -122,26 +122,6 @@ StepManager.beginExecute(OpenWechat::class.java, 1)
 
 ## 有问题欢迎反馈交流
 
-<style>
-.horizontal-container {
-    display: flex;
-}
-
-.horizontal-item {
-    flex: 1;
-    padding: 10px;
-}
-</style>
-
-
-<div class="horizontal-container">
-<div class="horizontal-item">
-<h4>交流群</h4>
-<img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat_group1.jpg" width=200/>
-</div>
-
-<div class="horizontal-item">
-<h4>个人微信</h4>
-<img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat1.jpg" width=200/>
-</div>
-</div>
+| 交流群 | 个人微信 |
+|:---------:|:-----------:|
+| <img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat_group1.jpg" width=200/>    | <img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat1.jpg" width=200/>
