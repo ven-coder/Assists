@@ -32,10 +32,11 @@ object StepManager {
     fun <T : StepImpl> execute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay, data: Any? = null) {
         if (isStop) return
         LogUtils.d("execute->${stepImpl.name}:$step", "delay:$delay")
+        stepCollector[stepImpl.name] ?: register(stepImpl)
         stepCollector[stepImpl.name]?.get(step)?.let {
             it.data = data
             it.execute(delay)
-        } ?: throw RuntimeException("The class ${stepImpl.name} is not registered. Please call StepManager.register() to register it first./类${stepImpl.name}未注册，请先调用StepManager.register()进行注册")
+        }
     }
 
     /**
