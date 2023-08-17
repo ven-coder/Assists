@@ -100,12 +100,8 @@ class OpenWechat:StepImpl {
     }
 }
 ```
-#### 3.2 在执行前注册上面步骤实现类`OpenWechat`
 
-```kotlin
-StepManager.register(OpenWechat::class.java)
-```
-#### 3.3 开始执行
+#### 3.2 开始执行
 执行前请确保无障碍服务已开启，开始执行请使用`beginExecute()`，后续的步骤执行请使用`execute()`方法
 
 ```kotlin
