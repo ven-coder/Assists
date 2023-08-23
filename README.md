@@ -33,7 +33,7 @@ allprojects {
 ```groovy
 dependencies {
 	//添加依赖
-    implementation 'com.github.ven-coder:assists:1.0.2'
+    implementation 'com.github.ven-coder:assists:1.0.3'
 }
 ```
 ### 2. 注册服务
