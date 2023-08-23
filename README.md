@@ -113,7 +113,7 @@ StepManager.beginExecute(OpenWechat::class.java, 1)
 
 [&#128229;直接下载](https://www.pgyer.com/1zaijG)或扫码下载
 <div align="left">
-<img src="https://raw.githubusercontent.com/ven-coder/Assists/master/graphics/1691765846270.jpg" width=200/>
+<img src="https://raw.githubusercontent.com/ven-coder/Assists/master/graphics/169176584627.jpg" width=200/>
 </div>
 
 ## 有问题欢迎反馈交流
