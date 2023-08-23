@@ -1,4 +1,4 @@
-![1692799124243](https://github.com/ven-coder/Assists/assets/27257149/09257389-f600-493a-bba5-a740404a166b)# Assists
+# Assists
 Android无障碍服务（AccessibilityService）开发框架，快速开发复杂自动化任务、远程协助、监听等
 ***
 ## Android无障碍服务能做什么
