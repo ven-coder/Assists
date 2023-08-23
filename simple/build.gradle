@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.ven.assists.simple"
+        applicationId "com.ven.assists.demo"
         minSdkVersion 22
         targetSdkVersion 33
         versionCode 1
