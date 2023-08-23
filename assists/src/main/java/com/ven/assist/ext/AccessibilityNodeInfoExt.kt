@@ -80,6 +80,13 @@ fun AccessibilityNodeInfo.findByText(text: String): AccessibilityNodeInfo? {
     return null
 }
 
+fun AccessibilityNodeInfo.containsText(text: String): AccessibilityNodeInfo? {
+    if (this.text?.contains(text) == true || this.contentDescription?.contains(text) == true) {
+        return this
+    }
+    return null
+}
+
 /**
  * 输出控件信息
  */

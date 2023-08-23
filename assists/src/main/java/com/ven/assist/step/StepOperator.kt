@@ -70,6 +70,7 @@ class StepOperator(
     }
 
     private fun onStep(it: (stepOperator: StepOperator) -> Boolean): Boolean {
+        Assists.ListenerManager.stepListener.forEach { if (it.onIntercept(this)) return true }
         Assists.ListenerManager.stepListener.forEach { it.onStep(this) }
         return it.invoke(this)
     }

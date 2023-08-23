@@ -89,6 +89,9 @@ object Assists {
             fun onStepStop() {}
             fun onStep(step: StepOperator) {}
             fun onLoop(step: StepOperator) {}
+            fun onIntercept(step: StepOperator): Boolean {
+                return false
+            }
         }
 
         /**
