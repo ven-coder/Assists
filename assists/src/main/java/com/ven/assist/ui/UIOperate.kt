@@ -101,7 +101,7 @@ object UIOperate {
      */
     private fun getNodes(parentNode: AccessibilityNodeInfo, nodeList: ArrayList<AccessibilityNodeInfo>) {
         nodeList.add(parentNode)
-        if (nodeList.size > 500) return
+        if (nodeList.size > 10000) return
         for (index in 0 until parentNode.childCount) {
             parentNode.getChild(index)?.let {
                 getNodes(it, nodeList)
