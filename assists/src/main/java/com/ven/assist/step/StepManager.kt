@@ -17,20 +17,21 @@ object StepManager {
      * @param step 步骤序号
      * @param delay 步骤执行延迟时间，默认[Assists.Config.defaultStepDelay]
      */
-    fun <T : StepImpl> beginExecute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay): StepManager {
+    private fun <T : StepImpl> beginExecute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay, data: Any? = null): StepManager {
         isStop = false
-        execute(stepImpl, step, delay)
+        execute(stepImpl, step, delay, data)
         return this
     }
 
     /**
-     * 执行步骤，如果是开始位置请使用[beginExecute]
+     * 执行步骤
      * @param stepImpl 执行的业务实现类
      * @param step 步骤序号
      * @param delay 步骤执行延迟时间，默认[Assists.Config.defaultStepDelay]
+     * @param isBegin 是否是初始执行，true则会忽略[isStop]直接开始执行，false则会判断[isStop]是否停止
      */
-    fun <T : StepImpl> execute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay, data: Any? = null) {
-        if (isStop) return
+    fun <T : StepImpl> execute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay, data: Any? = null, isBegin: Boolean = false) {
+        if (isStop && !isBegin) return
         LogUtils.d("execute->${stepImpl.name}:$step", "delay:$delay")
         stepCollector[stepImpl.name] ?: register(stepImpl)
         stepCollector[stepImpl.name]?.get(step)?.let {

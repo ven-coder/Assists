@@ -43,10 +43,10 @@ android {
 }
 
 dependencies {
-//    implementation project(':assists')
+    implementation project(':assists')
     implementation project(':base')
     implementation "androidx.room:room-runtime:2.4.3"
     implementation 'androidx.room:room-ktx:2.4.3'
     implementation 'com.github.mrmike:ok2curl:0.8.0'
-    implementation 'com.github.ven-coder:assists:1.0.1'
+//    implementation 'com.github.ven-coder:assists:1.0.1'
 }

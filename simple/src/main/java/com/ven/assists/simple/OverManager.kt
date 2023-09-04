@@ -36,11 +36,11 @@ object OverManager : Assists.ListenerManager.StepListener, Assists.ListenerManag
                         }
                         btnOpenSocial.setOnClickListener {
                             beginStart(this)
-                            StepManager.beginExecute(OpenWechatSocial::class.java, Step.STEP_1)
+                            StepManager.execute(OpenWechatSocial::class.java, Step.STEP_1, isBegin = true)
                         }
                         btnPublishSocial.setOnClickListener {
                             beginStart(this)
-                            StepManager.beginExecute(PublishSocial::class.java, Step.STEP_1)
+                            StepManager.execute(PublishSocial::class.java, Step.STEP_1, isBegin = true)
                         }
                         btnStop.setOnClickListener {
                             stop()
@@ -56,15 +56,15 @@ object OverManager : Assists.ListenerManager.StepListener, Assists.ListenerManag
                         }
                         btnScrollContacts.setOnClickListener {
                             beginStart(this)
-                            StepManager.beginExecute(ScrollContacts::class.java, Step.STEP_1)
+                            StepManager.execute(ScrollContacts::class.java, Step.STEP_1, isBegin = true)
                         }
                         btnClickBottomTab.setOnClickListener {
                             beginStart(this)
-                            StepManager.beginExecute(GestureBottomTab::class.java, Step.STEP_1)
+                            StepManager.execute(GestureBottomTab::class.java, Step.STEP_1, isBegin = true)
                         }
                         btnScrollSocial.setOnClickListener {
                             beginStart(this)
-                            StepManager.beginExecute(GestureScrollSocial::class.java, Step.STEP_1)
+                            StepManager.execute(GestureScrollSocial::class.java, Step.STEP_1, isBegin = true)
                         }
                     }
                 }
