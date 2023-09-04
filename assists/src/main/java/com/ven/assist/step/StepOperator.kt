@@ -1,6 +1,7 @@
 package com.ven.assist.step
 
 import android.os.CountDownTimer
+import android.util.Log
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.ven.assist.Assists
@@ -22,7 +23,7 @@ class StepOperator(
             Assists.ListenerManager.stepListener.forEach { it.onStepStop() }
             return
         }
-        LogUtils.d("step->$clazzName:$step", "delay:$delay")
+        Log.d(Assists.Config.logTag,"step->$clazzName:$step-delay:$delay")
 
         next?.let {
             if (loopDuration == 0L) {

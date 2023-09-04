@@ -1,6 +1,6 @@
 package com.ven.assist.step
 
-import com.blankj.utilcode.util.LogUtils
+import android.util.Log
 import com.ven.assist.Assists
 
 /**
@@ -32,7 +32,7 @@ object StepManager {
      */
     fun <T : StepImpl> execute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay, data: Any? = null, isBegin: Boolean = false) {
         if (isStop && !isBegin) return
-        LogUtils.d("execute->${stepImpl.name}:$step", "delay:$delay")
+        Log.d(Assists.Config.logTag, "execute->${stepImpl.simpleName}:$step-delay:$delay")
         stepCollector[stepImpl.name] ?: register(stepImpl)
         stepCollector[stepImpl.name]?.get(step)?.let {
             it.data = data
