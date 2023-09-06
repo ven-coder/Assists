@@ -10,6 +10,7 @@ class StepOperator(
     private val clazzName: String,
     val step: Int,
     val loopDuration: Long = 0,
+    val loopInterval: Long = 250,
     val next: ((stepOperator: StepOperator) -> Boolean)? = null,
 ) {
 
@@ -23,7 +24,7 @@ class StepOperator(
             Assists.ListenerManager.stepListener.forEach { it.onStepStop() }
             return
         }
-        Log.d(Assists.Config.logTag,"step->$clazzName:$step-delay:$delay")
+        Log.d(Assists.Config.logTag, "step->$clazzName:$step-delay:$delay")
 
         next?.let {
             if (loopDuration == 0L) {
@@ -43,7 +44,7 @@ class StepOperator(
                         return@runOnUiThreadDelayed
                     }
                     loopDownTimer?.cancel()
-                    loopDownTimer = object : CountDownTimer(loopDuration, 250) {
+                    loopDownTimer = object : CountDownTimer(loopDuration, loopInterval) {
                         override fun onTick(millisUntilFinished: Long) {
                             loopSurplusTime = millisUntilFinished
                             loopSurplusSecond = millisUntilFinished / 1000f

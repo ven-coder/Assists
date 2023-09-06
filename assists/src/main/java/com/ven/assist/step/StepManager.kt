@@ -31,7 +31,8 @@ object StepManager {
      * @param isBegin 是否是初始执行，true则会忽略[isStop]直接开始执行，false则会判断[isStop]是否停止
      */
     fun <T : StepImpl> execute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay, data: Any? = null, isBegin: Boolean = false) {
-        if (isStop && !isBegin) return
+        if (isBegin) isStop = false
+        if (isStop) return
         Log.d(Assists.Config.logTag, "execute->${stepImpl.simpleName}:$step-delay:$delay")
         stepCollector[stepImpl.name] ?: register(stepImpl)
         stepCollector[stepImpl.name]?.get(step)?.let {

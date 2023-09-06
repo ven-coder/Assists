@@ -36,9 +36,10 @@ class StepCollector(private val clazzName: String) {
     fun nextLoop(
         step: Int,
         loopDuration: Long = 5000,
+        loopInterval: Long = 250,
         next: (stepOperator: StepOperator) -> Boolean
     ): StepCollector {
-        stepOperatorMap[step] = StepOperator(clazzName, step, loopDuration, next)
+        stepOperatorMap[step] = StepOperator(clazzName, step, loopDuration = loopDuration, loopInterval = loopInterval, next)
         return this
     }
 }
