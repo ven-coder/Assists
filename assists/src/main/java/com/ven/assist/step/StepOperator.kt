@@ -7,7 +7,7 @@ import com.blankj.utilcode.util.ThreadUtils
 import com.ven.assist.Assists
 
 class StepOperator(
-    private val clazzName: String,
+    val clazzName: String,
     val step: Int,
     val loopDuration: Long = 0,
     val loopInterval: Long = 250,

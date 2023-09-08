@@ -33,7 +33,7 @@ object StepManager {
     fun <T : StepImpl> execute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay, data: Any? = null, isBegin: Boolean = false) {
         if (isBegin) isStop = false
         if (isStop) return
-        Log.d(Assists.Config.logTag, "execute->${stepImpl.simpleName}:$step-delay:$delay")
+        Log.d(Assists.Config.logTag, "execute->${stepImpl.name}:$step-delay:$delay")
         stepCollector[stepImpl.name] ?: register(stepImpl)
         stepCollector[stepImpl.name]?.get(step)?.let {
             it.data = data
