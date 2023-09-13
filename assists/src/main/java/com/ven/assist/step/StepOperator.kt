@@ -1,7 +1,6 @@
 package com.ven.assist.step
 
 import android.os.CountDownTimer
-import android.util.Log
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.ven.assist.Assists
@@ -17,15 +16,13 @@ class StepOperator(
     private var loopDownTimer: CountDownTimer? = null
     var loopSurplusTime: Long = 0
     var loopSurplusSecond: Float = 0f
-    var data: Any? = null
+    var data: StepData? = null
 
     fun execute(delay: Long) {
         if (StepManager.isStop) {
             Assists.ListenerManager.stepListener.forEach { it.onStepStop() }
             return
         }
-        Log.d(Assists.Config.logTag, "step->$clazzName:$step-delay:$delay")
-
         next?.let {
             if (loopDuration == 0L) {
                 ThreadUtils.runOnUiThreadDelayed({

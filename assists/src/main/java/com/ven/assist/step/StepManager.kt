@@ -17,7 +17,7 @@ object StepManager {
      * @param step 步骤序号
      * @param delay 步骤执行延迟时间，默认[Assists.Config.defaultStepDelay]
      */
-    private fun <T : StepImpl> beginExecute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay, data: Any? = null): StepManager {
+    private fun <T : StepImpl> beginExecute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay, data: StepData? = null): StepManager {
         isStop = false
         execute(stepImpl, step, delay, data)
         return this
@@ -30,7 +30,7 @@ object StepManager {
      * @param delay 步骤执行延迟时间，默认[Assists.Config.defaultStepDelay]
      * @param isBegin 是否是初始执行，true则会忽略[isStop]直接开始执行，false则会判断[isStop]是否停止
      */
-    fun <T : StepImpl> execute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay, data: Any? = null, isBegin: Boolean = false) {
+    fun <T : StepImpl> execute(stepImpl: Class<T>, step: Int, delay: Long = Assists.Config.defaultStepDelay, data: StepData? = null, isBegin: Boolean = false) {
         if (isBegin) isStop = false
         if (isStop) return
         Log.d(Assists.Config.logTag, "execute->${stepImpl.name}:$step-delay:$delay")

@@ -120,4 +120,4 @@ StepManager.beginExecute(OpenWechat::class.java, 1)
 
 | 交流群 | 个人微信 |
 |:---------:|:-----------:|
-| <img src="https://github.com/ven-coder/Assists/blob/master/graphics/1693440317864.png" width=200/>    | <img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat1.jpg" width=200/>
+| <img src="https://github.com/ven-coder/Assists/blob/master/graphics/1694582375808.png" width=200/>    | <img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat1.jpg" width=200/>

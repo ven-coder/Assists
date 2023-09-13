@@ -7,6 +7,7 @@ import com.ven.assist.Assists
 import com.ven.assist.ext.click
 import com.ven.assist.ext.getBoundsInScreen
 import com.ven.assist.step.StepCollector
+import com.ven.assist.step.StepData
 import com.ven.assist.step.StepImpl
 import com.ven.assist.step.StepManager
 import com.ven.assist.ui.UIOperate
@@ -32,12 +33,12 @@ class ScrollContacts : StepImpl {
                 ) {
                     OverManager.log("已打开微信主页，点击【通讯录】")
                     it.parent.parent.click()
-                    StepManager.execute(this::class.java, Step.STEP_3, data = 1)
+                    StepManager.execute(this::class.java, Step.STEP_3, data = StepData(data = 1))
                     return@nextLoop true
                 }
             }
 
-            if (0f==it.loopSurplusSecond){
+            if (0f == it.loopSurplusSecond) {
                 StepManager.execute(this::class.java, Step.STEP_1)
             }
 
@@ -54,7 +55,7 @@ class ScrollContacts : StepImpl {
                         OverManager.log("停止滚动")
                         return@next
                     }
-                    StepManager.execute(this::class.java, Step.STEP_3, data = ((step.data as Int) + 1))
+                    StepManager.execute(this::class.java, Step.STEP_3, data = StepData(data = (step.data?.data as Int) + 1))
                     return@next
                 }
 
@@ -69,7 +70,7 @@ class ScrollContacts : StepImpl {
                         OverManager.log("停止滚动")
                         return@next
                     }
-                    StepManager.execute(this::class.java, Step.STEP_3, data = ((step.data as Int) + 1))
+                    StepManager.execute(this::class.java, Step.STEP_3, data = StepData(data = (step.data?.data as Int) + 1))
                     return@next
                 }
             }
