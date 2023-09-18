@@ -108,6 +108,50 @@ class OpenWechat:StepImpl {
 //从步骤1开始执行
 StepManager.beginExecute(OpenWechat::class.java, 1)
 ```
+
+## API
+### UIOperate
+
+* findById
+>根据id查找元素控件，例：
+  
+```
+//查找当前页面id为"com.tencent.mm:id/gkp"的界面元素
+UIOperate.findById("com.tencent.mm:id/gkp")
+```
+
+
+* findByTags
+>根据类型查找元素控件，例：
+  
+```
+//查找元素child下类型为"android.widget.TextView"的元素
+//如child为空则查找当前整个页面元素
+UIOperate.findByTags("android.widget.TextView", child)
+```
+
+* findByText
+>根据文本查找元素控件，例：
+  
+```
+//查找当前页面文本为"返回"或包含"返回"的界面元素
+UIOperate.findByText("返回")
+```
+* getAllNodes
+>获取当前页面所有
+* getNodes
+>获取指定元素下所有子元素
+* findParentClickable
+>查找父类可点击的元素
+* clickScreen
+>点击屏幕指定位置
+* back
+>返回
+* paste
+>粘贴文本到指定元素
+
+文档持续更新中...
+
 ## 示例&下载
 [&#9654;示例视频](https://www.youtube.com/embed/kNuw9sUsDKo)
 
