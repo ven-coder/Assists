@@ -138,7 +138,7 @@ UIOperate.findByTags("android.widget.TextView", child)
 UIOperate.findByText("返回")
 ```
 * getAllNodes
->获取当前页面所有
+>获取当前页面所有元素
 * getNodes
 >获取指定元素下所有子元素
 * findParentClickable
