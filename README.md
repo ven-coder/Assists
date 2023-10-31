@@ -160,7 +160,7 @@ UIOperate.findByText("返回")
 <img src="https://raw.githubusercontent.com/ven-coder/Assists/master/graphics/169176584627.jpg" width=200/>
 </div>
 
-## 有问题欢迎反馈交流
+## 有问题欢迎反馈交流（微信群二维码失效可以加我拉进群）
 
 | 交流群 | 个人微信 |
 |:---------:|:-----------:|
