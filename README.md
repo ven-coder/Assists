@@ -164,4 +164,4 @@ UIOperate.findByText("返回")
 
 | 交流群 | 个人微信 |
 |:---------:|:-----------:|
-| <img src="https://github.com/ven-coder/Assists/blob/master/graphics/1698759668953.png" width=200/>    | <img src="https://raw.githubusercontent.com/ven-coder/assists/master/graphics/wechat1.jpg" width=200/>
+| <img src="https://github.com/ven-coder/Assists/blob/master/graphics/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240411223658.jpg" width=200/>    | <img src="https://github.com/ven-coder/Assists/blob/master/graphics/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240411224006.jpg" width=200/>
