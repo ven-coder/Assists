@@ -109,7 +109,6 @@ class UIOver private constructor(builder: Builder) {
         mWindowManager!!.defaultDisplay.getMetrics(mDisplayMetrics)
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun initFloatView() {
         view = FloatView(mContext)
         if (moveAble) {

@@ -42,4 +42,8 @@ class StepCollector(private val clazzName: String) {
         stepOperatorMap[step] = StepOperator(clazzName, step, loopDuration = loopDuration, loopInterval = loopInterval, next)
         return this
     }
+
+    fun allStop() {
+        stepOperatorMap.forEach { it.value.stop() }
+    }
 }

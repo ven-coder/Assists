@@ -6,9 +6,9 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.TimeUtils
-import com.ven.assist.Assists
-import com.ven.assist.step.StepManager
-import com.ven.assist.ui.UIOver
+import com.ven.assists.base.GestureListener
+import com.ven.assists.base.Assists
+import com.ven.assists.base.AssistsWindowManager
 import com.ven.assists.simple.databinding.ViewMainOverBinding
 import com.ven.assists.simple.step.GestureBottomTab
 import com.ven.assists.simple.step.GestureScrollSocial
@@ -16,61 +16,67 @@ import com.ven.assists.simple.step.OpenWechatSocial
 import com.ven.assists.simple.step.PublishSocial
 import com.ven.assists.simple.step.ScrollContacts
 import com.ven.assists.simple.step.Step
+import com.ven.assists.stepper.StepListener
+import com.ven.assists.stepper.StepManager
 
-object OverManager : Assists.ListenerManager.StepListener, Assists.ListenerManager.GestureListener {
+object OverManager : StepListener, GestureListener {
     @SuppressLint("StaticFieldLeak")
     private var viewMainOver: ViewMainOverBinding? = null
-        get() {
-            if (field == null) {
-                field = Assists.service?.let {
-                    Assists.ListenerManager.stepListener.add(this)
-                    ViewMainOverBinding.inflate(LayoutInflater.from(it)).apply {
-                        llOption.isVisible = true
-                        llLog.isVisible = false
-                        btnCloseLog.isVisible = false
-                        ivClose.setOnClickListener {
-                            stop()
-                            showOption()
-                            mainOver?.hide()
 
-                        }
-                        btnOpenSocial.setOnClickListener {
-                            beginStart(this)
-                            StepManager.execute(OpenWechatSocial::class.java, Step.STEP_1, isBegin = true)
-                        }
-                        btnPublishSocial.setOnClickListener {
-                            beginStart(this)
-                            StepManager.execute(PublishSocial::class.java, Step.STEP_1, isBegin = true)
-                        }
-                        btnStop.setOnClickListener {
-                            stop()
-                        }
-                        btnCloseLog.setOnClickListener { showOption() }
-                        btnStopScrollLog.setOnClickListener {
-                            isAutoScrollLog = !isAutoScrollLog
-                        }
-                        btnLog.setOnClickListener {
-                            showLog()
-                            btnCloseLog.isVisible = true
-                            btnStop.isVisible = false
-                        }
-                        btnScrollContacts.setOnClickListener {
-                            beginStart(this)
-                            StepManager.execute(ScrollContacts::class.java, Step.STEP_1, isBegin = true)
-                        }
-                        btnClickBottomTab.setOnClickListener {
-                            beginStart(this)
-                            StepManager.execute(GestureBottomTab::class.java, Step.STEP_1, isBegin = true)
-                        }
-                        btnScrollSocial.setOnClickListener {
-                            beginStart(this)
-                            StepManager.execute(GestureScrollSocial::class.java, Step.STEP_1, isBegin = true)
-                        }
-                    }
+    private fun createView(): ViewMainOverBinding? {
+        return Assists.service?.let {
+            Assists.gestureListeners.add(this)
+            StepManager.stepListeners.add(this)
+            ViewMainOverBinding.inflate(LayoutInflater.from(it)).apply {
+                llOption.isVisible = true
+                llLog.isVisible = false
+                btnCloseLog.isVisible = false
+                btnOpenSocial.setOnClickListener {
+                    beginStart(this)
+                    StepManager.execute(OpenWechatSocial::class.java, Step.STEP_1, isBegin = true)
+                }
+                btnPublishSocial.setOnClickListener {
+                    beginStart(this)
+                    StepManager.execute(PublishSocial::class.java, Step.STEP_1, isBegin = true)
+                }
+                btnStop.setOnClickListener {
+                    stop()
+                }
+                btnCloseLog.setOnClickListener { showOption() }
+                btnStopScrollLog.setOnClickListener {
+                    isAutoScrollLog = !isAutoScrollLog
+                }
+                btnLog.setOnClickListener {
+                    showLog()
+                    btnCloseLog.isVisible = true
+                    btnStop.isVisible = false
+                }
+                btnScrollContacts.setOnClickListener {
+                    beginStart(this)
+                    StepManager.execute(ScrollContacts::class.java, Step.STEP_1, isBegin = true)
+                }
+                btnClickBottomTab.setOnClickListener {
+                    beginStart(this)
+                    StepManager.execute(GestureBottomTab::class.java, Step.STEP_1, isBegin = true)
+                }
+                btnScrollSocial.setOnClickListener {
+                    beginStart(this)
+                    StepManager.execute(GestureScrollSocial::class.java, Step.STEP_1, isBegin = true)
+                }
+                root.setOnCloseClickListener {
+                    clear()
                 }
             }
-            return field
+
         }
+    }
+
+    fun show() {
+        viewMainOver ?: let {
+            viewMainOver = createView()
+            AssistsWindowManager.addView(viewMainOver?.root)
+        }
+    }
 
     private fun beginStart(view: ViewMainOverBinding) {
         with(view) {
@@ -83,7 +89,7 @@ object OverManager : Assists.ListenerManager.StepListener, Assists.ListenerManag
     }
 
     override fun onGestureBegin(startLocation: FloatArray, endLocation: FloatArray): Long {
-        mainOver?.view?.let {
+        viewMainOver?.root?.let {
             val viewXY = IntArray(2)
             it.getLocationOnScreen(viewXY)
             if (startLocation[0] >= viewXY[0] &&
@@ -91,7 +97,8 @@ object OverManager : Assists.ListenerManager.StepListener, Assists.ListenerManag
                 startLocation[1] >= viewXY[1] &&
                 startLocation[1] <= viewXY[1] + it.measuredHeight
             ) {
-                mainOver?.hide()
+                Assists.gestureBeginDelay = 1000L
+                viewMainOver?.root?.switchNotTouchable()
                 return 1000
             }
         }
@@ -99,7 +106,7 @@ object OverManager : Assists.ListenerManager.StepListener, Assists.ListenerManag
     }
 
     override fun onGestureEnd() {
-        mainOver?.show()
+        viewMainOver?.root?.switchTouchable()
     }
 
     override fun onStepStop() {
@@ -111,7 +118,7 @@ object OverManager : Assists.ListenerManager.StepListener, Assists.ListenerManag
             showOption()
             return
         }
-        StepManager.isStop=true
+        StepManager.isStop = true
         isAutoScrollLog = false
         viewMainOver?.btnStop?.isVisible = false
         viewMainOver?.btnCloseLog?.isVisible = true
@@ -127,26 +134,10 @@ object OverManager : Assists.ListenerManager.StepListener, Assists.ListenerManag
         viewMainOver?.llLog?.isVisible = false
     }
 
-    @SuppressLint("StaticFieldLeak")
-    var mainOver: UIOver? = null
-        get() {
-            if (field == null) {
-                field = viewMainOver?.let {
-                    Assists.ListenerManager.gestureListener = this
-                    UIOver.Builder(it.root.context, it.root)
-                        .setModality(false)
-                        .setMoveAble(true)
-                        .setAutoAlign(false)
-                        .isFirstCenterShow(true)
-                        .build()
-                }
-            }
-            return field
-        }
-
     fun clear() {
-        mainOver?.remove()
-        mainOver = null
+        AssistsWindowManager.windowManager.removeView(viewMainOver?.root)
+        Assists.gestureListeners.remove(this)
+        StepManager.stepListeners.remove(this)
         viewMainOver = null
     }
 

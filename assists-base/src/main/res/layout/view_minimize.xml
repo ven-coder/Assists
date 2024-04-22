@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.ven.assists.base.MinimizeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="#ffffff"
+        android:gravity="center"
+        android:text="Assists"
+        android:textColor="#009688"
+        android:textSize="12dp"
+        android:textStyle="bold" />
+
+</com.ven.assists.base.MinimizeLayout>

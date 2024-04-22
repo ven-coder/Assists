@@ -3,19 +3,31 @@ package com.ven.assists.simple
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import com.blankj.utilcode.util.BarUtils
-import com.ven.assist.Assists
-import com.ven.assist.AssistsService
+import com.blankj.utilcode.util.ThreadUtils
+import com.ven.assists.base.Assists
+import com.ven.assists.base.AssistsService
+import com.ven.assists.base.AssistsServiceListener
+import com.ven.assists.base.AssistsWindowManager
+import com.ven.assists.base.databinding.ViewMinimizeBinding
 import com.ven.assists.simple.databinding.ActivityMainBinding
+import com.ven.assists.simple.databinding.ViewMainOverBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
 
-class MainActivity : AppCompatActivity(), Assists.ListenerManager.ServiceListener {
+class MainActivity : AppCompatActivity(), AssistsServiceListener {
     val viewBind: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater).apply {
             btnOption.setOnClickListener {
                 if (Assists.isAccessibilityServiceEnabled()) {
-                    OverManager.mainOver?.show()
+                    OverManager.show()
                 } else {
                     Assists.openAccessibilitySetting()
                 }
@@ -37,9 +49,18 @@ class MainActivity : AppCompatActivity(), Assists.ListenerManager.ServiceListene
     }
 
     override fun onServiceConnected(service: AssistsService) {
-        startActivity(Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-        })
+        GlobalScope.launch {
+            onBackApp()
+        }
+    }
+
+    private suspend fun onBackApp() {
+        flow<String> {
+            while (Assists.getPackageName() != packageName) {
+                Assists.back()
+                delay(500)
+            }
+        }.flowOn(Dispatchers.IO).collect {}
     }
 
     override fun onUnbind() {
@@ -51,13 +72,13 @@ class MainActivity : AppCompatActivity(), Assists.ListenerManager.ServiceListene
         super.onCreate(savedInstanceState)
         BarUtils.setStatusBarLightMode(this, true)
         setContentView(viewBind.root)
-        Assists.ListenerManager.globalListeners.add(this)
+        Assists.serviceListeners.add(this)
     }
 
 
     override fun onDestroy() {
         super.onDestroy()
-        Assists.ListenerManager.globalListeners.remove(this)
+        Assists.serviceListeners.remove(this)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

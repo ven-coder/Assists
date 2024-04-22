@@ -3,15 +3,16 @@ package com.ven.assists.simple.step
 import android.content.ComponentName
 import android.content.Intent
 import com.blankj.utilcode.util.ScreenUtils
-import com.ven.assist.Assists
-import com.ven.assist.ext.click
-import com.ven.assist.ext.getBoundsInScreen
-import com.ven.assist.ext.logToText
-import com.ven.assist.step.StepCollector
-import com.ven.assist.step.StepImpl
-import com.ven.assist.step.StepManager
-import com.ven.assist.ui.UIOperate
+import com.ven.assists.base.Assists
+import com.ven.assists.base.Assists.click
+import com.ven.assists.base.Assists.findFirstParentClickable
+import com.ven.assists.base.Assists.getBoundsInScreen
+import com.ven.assists.base.Assists.log
+import com.ven.assists.simple.App
 import com.ven.assists.simple.OverManager
+import com.ven.assists.stepper.StepCollector
+import com.ven.assists.stepper.StepImpl
+import com.ven.assists.stepper.StepManager
 
 class GestureScrollSocial : StepImpl {
     override fun onImpl(collector: StepCollector) {
@@ -26,10 +27,10 @@ class GestureScrollSocial : StepImpl {
             StepManager.execute(this::class.java, Step.STEP_2)
         }.nextLoop(Step.STEP_2) {
             OverManager.log("检查是否已打开微信主页：\n剩余时间=${it.loopSurplusSecond}秒")
-            UIOperate.findByText("发现").forEach {
+            Assists.findByText("发现").forEach {
                 val screen = it.getBoundsInScreen()
-                if (screen.left > UIOperate.getX(1080, 630) &&
-                    screen.top > UIOperate.getX(1920, 1850)
+                if (screen.left > Assists.getX(1080, 630) &&
+                    screen.top > Assists.getX(1920, 1850)
                 ) {
                     OverManager.log("已打开微信主页，点击【发现】")
                     it.parent.parent.click()
@@ -37,19 +38,23 @@ class GestureScrollSocial : StepImpl {
                     return@nextLoop true
                 }
             }
-
+            if (Assists.getPackageName() == App.TARGET_PACKAGE_NAME) {
+                Assists.back()
+                StepManager.execute(this::class.java, Step.STEP_2)
+                return@nextLoop true
+            }
             if (0f == it.loopSurplusSecond) {
                 StepManager.execute(this::class.java, Step.STEP_1)
             }
 
             false
         }.next(Step.STEP_3) {
-            UIOperate.findByText("朋友圈").forEach {
-                it.logToText()
+            Assists.findByText("朋友圈").forEach {
+                it.log()
                 val screen = it.getBoundsInScreen()
                 if (screen.left > 140 && screen.top > 240) {
                     OverManager.log("点击朋友圈")
-                    UIOperate.findParentClickable(it) {
+                    it.findFirstParentClickable()?.let {
                         it.click()
                         StepManager.execute(this::class.java, Step.STEP_4)
                     }
@@ -58,17 +63,17 @@ class GestureScrollSocial : StepImpl {
             }
         }.nextLoop(Step.STEP_4) {
             OverManager.log("检查是否进入朋友圈：剩余时间=${it.loopSurplusSecond}秒")
-            UIOperate.findByText("朋友圈").forEach {
+            Assists.findByText("朋友圈").forEach {
                 OverManager.log("已进入朋友圈")
                 StepManager.execute(this::class.java, Step.STEP_5)
                 return@nextLoop true
             }
-            UIOperate.findByText("朋友圈封面，再点一次可以改封面").forEach {
+            Assists.findByText("朋友圈封面，再点一次可以改封面").forEach {
                 OverManager.log("已进入朋友圈")
                 StepManager.execute(this::class.java, Step.STEP_5)
                 return@nextLoop true
             }
-            UIOperate.findByText("朋友圈封面，点按两次修改封面").forEach {
+            Assists.findByText("朋友圈封面，点按两次修改封面").forEach {
                 OverManager.log("已进入朋友圈")
                 StepManager.execute(this::class.java, Step.STEP_5)
                 return@nextLoop true
@@ -84,10 +89,10 @@ class GestureScrollSocial : StepImpl {
             val startY = distance + distance / 2F
             val endY = distance - distance / 2F
             OverManager.log("滑动：$x/$startY,$x/$endY")
-            val delay = UIOperate.gesture(
+            val delay = Assists.gesture(
                 floatArrayOf(x, startY), floatArrayOf(x, endY), 0, 2000L
             )
-            StepManager.execute(this::class.java, Step.STEP_5, Assists.Config.defaultStepDelay + delay)
+            StepManager.execute(this::class.java, Step.STEP_5, StepManager.DEFAULT_STEP_DELAY + delay)
         }
     }
 }

@@ -3,11 +3,11 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 33
+    compileSdk 34
     defaultConfig {
         applicationId "com.ven.assists.demo"
-        minSdkVersion 22
-        targetSdkVersion 33
+        minSdk 22
+        targetSdk 33
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -43,10 +43,12 @@ android {
 }
 
 dependencies {
-    implementation project(':assists')
+//    implementation project(':assists')
     implementation project(':base')
     implementation "androidx.room:room-runtime:2.4.3"
     implementation 'androidx.room:room-ktx:2.4.3'
     implementation 'com.github.mrmike:ok2curl:0.8.0'
+    implementation project(':assists-base')
+    implementation project(':assists-stepper')
 //    implementation 'com.github.ven-coder:assists:1.0.1'
 }

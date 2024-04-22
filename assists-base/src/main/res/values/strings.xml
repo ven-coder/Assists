@@ -1,0 +1,3 @@
+<resources>
+    <string name="assists_description">服务说明。\n在主module覆盖文本资源id（assists_description）即可</string>
+</resources>

@@ -10,6 +10,12 @@ object StepManager {
 
     private val stepCollector: HashMap<String, StepCollector> = hashMapOf()
     var isStop = false
+        set(value) {
+            field = value
+            if (field) {
+                stepCollector.forEach { it.value.allStop() }
+            }
+        }
 
     /**
      * 开始执行，仅用于开始位置执行，如果执行过程调用会导致步骤无法停止
