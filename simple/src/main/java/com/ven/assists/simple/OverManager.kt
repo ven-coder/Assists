@@ -6,9 +6,9 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.TimeUtils
-import com.ven.assists.base.GestureListener
-import com.ven.assists.base.Assists
-import com.ven.assists.base.AssistsWindowManager
+import com.ven.assists.GestureListener
+import com.ven.assists.Assists
+import com.ven.assists.AssistsWindowManager
 import com.ven.assists.simple.databinding.ViewMainOverBinding
 import com.ven.assists.simple.step.GestureBottomTab
 import com.ven.assists.simple.step.GestureScrollSocial
@@ -88,7 +88,7 @@ object OverManager : StepListener, GestureListener {
         }
     }
 
-    override fun onGestureBegin(startLocation: FloatArray, endLocation: FloatArray): Long {
+    override fun onGestureBegin(startLocation: FloatArray, endLocation: FloatArray) {
         viewMainOver?.root?.let {
             val viewXY = IntArray(2)
             it.getLocationOnScreen(viewXY)
@@ -99,10 +99,8 @@ object OverManager : StepListener, GestureListener {
             ) {
                 Assists.gestureBeginDelay = 1000L
                 viewMainOver?.root?.switchNotTouchable()
-                return 1000
             }
         }
-        return 0
     }
 
     override fun onGestureEnd() {

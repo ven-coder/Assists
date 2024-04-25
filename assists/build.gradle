@@ -1,34 +1,39 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-
 android {
-    namespace 'com.ven.assists'
+    namespace 'com.ven.assists.base'
     compileSdk 34
 
     defaultConfig {
-        minSdk 22
+        minSdk 24
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    viewBinding {
+        enabled = true
     }
 }
 
 dependencies {
+    implementation 'androidx.core:core-ktx:1.13.0'
+    implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.22')
     api 'com.blankj:utilcodex:1.31.1'
 }
 
-// 注意 这边配置的groupId artifactId version 实际测试只对本地mavenLocal生效
-// jitpack点击发布貌似不会采纳 而是 根据 com.github.userName:projectName:Tag的格式
-// 因此 本地配置的版本和远程配置的版本请完全对应 (本段内容也不能丢失) 貌似的原理是github在远端服务器 的mavenLocal
-// 生成文件 然后映射相关文件 到 指定的格式
-//afterEvaluate {
-//    publishing {
-//        publications {
-//            release(MavenPublication) {
-//                from components.release
-//                groupId = 'com.github.JailedBird'
-//                artifactId = 'jitpack'
-//                version = '0.0.2-beta08'
-//            }
-//        }
-//    }
-//}
 apply from: rootProject.file("gradle/maven-publish.gradle")

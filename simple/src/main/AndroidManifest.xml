@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="com.ven.assists.base.AssistsService"
+            android:name="com.ven.assists.AssistsService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">

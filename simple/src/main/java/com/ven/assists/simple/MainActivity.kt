@@ -1,19 +1,13 @@
 package com.ven.assists.simple
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import com.blankj.utilcode.util.BarUtils
-import com.blankj.utilcode.util.ThreadUtils
-import com.ven.assists.base.Assists
-import com.ven.assists.base.AssistsService
-import com.ven.assists.base.AssistsServiceListener
-import com.ven.assists.base.AssistsWindowManager
-import com.ven.assists.base.databinding.ViewMinimizeBinding
+import com.ven.assists.Assists
+import com.ven.assists.AssistsService
+import com.ven.assists.AssistsServiceListener
 import com.ven.assists.simple.databinding.ActivityMainBinding
-import com.ven.assists.simple.databinding.ViewMainOverBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay

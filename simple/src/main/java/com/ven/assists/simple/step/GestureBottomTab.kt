@@ -2,9 +2,9 @@ package com.ven.assists.simple.step
 
 import android.content.ComponentName
 import android.content.Intent
-import com.ven.assists.base.Assists
-import com.ven.assists.base.Assists.gestureClick
-import com.ven.assists.base.Assists.getBoundsInScreen
+import com.ven.assists.Assists
+import com.ven.assists.Assists.gestureClick
+import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.simple.App
 import com.ven.assists.simple.OverManager
 import com.ven.assists.stepper.StepCollector

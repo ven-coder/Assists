@@ -3,11 +3,11 @@ package com.ven.assists.simple.step
 import android.content.ComponentName
 import android.content.Intent
 import com.blankj.utilcode.util.ScreenUtils
-import com.ven.assists.base.Assists
-import com.ven.assists.base.Assists.click
-import com.ven.assists.base.Assists.findFirstParentClickable
-import com.ven.assists.base.Assists.getBoundsInScreen
-import com.ven.assists.base.Assists.log
+import com.ven.assists.Assists
+import com.ven.assists.Assists.click
+import com.ven.assists.Assists.findFirstParentClickable
+import com.ven.assists.Assists.getBoundsInScreen
+import com.ven.assists.Assists.log
 import com.ven.assists.simple.App
 import com.ven.assists.simple.OverManager
 import com.ven.assists.stepper.StepCollector
