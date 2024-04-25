@@ -16,6 +16,22 @@ Android无障碍服务（AccessibilityService）开发框架，快速开发复�
 
 在这个框架下开发Android无障碍服务业务可以让你的业务开发更加快速、逻辑更加健壮且容易维护。
 
+## v2.0.0更新日志（文档后续补充...）
+1. 整理api
+2. 增加
+- 浮窗支持拖动修改大小
+- 根据类型查找元素
+- 在当前元素范围下，根据类型查找元素
+- 获取当前页面所有元素
+- 获取指定元素下所有子元素
+- 查找第一个可点击的父元素
+- 拓展-获取元素在屏幕中的范围
+- 拓展-手势点击元素所处的位置
+- 拓展-点击元素
+- 拓展-手势长按元素所处的位置
+3. 修复
+- 基准分辨率获取对应当前分辨率的坐标部分机型不一致问题
+
 ## 快速开始
 ### 1. 添加依赖
 #### 1.1 将JitPack仓库添加到根目录build.gradle文件中
@@ -33,9 +49,10 @@ allprojects {
 ```groovy
 dependencies {
 	//添加依赖
-    implementation 'com.github.ven-coder:assists:1.0.3'
+    implementation 'com.github.ven-coder:assists:2.0.0'
 }
 ```
+
 ### 2. 注册服务
 #### 1.1 主模块AndroidManifest.xml中注册服务
 一定要在主模块中注册服务，不然进程被杀服务也会自动被关闭需要再次开启
@@ -164,4 +181,4 @@ UIOperate.findByText("返回")
 
 | 交流群 | 个人微信 |
 |:---------:|:-----------:|
-| <img src="https://github.com/ven-coder/Assists/blob/master/graphics/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240419204739.jpg" width=200/>    | <img src="https://github.com/ven-coder/Assists/blob/master/graphics/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240411224006.jpg" width=200/>
+| <img src="https://github.com/ven-coder/Assists/blob/master/graphics/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240425232301.jpg" width=200/>    | <img src="https://github.com/ven-coder/Assists/blob/master/graphics/me.jpg" width=200/>
