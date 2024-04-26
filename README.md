@@ -55,7 +55,7 @@ dependencies {
 
 ### 2. 注册服务
 #### 1.1 主模块AndroidManifest.xml中注册服务
-一定要在主模块中注册服务，不然进程被杀服务也会自动被关闭需要再次开启
+一定要在主模块中注册服务，不然进程被杀服务也会自动被关闭需要再次开启（小米可保持杀进程保持开启，其他vivo、oppo、鸿蒙机型似乎不行）
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -89,33 +89,37 @@ dependencies {
 
 </manifest>
 ```
-### 3. 实现业务逻辑
-#### 3.1 继承```StepImpl```
-实现`onImpl(collector: StepCollector)`接口，通过```collector.next()```实现步骤逻辑
+至此，开启无障碍服务后即可使用包装的API了
+
+## 步骤器-快速实现复杂业务
+步骤器可以帮助快速实现复杂的业务场景，比如自动发朋友圈、获取微信所有好友昵称、自动删除好友...等等都是一些逻辑较多的业务场景，步骤器可帮助快速实现。
+下面以简单的自动滚动微信通讯录为例（前提已完整前面的[配置](https://github.com/ven-coder/Assists?tab=readme-ov-file#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)）
+### 1.继承```StepImpl```
+直接在接口`onImpl(collector: StepCollector)`写逻辑
 
 ```kotlin
+//OpenWechat为该业务场景的分类
 class OpenWechat:StepImpl {
     override fun onImpl(collector: StepCollector) {
-        collector.next(1) {
-        	//步骤1逻辑
-        	//打开微信
+	//步骤1逻辑
+        collector.next(1) {//1为该步骤的标识
+	    //打开微信
             Intent().apply {
                 addCategory(Intent.CATEGORY_LAUNCHER)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 component = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")
                 Assists.service?.startActivity(this)
             }
-            //步骤1执行完，紧接执行步骤2
+            //步骤1执行完，执行步骤2，this::class.java为当前StepImpl实现类的步骤逻辑，如果传其他的StepImpl就会执行指定的StepImpl逻辑
             StepManager.execute(this::class.java, 2)
         }.next(2) {
-        	//步骤2逻辑
-        	//查找通讯录按钮
-        	UIOperate.findByText("通讯录").forEach {
-                //获取到按钮后执行其他逻辑
-            }
+            //步骤2逻辑
+	    //查找通讯录按钮
+
         }
     }
 }
+
 ```
 
 #### 3.2 开始执行
