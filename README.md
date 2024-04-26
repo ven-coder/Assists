@@ -32,6 +32,14 @@ Android无障碍服务（AccessibilityService）开发框架，快速开发复�
 3. 修复
 - 基准分辨率获取对应当前分辨率的坐标部分机型不一致问题
 
+## 功能计划
+- 录屏
+- 图文识别
+- js支持
+- vue.js支持
+- uniapp插件
+- flutter插件
+
 ## 快速开始
 ### 1. 添加依赖
 #### 1.1 将JitPack仓库添加到根目录build.gradle文件中
