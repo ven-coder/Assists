@@ -93,7 +93,7 @@ dependencies {
 
 ## 步骤器-快速实现复杂业务
 步骤器可以帮助快速实现复杂的业务场景，比如自动发朋友圈、获取微信所有好友昵称、自动删除好友...等等都是一些逻辑较多的业务场景，步骤器可帮助快速实现。
-下面以简单的自动滚动微信通讯录为例（前提已完整前面的[配置](https://github.com/ven-coder/Assists?tab=readme-ov-file#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)）
+前提: 已完成前面的[配置](https://github.com/ven-coder/Assists?tab=readme-ov-file#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)
 ### 1.继承```StepImpl```
 直接在接口`onImpl(collector: StepCollector)`写逻辑
 
@@ -103,30 +103,33 @@ class OpenWechat:StepImpl {
     override fun onImpl(collector: StepCollector) {
 	//步骤1逻辑
         collector.next(1) {//1为该步骤的标识
-	    //打开微信
-            Intent().apply {
-                addCategory(Intent.CATEGORY_LAUNCHER)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                component = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")
-                Assists.service?.startActivity(this)
-            }
-            //步骤1执行完，执行步骤2，this::class.java为当前StepImpl实现类的步骤逻辑，如果传其他的StepImpl就会执行指定的StepImpl逻辑
+            //步骤1逻辑
+	    ...
+            //执行步骤2，this::class.java为当前StepImpl实现类的步骤逻辑，如果传其他的StepImpl就会执行指定的StepImpl逻辑
             StepManager.execute(this::class.java, 2)
         }.next(2) {
             //步骤2逻辑
-	    //查找通讯录按钮
-
+	    ...
+	    //下一步
+	    StepManager.execute(this::class.java, 3)
+        }.next(2) {
+            //步骤3逻辑
+	    ...
+	    //下一步
+	    StepManager.execute(this::class.java, 4)
         }
+	其他步骤
+	...
     }
 }
 
 ```
 
-#### 3.2 开始执行
+### 2. 开始执行
 执行前请确保无障碍服务已开启，开始执行请使用`beginExecute()`，后续的步骤执行请使用`execute()`方法
 
 ```kotlin
-//从步骤1开始执行
+//从OpenWechat的步骤1开始执行
 StepManager.beginExecute(OpenWechat::class.java, 1)
 ```
 
