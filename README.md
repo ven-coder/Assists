@@ -187,10 +187,7 @@ StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
 ## 示例&下载
 [&#9654;示例视频](https://www.youtube.com/embed/kNuw9sUsDKo)
 
-[&#128229;直接下载](https://www.pgyer.com/1zaijG)或扫码下载
-<div align="left">
-<img src="https://raw.githubusercontent.com/ven-coder/Assists/master/graphics/169176584627.jpg" width=200/>
-</div>
+[&#128229;直接下载](https://www.pgyer.com/1zaijG)
 
 ## 有问题欢迎反馈交流（微信群二维码失效可以加我拉进群）
 
