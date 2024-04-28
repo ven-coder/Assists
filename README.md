@@ -142,48 +142,8 @@ StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
 ```
 具体的使用可以下载查看demo源码
 
-## API
-### Assists
-|方法|说明|
-|:-----:|:------:|
-|openAccessibilitySetting()|打开无障碍服务设置|
-|isAccessibilityServiceEnabled()|检查无障碍服务是否开启|
-|getPackageName()|获取当前窗口所属包名|
-|findById(id: String)|通过id查找所有符合条件元素|
-|AccessibilityNodeInfo?.findById(id: String)|在当前元素范围下，通过id查找所有符合条件元素|
-|findByText(text: String)|通过文本查找所有符合条件元素|
-|AccessibilityNodeInfo?.findByText(text: String)|在当前元素范围下，通过文本查找所有符合条件元素|
-|findByTags(className: String)|根据元素类型查找元素|
-|AccessibilityNodeInfo.findByTags(className: String)|在当前元素范围下，根据类型查找元素|
-|getAllNodes()|获取所有元素|
-|AccessibilityNodeInfo.getNodes()|获取当前元素下所有子元素|
-|AccessibilityNodeInfo.findFirstParentClickable()|查找第一个可点击的父元素|
-|AccessibilityNodeInfo.getBoundsInScreen()|获取当前元素在屏幕中的范围|
-|AccessibilityNodeInfo.gestureClick()|手势点击当前元素所处的位置|
-|AccessibilityNodeInfo.gestureLongClick()|手势长按元素所处的位置|
-|AccessibilityNodeInfo.click()|点击当前元素|
-|gesture()|手势模拟，点击/路径|
-|gestureClick|点击屏幕指定位置|
-|back()|返回|
-|home()|回到主页|
-|notifications()|显示通知栏|
-|tasks()|查看最近任务|
-|getX(baseWidth: Int, x: Int)|根据基准分辨率宽度获取对应当前设备分辨率的x坐标|
-|getY(baseHeight: Int, y: Int)|根据基准分辨率高度获取对应当前设备分辨率的y坐标|
-|AccessibilityNodeInfo.paste(text: String?)|粘贴文本到当前元素|
-|AccessibilityNodeInfo.log()|控制台输出当前元素信息|
+##### 更多开发文档请查看：[https://github.com/ven-coder/Assists/wiki](https://github.com/ven-coder/Assists/wiki)
 
-### StepCollector（步骤收集器）
-|方法|说明|
-|:-:|:-:|
-|next(step,next)|单次步骤，step步骤序号，next步骤逻辑|
-|nextLoop(step,loopDuration,loopInterval,next)|循环步骤，step步骤序号，loopDuration循环时长，loopInterval循环间隔，next步骤逻辑|
-### StepManager（步骤管理器）
-|方法|说明|
-|:-:|:-:|
-|execute(stepImpl，step)|执行步骤，stepImpl 执行的业务实现类，step 步骤序号|
-
-继续完善中...后续修改为更好的文档支持
 ## 示例&下载
 [&#9654;示例视频](https://www.youtube.com/embed/kNuw9sUsDKo)
 
