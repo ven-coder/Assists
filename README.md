@@ -20,6 +20,8 @@ Android无障碍服务（AccessibilityService）开发框架，快速开发复�
 1. 整理api
 2. 增加
 - 浮窗支持拖动修改大小
+- 
+  <img src="https://github.com/ven-coder/Assists/blob/master/graphics/scale.gif" width=150>
 - 根据类型查找元素
 - 在当前元素范围下，根据类型查找元素
 - 获取当前页面所有元素
@@ -142,7 +144,7 @@ StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
 ```
 具体的使用可以下载查看demo源码
 
-##### 更多开发文档请查看：[https://github.com/ven-coder/Assists/wiki](https://github.com/ven-coder/Assists/wiki)
+### 更多开发文档请查看：[https://github.com/ven-coder/Assists/wiki](https://github.com/ven-coder/Assists/wiki)
 
 ## 示例&下载
 [&#9654;示例视频](https://www.youtube.com/embed/kNuw9sUsDKo)
