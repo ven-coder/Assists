@@ -21,18 +21,6 @@ object StepManager {
         }
 
     /**
-     * 开始执行，仅用于开始位置执行，如果执行过程调用会导致步骤无法停止
-     * @param stepImpl 执行的业务实现类
-     * @param step 步骤序号
-     * @param delay 步骤执行延迟时间，默认[Assists.Config.defaultStepDelay]
-     */
-    private fun <T : StepImpl> beginExecute(stepImpl: Class<T>, step: Int, delay: Long = DEFAULT_STEP_DELAY, data: StepData? = null): StepManager {
-        isStop = false
-        execute(stepImpl, step, delay, data)
-        return this
-    }
-
-    /**
      * 执行步骤
      * @param stepImpl 执行的业务实现类
      * @param step 步骤序号

@@ -29,21 +29,11 @@ android {
     viewBinding {
         enabled = true
     }
-
-    flavorDimensions "version"
-
-    productFlavors {
-        _default {
-            buildConfigField "String", "YM_CHANNEL", "\"default\""
-        }
-        _xiaomi {
-            buildConfigField "String", "YM_CHANNEL", "\"xiaomi\""
-        }
-    }
 }
 
 dependencies {
     implementation project(':assists')
+    implementation project(':opencv-sdk')
     implementation "androidx.room:room-runtime:2.4.3"
     implementation 'androidx.room:room-ktx:2.4.3'
     implementation 'com.github.mrmike:ok2curl:0.8.0'

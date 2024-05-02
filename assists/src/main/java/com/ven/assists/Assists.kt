@@ -82,7 +82,7 @@ object Assists {
     }
 
     /**
-     * 在当前元素范围下，通过文本查找所有符合条件元素
+     * 通过文本查找所有符合条件元素
      */
     fun findByText(text: String): List<AccessibilityNodeInfo> {
         return service?.rootInActiveWindow?.findByText(text) ?: arrayListOf()
@@ -140,7 +140,7 @@ object Assists {
     }
 
     /**
-     * 获取指定元素下所有子元素
+     * 获取当前元素下所有子元素
      */
     fun AccessibilityNodeInfo.getNodes(): ArrayList<AccessibilityNodeInfo> {
         val nodeList = arrayListOf<AccessibilityNodeInfo>()
@@ -320,7 +320,7 @@ object Assists {
     }
 
     /**
-     * 粘贴文本
+     * 粘贴文本到当前元素
      */
     fun AccessibilityNodeInfo.paste(text: String?) {
         service?.let {
