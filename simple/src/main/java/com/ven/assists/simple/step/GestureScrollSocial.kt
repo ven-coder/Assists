@@ -26,7 +26,6 @@ class GestureScrollSocial : StepImpl {
             }
             StepManager.execute(this::class.java, Step.STEP_2)
         }.nextLoop(Step.STEP_2) {
-            OverManager.log("检查是否已打开微信主页：\n剩余时间=${it.loopSurplusSecond}秒")
             Assists.findByText("发现").forEach {
                 val screen = it.getBoundsInScreen()
                 if (screen.left > Assists.getX(1080, 630) &&
@@ -43,7 +42,7 @@ class GestureScrollSocial : StepImpl {
                 StepManager.execute(this::class.java, Step.STEP_2)
                 return@nextLoop true
             }
-            if (0f == it.loopSurplusSecond) {
+            if (it.isLastLoop) {
                 StepManager.execute(this::class.java, Step.STEP_1)
             }
 
@@ -62,7 +61,6 @@ class GestureScrollSocial : StepImpl {
                 }
             }
         }.nextLoop(Step.STEP_4) {
-            OverManager.log("检查是否进入朋友圈：剩余时间=${it.loopSurplusSecond}秒")
             Assists.findByText("朋友圈").forEach {
                 OverManager.log("已进入朋友圈")
                 StepManager.execute(this::class.java, Step.STEP_5)
@@ -78,7 +76,7 @@ class GestureScrollSocial : StepImpl {
                 StepManager.execute(this::class.java, Step.STEP_5)
                 return@nextLoop true
             }
-            if (it.loopSurplusSecond == 0f) {
+            if (it.isLastLoop) {
                 OverManager.log("未进入朋友圈")
             }
             false

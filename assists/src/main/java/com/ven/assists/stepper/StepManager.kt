@@ -2,6 +2,10 @@ package com.ven.assists.stepper
 
 import android.util.Log
 import com.ven.assists.Assists
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 
 /**
  * 步骤管理器
@@ -12,11 +16,22 @@ object StepManager {
     var stepListeners: ArrayList<StepListener> = arrayListOf()
 
     private val stepCollector: HashMap<String, StepCollector> = hashMapOf()
+    private var job = Job()
+    var coroutine: CoroutineScope = CoroutineScope(job + Dispatchers.IO)
+        private set
+        get() {
+            if (job.isCancelled || !job.isActive) {
+                job = Job()
+                field = CoroutineScope(job + Dispatchers.IO)
+            }
+            return field
+        }
     var isStop = false
         set(value) {
             field = value
             if (field) {
                 stepCollector.forEach { it.value.allStop() }
+                coroutine.cancel()
             }
         }
 

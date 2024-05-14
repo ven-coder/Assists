@@ -32,7 +32,6 @@ class ScrollContacts : StepImpl {
             StepManager.execute(this::class.java, Step.STEP_2)
 
         }.nextLoop(Step.STEP_2) {//2. 定义Step.STEP_2逻辑，nextLoop该方法会在指定时间内按指定间隔循环执行
-            OverManager.log("检查是否已打开微信主页：\n剩余时间=${it.loopSurplusSecond}秒")
             //按文本查找元素
             Assists.findByText("通讯录").forEach {
                 val screen = it.getBoundsInScreen()
@@ -53,7 +52,7 @@ class ScrollContacts : StepImpl {
                 return@nextLoop true
             }
 
-            if (0f == it.loopSurplusSecond) {
+            if (it.isLastLoop) {
                 StepManager.execute(this::class.java, Step.STEP_1)
             }
             false//false表示继续循环

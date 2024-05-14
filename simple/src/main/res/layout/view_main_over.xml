@@ -6,9 +6,9 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="250dp"
-        android:layout_gravity="center"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:orientation="vertical">
 
         <LinearLayout
@@ -20,12 +20,29 @@
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="250dp">
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/btn_screen_save"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorAccent"
+                        android:text="识图"
+                        android:textColor="@color/colorPrimary" />
+
+                    <Button
+                        android:id="@+id/btn_ant_forest_energy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorAccent"
+                        android:text="蚂蚁森林能量自动收集"
+                        android:textColor="@color/colorPrimary" />
 
                     <Button
                         android:id="@+id/btn_open_social"
@@ -119,7 +136,9 @@
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/scrollView"
                 android:layout_width="match_parent"
-                android:layout_height="250dp">
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:minHeight="250dp">
 
                 <FrameLayout
                     android:layout_width="match_parent"

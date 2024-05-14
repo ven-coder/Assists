@@ -24,7 +24,6 @@ class OpenWechatSocial : StepImpl {
             }
             StepManager.execute(this::class.java, Step.STEP_2)
         }.nextLoop(Step.STEP_2) {
-            OverManager.log("检查是否已打开微信主页：\n剩余时间=${it.loopSurplusSecond}秒")
             Assists.findByText("发现").forEach {
                 val screen = it.getBoundsInScreen()
                 if (screen.left > Assists.getX(1080, 630) &&
@@ -37,7 +36,7 @@ class OpenWechatSocial : StepImpl {
                 }
             }
 
-            if (0f == it.loopSurplusSecond) {
+            if (it.isLastLoop) {
                 StepManager.execute(this::class.java, Step.STEP_1)
             }
 
@@ -56,7 +55,6 @@ class OpenWechatSocial : StepImpl {
                 }
             }
         }.nextLoop(Step.STEP_4) {
-            OverManager.log("检查是否进入朋友圈：剩余时间=${it.loopSurplusSecond}秒")
             Assists.findByText("朋友圈封面，再点一次可以改封面").forEach {
                 OverManager.log("已进入朋友圈")
                 return@nextLoop true
@@ -65,7 +63,7 @@ class OpenWechatSocial : StepImpl {
                 OverManager.log("已进入朋友圈")
                 return@nextLoop true
             }
-            if (it.loopSurplusSecond == 0f) {
+            if (it.isLastLoop) {
                 OverManager.log("未进入朋友圈")
             }
             false
