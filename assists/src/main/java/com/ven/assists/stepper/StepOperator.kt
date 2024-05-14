@@ -2,20 +2,23 @@ package com.ven.assists.stepper
 
 import android.os.CountDownTimer
 import com.blankj.utilcode.util.LogUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class StepOperator(
     val clazzName: String,
     val step: Int,
-    val loopDuration: Long = 0,
-    val loopInterval: Long = 250,
+    val loopMaxCount: Int = 5,
     val next: ((stepOperator: StepOperator) -> Boolean)? = null,
+    val isRunCoroutineIO: Boolean = false
 ) {
-
-    private var loopDownTimer: CountDownTimer? = null
-    var loopSurplusTime: Long = 0
-    var loopSurplusSecond: Float = 0f
     var data: StepData? = null
-    var delayDownTimer: CountDownTimer? = null
+    var loopCount = 0
+        private set
+    var isLastLoop = false
+        private set
 
     fun execute(delay: Long) {
         if (StepManager.isStop) {
@@ -30,60 +33,28 @@ class StepOperator(
     }
 
     fun stop() {
-        delayDownTimer?.cancel()
-        loopDownTimer?.cancel()
     }
 
     private fun startDelay(delay: Long, next: (stepOperator: StepOperator) -> Boolean) {
-        if (delay == 0L) {
-            startLoopExecute(next)
-            return
-        }
-        delayDownTimer?.cancel()
-        delayDownTimer = object : CountDownTimer(delay, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
 
-            }
+        StepManager.coroutine.launch {
+            delay(delay)
 
-            override fun onFinish() {
-                startLoopExecute(next)
-            }
-        }.start()
-    }
-
-    private fun startLoopExecute(next: (stepOperator: StepOperator) -> Boolean) {
-        if (StepManager.isStop) {
-            loopDownTimer?.cancel()
-            loopDownTimer = null
-            StepManager.stepListeners.forEach { it.onStepStop() }
-            return
-        }
-
-        if (loopDuration == 0L) {
-            onStep(next)
-            return
-        }
-
-        loopDownTimer?.cancel()
-        loopDownTimer = object : CountDownTimer(loopDuration, loopInterval) {
-            override fun onTick(millisUntilFinished: Long) {
-                loopSurplusTime = millisUntilFinished
-                loopSurplusSecond = millisUntilFinished / 1000f
-                if (StepManager.isStop) StepManager.stepListeners.forEach { it.onStepStop() }
-                StepManager.stepListeners.forEach { it.onLoop(this@StepOperator) }
-                if (onStep(next) || StepManager.isStop) {
-                    cancel()
-                    loopDownTimer = null
+            while (loopCount < loopMaxCount) {
+                loopCount++
+                isLastLoop = loopCount >= loopMaxCount
+                if (isRunCoroutineIO) {
+                    val result = onStep(next)
+                    if (result) break
+                } else {
+                    var result: Boolean
+                    withContext(Dispatchers.Main) {
+                        result = onStep(next)
+                    }
+                    if (result) break;
                 }
             }
-
-            override fun onFinish() {
-                loopSurplusTime = 0
-                loopSurplusSecond = 0f
-                onStep(next)
-            }
-
-        }.start()
+        }
     }
 
     private fun onStep(it: (stepOperator: StepOperator) -> Boolean): Boolean {

@@ -14,32 +14,45 @@ class StepCollector(private val clazzName: String) {
     /**
      * 单次步骤
      * @param step  步骤序号
+     * @param isRunCoroutineIO 是否在IO协程中执行
      * @param next 步骤逻辑接口
      */
     fun next(
         step: Int,
+        isRunCoroutineIO: Boolean = false,
         next: (stepOperator: StepOperator) -> Unit
     ): StepCollector {
-        stepOperatorMap[step] = StepOperator(clazzName, step, next = {
-            next.invoke(it)
-            true
-        })
+        nextLoop(
+            step = step,
+            loopMaxCount = 1,
+            isRunCoroutineIO = isRunCoroutineIO,
+            next = {
+                next.invoke(it)
+                true
+            })
         return this
     }
 
     /**
      * 循环步骤
      * @param step 步骤序号
-     * @param loopDuration 循环时长
-     * @param next 步骤逻辑接口，接口中需要返回[kotlin.Boolean]，false继续循环，true终止循环
+     * @param loopMaxCount 最大循环次数
+     * @param isRunCoroutineIO 是否在IO协程中执行
+     * @param next 步骤逻辑，需要返回[kotlin.Boolean]，false继续循环，true终止循环
      */
     fun nextLoop(
         step: Int,
-        loopDuration: Long = 5000,
-        loopInterval: Long = 250,
+        loopMaxCount: Int = 5,
+        isRunCoroutineIO: Boolean = false,
         next: (stepOperator: StepOperator) -> Boolean
     ): StepCollector {
-        stepOperatorMap[step] = StepOperator(clazzName, step, loopDuration = loopDuration, loopInterval = loopInterval, next)
+        stepOperatorMap[step] = StepOperator(
+            clazzName,
+            step,
+            loopMaxCount = loopMaxCount,
+            isRunCoroutineIO = isRunCoroutineIO,
+            next = next
+        )
         return this
     }
 

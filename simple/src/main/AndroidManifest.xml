@@ -51,6 +51,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name="com.ven.assists.AssistsService"
             android:enabled="true"
@@ -63,6 +64,11 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/assists_service" />
         </service>
+        <service
+            android:name=".ScreenCaptureService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
     </application>
 
 </manifest>

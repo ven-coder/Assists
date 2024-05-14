@@ -9,9 +9,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.FrameLayout
 import com.blankj.utilcode.util.BarUtils
+import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SizeUtils
 import com.ven.assists.base.databinding.AssistsWindowLayoutWrapperBinding
 
@@ -23,6 +25,9 @@ class AssistsWindowLayout @JvmOverloads constructor(
     var layoutWidth: Int = 0
     var downRawX = 0
     var downRawY = 0
+    var closeClickListener: (() -> Boolean)? = null
+    var minHeight = -1
+    var minWidth = -1
 
     private val onTouchScaleListener = object : OnTouchListener {
         override fun onTouch(v: View?, event: MotionEvent): Boolean {
@@ -36,15 +41,20 @@ class AssistsWindowLayout @JvmOverloads constructor(
             if (event.action == MotionEvent.ACTION_MOVE) {
                 val width = layoutWidth + (downRawX - event.rawX.toInt())
                 if (width > 0) {
-                    layoutParams.width = width
-                    layoutParams.x = event.rawX.toInt()
+                    if (minWidth == -1 || width >= minWidth) {
+                        layoutParams.width = width
+                        layoutParams.x = event.rawX.toInt()
+                    }
                 }
 
                 val height = layoutHeight - (downRawY - event.rawY.toInt())
+
                 if (height > 0) {
-                    layoutParams.height = height
+                    if (minHeight == -1 || height >= minHeight) {
+                        layoutParams.height = height
+                    }
                 }
-                AssistsWindowManager.windowManager.updateViewLayout(this@AssistsWindowLayout, layoutParams)
+                AssistsWindowManager.updateViewLayout(this@AssistsWindowLayout, layoutParams)
                 return true
             }
 
@@ -59,7 +69,7 @@ class AssistsWindowLayout @JvmOverloads constructor(
             if (event.action == MotionEvent.ACTION_MOVE) {
                 layoutParams.x = event.rawX.toInt()
                 layoutParams.y = event.rawY.toInt() - BarUtils.getStatusBarHeight()
-                AssistsWindowManager.windowManager.updateViewLayout(this@AssistsWindowLayout, layoutParams)
+                AssistsWindowManager.updateViewLayout(this@AssistsWindowLayout, layoutParams)
                 return true
             }
 
@@ -80,6 +90,11 @@ class AssistsWindowLayout @JvmOverloads constructor(
         assistsWindowLayoutWrapperBinding = AssistsWindowLayoutWrapperBinding.inflate(LayoutInflater.from(getContext()), this).apply {
             ivMove.setOnTouchListener(onTouchMoveListener)
             ivScale.setOnTouchListener(onTouchScaleListener)
+            ivClose.setOnClickListener {
+                val result = closeClickListener?.invoke()
+                if (result == true) return@setOnClickListener
+                AssistsWindowManager.removeView(this@AssistsWindowLayout)
+            }
         }
 
         layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
@@ -97,8 +112,8 @@ class AssistsWindowLayout @JvmOverloads constructor(
         layoutParams.alpha = 1f
     }
 
-    fun setOnCloseClickListener(onClickListener: OnClickListener) {
-        assistsWindowLayoutWrapperBinding.ivClose.setOnClickListener(onClickListener)
+    fun setOnCloseClickListener(closeClickListener: () -> Boolean) {
+        this.closeClickListener = closeClickListener
     }
 
     override fun onAttachedToWindow() {
@@ -113,6 +128,31 @@ class AssistsWindowLayout @JvmOverloads constructor(
         }
     }
 
+    fun setCenter() {
+        if (measuredWidth > 0 && measuredHeight > 0) {
+            val x = (ScreenUtils.getScreenWidth() - measuredWidth) / 2
+            val y = (ScreenUtils.getScreenHeight() - BarUtils.getStatusBarHeight() - measuredHeight) / 2
+            layoutParams.x = x
+            layoutParams.y = y
+            AssistsWindowManager.updateViewLayout(this@AssistsWindowLayout, layoutParams)
+        } else {
+            viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    if (measuredWidth > 0 && measuredHeight > 0) {
+                        val x = (ScreenUtils.getScreenWidth() - measuredWidth) / 2
+                        val y = (ScreenUtils.getScreenHeight() - BarUtils.getStatusBarHeight() - measuredHeight) / 2
+                        layoutParams.x = x
+                        layoutParams.y = y
+                        AssistsWindowManager.updateViewLayout(this@AssistsWindowLayout, layoutParams)
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    }
+                }
+
+            })
+        }
+
+    }
+
     /**
      * 切换至不可消费事件
      */
@@ -120,7 +160,7 @@ class AssistsWindowLayout @JvmOverloads constructor(
         layoutParams.flags = (WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL)
-        AssistsWindowManager.windowManager.updateViewLayout(this, layoutParams)
+        AssistsWindowManager.updateViewLayout(this, layoutParams)
     }
 
     /**
@@ -130,7 +170,7 @@ class AssistsWindowLayout @JvmOverloads constructor(
         layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
-        AssistsWindowManager.windowManager.updateViewLayout(this, layoutParams)
+        AssistsWindowManager.updateViewLayout(this, layoutParams)
     }
 
 }
