@@ -159,7 +159,7 @@ StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
 
 | 交流群 | 个人微信 |
 |:---------:|:-----------:|
-| <img src="https://github.com/ven-coder/Assists/blob/master/graphics/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240507160659.jpg" width=200/>    | <img src="https://github.com/ven-coder/Assists/blob/master/graphics/me.jpg" width=200/>
+| <img src="https://github.com/ven-coder/Assists/blob/master/graphics/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240518200809.jpg" width=200/>    | <img src="https://github.com/ven-coder/Assists/blob/master/graphics/me.jpg" width=200/>
 
 # License
 [GNU General Public License v3.0](https://github.com/ven-coder/Assists/blob/master/LICENSE)
