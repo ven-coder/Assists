@@ -75,6 +75,12 @@ object AssistsWindowManager {
         viewList.add(ViewWrapper(view, view.layoutParams))
     }
 
+    fun pop() {
+        viewList.lastOrNull()?.let {
+            removeView(it.view)
+        }
+    }
+
     fun removeView(view: View?) {
         view ?: return
         windowManager.removeView(view)

@@ -8,16 +8,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class StepOperator(
-    val clazzName: String,
+    val implClassName: String,
     val step: Int,
-    val loopMaxCount: Int = 5,
-    val next: ((stepOperator: StepOperator) -> Boolean)? = null,
+    val next: (stepOperator: StepOperator) -> Step,
     val isRunCoroutineIO: Boolean = false
 ) {
-    var data: StepData? = null
-    var loopCount = 0
-        private set
-    var isLastLoop = false
+    var repeatCount = 0
         private set
 
     fun execute(delay: Long) {
@@ -25,41 +21,45 @@ class StepOperator(
             StepManager.stepListeners.forEach { it.onStepStop() }
             return
         }
-        next?.let {
-            startDelay(delay, it)
-        } ?: let {
-            LogUtils.e("The execution logic for Step [$step] in the class [${clazzName}] has not been implemented. / 类[${clazzName}]中的步骤[${step}]未实现执行逻辑")
+        StepManager.coroutine.launch {
+            delay(delay)
+            if (isRunCoroutineIO) {
+                val nextStep = onStep(next)
+                onNextStep(nextStep)
+            } else {
+                var nextStep: Step
+                withContext(Dispatchers.Main) {
+                    nextStep = onStep(next)
+                }
+                onNextStep(nextStep)
+            }
         }
     }
 
-    fun stop() {
-    }
+    private fun onNextStep(nextStep: Step) {
+        when (nextStep) {
+            Step.none -> {
 
-    private fun startDelay(delay: Long, next: (stepOperator: StepOperator) -> Boolean) {
+            }
 
-        StepManager.coroutine.launch {
-            delay(delay)
+            Step.repeat -> {
+                StepManager.execute(implClassName, step)
+            }
 
-            while (loopCount < loopMaxCount) {
-                loopCount++
-                isLastLoop = loopCount >= loopMaxCount
-                if (isRunCoroutineIO) {
-                    val result = onStep(next)
-                    if (result) break
-                } else {
-                    var result: Boolean
-                    withContext(Dispatchers.Main) {
-                        result = onStep(next)
-                    }
-                    if (result) break;
+            else -> {
+                nextStep.stepImpl?.let {
+                    StepManager.execute(it::class.java, nextStep.tag)
+                } ?: let {
+                    StepManager.execute(implClassName, nextStep.tag)
                 }
             }
         }
     }
 
-    private fun onStep(it: (stepOperator: StepOperator) -> Boolean): Boolean {
-        StepManager.stepListeners.forEach { if (it.onIntercept(this)) return true }
+    private fun onStep(next: (stepOperator: StepOperator) -> Step): Step {
+        StepManager.stepListeners.forEach { if (it.onIntercept(this)) return Step.none }
         StepManager.stepListeners.forEach { it.onStep(this) }
-        return it.invoke(this)
+        repeatCount++
+        return next.invoke(this)
     }
 }

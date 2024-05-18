@@ -18,4 +18,11 @@ interface AssistsServiceListener {
      * 服务关闭后的回调，即[AssistsService.onUnbind]回调
      */
     fun onUnbind() {}
+
+    /**
+     * 录屏权限开启
+     */
+    fun screenCaptureEnable() {
+
+    }
 }

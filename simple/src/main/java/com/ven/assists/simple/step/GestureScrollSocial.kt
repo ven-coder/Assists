@@ -10,13 +10,14 @@ import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.Assists.log
 import com.ven.assists.simple.App
 import com.ven.assists.simple.OverManager
+import com.ven.assists.stepper.Step
 import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
 import com.ven.assists.stepper.StepManager
 
-class GestureScrollSocial : StepImpl {
+class GestureScrollSocial : StepImpl() {
     override fun onImpl(collector: StepCollector) {
-        collector.next(Step.STEP_1) {
+        collector.next(StepTag.STEP_1) {
             OverManager.log("启动微信")
             Intent().apply {
                 addCategory(Intent.CATEGORY_LAUNCHER)
@@ -24,8 +25,8 @@ class GestureScrollSocial : StepImpl {
                 component = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")
                 Assists.service?.startActivity(this)
             }
-            StepManager.execute(this::class.java, Step.STEP_2)
-        }.nextLoop(Step.STEP_2) {
+            return@next Step.get(StepTag.STEP_2)
+        }.next(StepTag.STEP_2) {
             Assists.findByText("发现").forEach {
                 val screen = it.getBoundsInScreen()
                 if (screen.left > Assists.getX(1080, 630) &&
@@ -33,21 +34,20 @@ class GestureScrollSocial : StepImpl {
                 ) {
                     OverManager.log("已打开微信主页，点击【发现】")
                     it.parent.parent.click()
-                    StepManager.execute(this::class.java, Step.STEP_3)
-                    return@nextLoop true
+                    StepManager.execute(this::class.java, StepTag.STEP_3)
+                    return@next Step.get(StepTag.STEP_3)
                 }
             }
             if (Assists.getPackageName() == App.TARGET_PACKAGE_NAME) {
                 Assists.back()
-                StepManager.execute(this::class.java, Step.STEP_2)
-                return@nextLoop true
+                return@next Step.get(StepTag.STEP_2)
             }
-            if (it.isLastLoop) {
-                StepManager.execute(this::class.java, Step.STEP_1)
+            if (it.repeatCount == 5) {
+                return@next Step.get(StepTag.STEP_1)
             }
 
-            false
-        }.next(Step.STEP_3) {
+            return@next Step.repeat
+        }.next(StepTag.STEP_3) {
             Assists.findByText("朋友圈").forEach {
                 it.log()
                 val screen = it.getBoundsInScreen()
@@ -55,32 +55,29 @@ class GestureScrollSocial : StepImpl {
                     OverManager.log("点击朋友圈")
                     it.findFirstParentClickable()?.let {
                         it.click()
-                        StepManager.execute(this::class.java, Step.STEP_4)
                     }
-                    return@next
+                    return@next Step.get(StepTag.STEP_4)
                 }
             }
-        }.nextLoop(Step.STEP_4) {
+            return@next Step.none
+        }.next(StepTag.STEP_4) {
             Assists.findByText("朋友圈").forEach {
                 OverManager.log("已进入朋友圈")
-                StepManager.execute(this::class.java, Step.STEP_5)
-                return@nextLoop true
+                return@next Step.get(StepTag.STEP_5)
             }
             Assists.findByText("朋友圈封面，再点一次可以改封面").forEach {
                 OverManager.log("已进入朋友圈")
-                StepManager.execute(this::class.java, Step.STEP_5)
-                return@nextLoop true
+                return@next Step.get(StepTag.STEP_5)
             }
             Assists.findByText("朋友圈封面，点按两次修改封面").forEach {
                 OverManager.log("已进入朋友圈")
-                StepManager.execute(this::class.java, Step.STEP_5)
-                return@nextLoop true
+                return@next Step.get(StepTag.STEP_5)
             }
-            if (it.isLastLoop) {
+            if (it.repeatCount == 5) {
                 OverManager.log("未进入朋友圈")
             }
-            false
-        }.next(Step.STEP_5) {
+            return@next Step.repeat
+        }.next(StepTag.STEP_5) {
 
             val x = ScreenUtils.getAppScreenWidth() / 2F
             val distance = ScreenUtils.getAppScreenHeight() / 2F
@@ -90,7 +87,7 @@ class GestureScrollSocial : StepImpl {
             val delay = Assists.gesture(
                 floatArrayOf(x, startY), floatArrayOf(x, endY), 0, 2000L
             )
-            StepManager.execute(this::class.java, Step.STEP_5, StepManager.DEFAULT_STEP_DELAY + delay)
+            return@next Step.get(StepTag.STEP_5)
         }
     }
 }

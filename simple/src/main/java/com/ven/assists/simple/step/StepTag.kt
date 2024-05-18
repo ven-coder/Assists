@@ -6,7 +6,7 @@ package com.ven.assists.simple.step
  * Levine
  * wechat 1483232332
  */
-object Step {
+object StepTag {
     const val STEP_NONE = -1
 
     /**

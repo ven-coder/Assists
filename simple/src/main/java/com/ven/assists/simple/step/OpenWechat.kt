@@ -7,13 +7,14 @@ import com.ven.assists.Assists.click
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.simple.App
 import com.ven.assists.simple.OverManager
+import com.ven.assists.stepper.Step
 import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
 import com.ven.assists.stepper.StepManager
 
-class OpenWechat: StepImpl {
+class OpenWechat : StepImpl() {
     override fun onImpl(collector: StepCollector) {
-        collector.next(Step.STEP_1) {
+        collector.next(StepTag.STEP_1) {
             OverManager.log("启动微信")
             Intent().apply {
                 addCategory(Intent.CATEGORY_LAUNCHER)
@@ -21,8 +22,8 @@ class OpenWechat: StepImpl {
                 component = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")
                 Assists.service?.startActivity(this)
             }
-            StepManager.execute(this::class.java, Step.STEP_2)
-        }.nextLoop(Step.STEP_2) {
+            return@next Step.get(StepTag.STEP_2)
+        }.next(StepTag.STEP_2) {
             Assists.findByText("通讯录").forEach {
                 val screen = it.getBoundsInScreen()
                 if (screen.left > Assists.getX(1080, 340) &&
@@ -30,20 +31,18 @@ class OpenWechat: StepImpl {
                 ) {
                     OverManager.log("已打开微信主页")
                     it.parent.parent.click()
-                    StepManager.execute(this::class.java, Step.STEP_3)
-                    return@nextLoop true
+                    return@next Step.get(StepTag.STEP_3)
                 }
             }
             if (Assists.getPackageName() == App.TARGET_PACKAGE_NAME) {
                 Assists.back()
-                StepManager.execute(this::class.java, Step.STEP_2)
-                return@nextLoop true
+                return@next Step.get(StepTag.STEP_2)
             }
-            if (it.isLastLoop){
-                StepManager.execute(this::class.java, Step.STEP_1)
+            if (it.repeatCount == 5) {
+                return@next Step.get(StepTag.STEP_1)
             }
 
-            false
+            return@next Step.repeat
         }
     }
 }
