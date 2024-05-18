@@ -6,6 +6,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import java.lang.reflect.InvocationTargetException
+
 
 /**
  * 步骤管理器
@@ -30,36 +32,32 @@ object StepManager {
         set(value) {
             field = value
             if (field) {
-                stepCollector.forEach { it.value.allStop() }
                 coroutine.cancel()
             }
         }
 
-    /**
-     * 执行步骤
-     * @param stepImpl 执行的业务实现类
-     * @param step 步骤序号
-     * @param delay 步骤执行延迟时间，默认[Assists.Config.defaultStepDelay]
-     * @param isBegin 是否是初始执行，true则会忽略[isStop]直接开始执行，false则会判断[isStop]是否停止
-     */
-    fun <T : StepImpl> execute(stepImpl: Class<T>, step: Int, delay: Long = DEFAULT_STEP_DELAY, data: StepData? = null, isBegin: Boolean = false) {
-        if (isBegin) isStop = false
+    fun <T : StepImpl> execute(stepImpl: Class<T>, stepTag: Int, delay: Long = DEFAULT_STEP_DELAY) {
+        execute(stepImpl.name, stepTag, delay)
+    }
+
+
+    fun execute(implClassName: String, stepTag: Int, delay: Long = DEFAULT_STEP_DELAY) {
         if (isStop) return
-        Log.d(Assists.LOG_TAG, "execute->${stepImpl.name}:$step-delay:$delay")
-        stepCollector[stepImpl.name] ?: register(stepImpl)
-        stepCollector[stepImpl.name]?.get(step)?.let {
-            it.data = data
-            it.execute(delay)
-        }
+        Log.d(Assists.LOG_TAG, "execute->${implClassName}:$stepTag-delay:$delay")
+        stepCollector[implClassName] ?: register(implClassName)
+        stepCollector[implClassName]?.get(stepTag)?.execute(delay)
     }
 
     /**
      * 注册业务实现类
      */
-    fun <T : StepImpl> register(stepImpl: Class<T>) {
-        StepCollector(stepImpl.name).let {
-            stepCollector[stepImpl.name] = it
-            stepImpl.newInstance().onImpl(it)
+    fun register(implClassName: String) {
+        StepCollector(implClassName).let {
+            val clazz = Class.forName(implClassName)
+            val instance = clazz.getDeclaredConstructor().newInstance()
+            val stepImpl = instance as StepImpl
+            stepImpl.onImpl(it)
+            stepCollector[implClassName] = it
         }
     }
 }

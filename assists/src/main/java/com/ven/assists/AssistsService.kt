@@ -3,6 +3,7 @@ package com.ven.assists
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
 import android.view.accessibility.AccessibilityEvent
+import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 
 class AssistsService : AccessibilityService() {
@@ -10,7 +11,6 @@ class AssistsService : AccessibilityService() {
     override fun onCreate() {
         super.onCreate()
         Assists.service = this
-        Assists.init()
     }
 
     override fun onServiceConnected() {

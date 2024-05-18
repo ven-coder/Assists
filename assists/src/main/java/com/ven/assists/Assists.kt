@@ -2,25 +2,54 @@ package com.ven.assists
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
+import android.app.Activity
+import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Path
 import android.graphics.Rect
+import android.media.projection.MediaProjectionManager
+import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.ThreadUtils
+import com.ven.assists.stepper.StepManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 
 object Assists {
 
     //日志TAG
     var LOG_TAG = "assists_log"
+
+    //手势执行延迟回调
+    var gestureBeginDelay = 0L
+
+    val screenRequestLaunchers: HashMap<Activity, ActivityResultLauncher<Intent>> = hashMapOf()
+
+    private var job = Job()
+    var coroutine: CoroutineScope = CoroutineScope(job + Dispatchers.IO)
+        private set
+        get() {
+            if (job.isCancelled || !job.isActive) {
+                job = Job()
+                field = CoroutineScope(job + Dispatchers.IO)
+            }
+            return field
+        }
+
 
     /**
      * 无障碍服务，未开启前为null，使用注意判空
@@ -33,11 +62,76 @@ object Assists {
     //手势监听
     val gestureListeners: ArrayList<GestureListener> = arrayListOf()
 
-    //手势执行延迟回调
-    var gestureBeginDelay = 0L
 
-    fun init() {
+    var screenCaptureService: ScreenCaptureService? = null
+        set(value) {
+            if (value != null) {
+                serviceListeners.forEach { it.screenCaptureEnable() }
+            }
+            field = value
+        }
+
+    private val activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            if (activity is ComponentActivity) {
+                val screenRequestLauncher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                    if (result.resultCode == Activity.RESULT_OK) {
+                        val service = Intent(activity, ScreenCaptureService::class.java)
+                        service.putExtra("rCode", result.resultCode)
+                        service.putExtra("rData", result.data)
+                        activity.startService(service)
+                    }
+                }
+                screenRequestLaunchers[activity] = screenRequestLauncher
+            }
+        }
+
+        override fun onActivityStarted(activity: Activity) {
+        }
+
+        override fun onActivityResumed(activity: Activity) {
+        }
+
+        override fun onActivityPaused(activity: Activity) {
+        }
+
+        override fun onActivityStopped(activity: Activity) {
+        }
+
+        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+        }
+
+        override fun onActivityDestroyed(activity: Activity) {
+            screenRequestLaunchers.remove(activity)
+        }
+    }
+
+    /**
+     * 请求录屏权限
+     * @param isAutoEnable 是否自动通过，如果设置自动通过前提需要先开启无障碍服务（当前仅测试小米系统通过，其他机型系统未测试）
+     */
+    fun requestScreenCapture(isAutoEnable: Boolean) {
+        screenCaptureService ?: let {
+            screenRequestLaunchers[ActivityUtils.getTopActivity()]?.launch(
+                (ActivityUtils.getTopActivity().getSystemService(AppCompatActivity.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager)
+                    .createScreenCaptureIntent()
+            )
+            if (isAutoEnable && service != null) {
+            }
+        }
+    }
+
+    /**
+     * 是否拥有录屏权限
+     */
+    fun isOwnScreenCapture(): Boolean {
+        return screenCaptureService == null
+    }
+
+    fun init(application: Application) {
+        application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
         LogUtils.getConfig().globalTag = LOG_TAG
+        OpencvWrapper.init()
     }
 
     /**

@@ -1,13 +1,11 @@
-package com.ven.assists.simple
+package com.ven.assists
 
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.hardware.display.DisplayManager
@@ -17,25 +15,20 @@ import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.IBinder
-import android.util.DisplayMetrics
-import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ScreenUtils
+import com.ven.assists.base.R
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
 
 
 /**
- * 录制视频服务
+ * 屏幕录制服务
  */
 class ScreenCaptureService : Service() {
-
-    companion object {
-        var instance: ScreenCaptureService? = null
-    }
 
     private var mMediaProjectionManager: MediaProjectionManager? = null
     private var imageReader: ImageReader? = null
@@ -46,9 +39,13 @@ class ScreenCaptureService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val rCode = intent.getIntExtra("rCode", -1)
-        val rData = intent.getParcelableExtra<Intent>("rData")
+        val rData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("rData", Intent::class.java)
+        } else {
+            intent.getParcelableExtra<Intent>("rData")
+        }
         startPushProjection(rCode, rData)
-        instance = this
+        Assists.screenCaptureService = this
         return super.onStartCommand(intent, flags, startId)
     }
 

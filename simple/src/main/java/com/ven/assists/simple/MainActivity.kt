@@ -63,19 +63,6 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
         }
     }
 
-    lateinit var mediaProjectionService: MediaProjectionManager
-
-    private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val scapService = Intent(this, ScreenCaptureService::class.java)
-            scapService.putExtra("rCode", result.resultCode)
-            scapService.putExtra("rData", result.data)
-            startService(scapService)
-        } else {
-            LogUtils.d(result)
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         checkServiceEnable()
@@ -111,27 +98,10 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mediaProjectionService = getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         BarUtils.setStatusBarLightMode(this, true)
         setContentView(viewBind.root)
         Assists.serviceListeners.add(this)
-
-        GlobalScope.launch {
-            withContext(Dispatchers.IO) {
-                if (OpenCVLoader.initLocal()) {
-                    LogUtils.d("OpenCV loaded successfully")
-                } else {
-                    LogUtils.d("OpenCV initialization failed!")
-                }
-            }
-        }
     }
-
-    fun requestMediaProjectionService() {
-
-        activityResultLauncher.launch(mediaProjectionService.createScreenCaptureIntent())
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         Assists.serviceListeners.remove(this)
@@ -145,7 +115,9 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
         return super.onKeyDown(keyCode, event)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        super.onBackPressed()
         moveTaskToBack(true)
     }
 }

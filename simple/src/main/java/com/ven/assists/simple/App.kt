@@ -17,10 +17,5 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         Utils.init(this)
-        StepManager.register(OpenWechatSocial::class.java)
-        StepManager.register(PublishSocial::class.java)
-        StepManager.register(ScrollContacts::class.java)
-        StepManager.register(GestureBottomTab::class.java)
-        StepManager.register(GestureScrollSocial::class.java)
     }
 }
