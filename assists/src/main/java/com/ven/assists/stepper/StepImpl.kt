@@ -1,10 +1,16 @@
 package com.ven.assists.stepper
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 abstract class StepImpl {
 
     abstract fun onImpl(collector: StepCollector)
+    suspend fun runIO(function: suspend () -> Unit) {
+        withContext(Dispatchers.IO) { function.invoke() }
+    }
 
-    fun next(stepTag: Int, delay: Long = StepManager.DEFAULT_STEP_DELAY) {
-        StepManager.execute(this::class.java, stepTag, delay)
+    suspend fun runMain(function: suspend () -> Unit) {
+        withContext(Dispatchers.Main) { function.invoke() }
     }
 }

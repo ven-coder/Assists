@@ -24,10 +24,16 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.ThreadUtils
+import com.ven.assists.stepper.ScreenCaptureAutoEnable
+import com.ven.assists.stepper.Step
+import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepManager
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 object Assists {
 
@@ -40,6 +46,8 @@ object Assists {
     val screenRequestLaunchers: HashMap<Activity, ActivityResultLauncher<Intent>> = hashMapOf()
 
     private var job = Job()
+
+    //协程域
     var coroutine: CoroutineScope = CoroutineScope(job + Dispatchers.IO)
         private set
         get() {
@@ -117,6 +125,7 @@ object Assists {
                     .createScreenCaptureIntent()
             )
             if (isAutoEnable && service != null) {
+                StepManager.execute(ScreenCaptureAutoEnable::class.java, 1)
             }
         }
     }
@@ -124,8 +133,8 @@ object Assists {
     /**
      * 是否拥有录屏权限
      */
-    fun isOwnScreenCapture(): Boolean {
-        return screenCaptureService == null
+    fun isEnableScreenCapture(): Boolean {
+        return screenCaptureService != null
     }
 
     fun init(application: Application) {
@@ -191,6 +200,20 @@ object Assists {
             return it
         }
         return arrayListOf()
+    }
+
+    /**
+     * 判断元素是否包含指定的文本
+     */
+    fun AccessibilityNodeInfo?.containsText(text: String): Boolean {
+        if (this == null) return false
+        getText()?.let {
+            if (it.contains(text)) return true
+        }
+        contentDescription?.let {
+            if (it.contains(text)) return true
+        }
+        return false
     }
 
 
@@ -285,17 +308,17 @@ object Assists {
      * @return 执行手势动作总耗时
      */
     @JvmStatic
-    fun gesture(
+    suspend fun gesture(
         startLocation: FloatArray,
         endLocation: FloatArray,
         startTime: Long,
         duration: Long,
-    ): Long {
+    ) {
         gestureListeners.forEach { it.onGestureBegin(startLocation, endLocation) }
         val path = Path()
         path.moveTo(startLocation[0], startLocation[1])
         path.lineTo(endLocation[0], endLocation[1])
-        return gesture(path, startTime, duration)
+        gesture(path, startTime, duration)
     }
 
     /**
@@ -306,34 +329,35 @@ object Assists {
      * @return 执行手势动作总耗时
      */
     @JvmStatic
-    fun gesture(
+    suspend fun gesture(
         path: Path,
         startTime: Long,
         duration: Long,
-    ): Long {
+    ) {
         val builder = GestureDescription.Builder()
         val strokeDescription = GestureDescription.StrokeDescription(path, startTime, duration)
         val gestureDescription = builder.addStroke(strokeDescription).build()
-        object : AccessibilityService.GestureResultCallback() {
+        val deferred = CompletableDeferred<Int>()
+        service?.dispatchGesture(gestureDescription, object : AccessibilityService.GestureResultCallback() {
             override fun onCompleted(gestureDescription: GestureDescription) {
-                gestureListeners.forEach { it.onGestureCompleted() }
-                gestureListeners.forEach { it.onGestureEnd() }
+                deferred.complete(1)
             }
 
             override fun onCancelled(gestureDescription: GestureDescription) {
+                deferred.complete(0)
                 gestureListeners.forEach { it.onGestureCancelled() }
                 gestureListeners.forEach { it.onGestureEnd() }
             }
-        }.apply {
-            if (gestureBeginDelay == 0L) {
-                service?.dispatchGesture(gestureDescription, this, null)
-            } else {
-                ThreadUtils.runOnUiThreadDelayed({
-                    service?.dispatchGesture(gestureDescription, this, null)
-                }, gestureBeginDelay)
-            }
+        }, null) ?: let {
+            deferred.complete(0)
         }
-        return gestureBeginDelay + startTime + duration
+        val result = deferred.await()
+        if (result == 1) {
+            gestureListeners.forEach { it.onGestureCompleted() }
+        } else {
+            gestureListeners.forEach { it.onGestureCancelled() }
+        }
+        gestureListeners.forEach { it.onGestureEnd() }
     }
 
     /**
@@ -348,9 +372,9 @@ object Assists {
     /**
      * 手势点击元素所处的位置
      */
-    fun AccessibilityNodeInfo.gestureClick(): Long {
+    suspend fun AccessibilityNodeInfo.gestureClick() {
         val rect = getBoundsInScreen()
-        return gestureClick(rect.left + 15F, rect.top + 15F, 10)
+        gestureClick(rect.left + 15F, rect.top + 15F, 10)
     }
 
     /**
@@ -363,21 +387,21 @@ object Assists {
     /**
      * 手势长按元素所处的位置
      */
-    fun AccessibilityNodeInfo.gestureLongClick(): Long {
+    suspend fun AccessibilityNodeInfo.gestureLongClick() {
         val rect = getBoundsInScreen()
-        return gestureClick(rect.left + 15F, rect.top + 15F, 1000)
+        gestureClick(rect.left + 15F, rect.top + 15F, 1000)
     }
 
     /**
      * 点击屏幕指定位置
      * @return 执行手势动作总耗时
      */
-    fun gestureClick(
+    suspend fun gestureClick(
         x: Float,
         y: Float,
         duration: Long = 10
-    ): Long {
-        return gesture(
+    ) {
+        gesture(
             floatArrayOf(x, y), floatArrayOf(x, y),
             0,
             duration,

@@ -18,6 +18,9 @@ import com.ven.assists.stepper.Step
 import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
 import com.ven.assists.stepper.StepManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 class PublishSocial : StepImpl() {
     override fun onImpl(collector: StepCollector) {
@@ -80,6 +83,14 @@ class PublishSocial : StepImpl() {
             }
             return@next Step.repeat
         }.next(StepTag.STEP_5) {
+            runIO { delay(2000) }
+            Assists.findByText("拍照，记录生活").firstOrNull()?.let {
+                Assists.findByText("我知道了").firstOrNull()?.click()
+                runIO {
+                    delay(1000)
+                }
+            }
+
             OverManager.log("点击拍照分享按钮")
             Assists.findByText("拍照分享").forEach {
                 it.click()
@@ -114,20 +125,26 @@ class PublishSocial : StepImpl() {
             return@next Step.get(StepTag.STEP_8)
         }.next(StepTag.STEP_8) {
             Assists.findByTags("android.support.v7.widget.RecyclerView").forEach {
-                it.log()
                 for (index in 0 until it.childCount) {
                     if (TextUtils.equals("android.widget.RelativeLayout", it.getChild(index).className)) {
-                        it.getChild(index).findByTags("android.widget.CheckBox").forEach { it.click() }
-
-                        return@next Step.get(StepTag.STEP_9)
+                        it.getChild(index).let { child ->
+                            child.findByTags("android.widget.TextView").firstOrNull() ?: let {
+                                child.findByTags("android.widget.CheckBox").forEach { it.click() }
+                                return@next Step.get(StepTag.STEP_9)
+                            }
+                        }
                     }
                 }
             }
             Assists.findByTags("androidx.recyclerview.widget.RecyclerView").forEach {
                 for (index in 0 until it.childCount) {
                     if (TextUtils.equals("android.widget.RelativeLayout", it.getChild(index).className)) {
-                        it.getChild(index).findByTags("android.widget.CheckBox").forEach { it.click() }
-                        return@next Step.get(StepTag.STEP_9)
+                        it.getChild(index).let { child ->
+                            child.findByTags("android.widget.TextView").firstOrNull() ?: let {
+                                child.findByTags("android.widget.CheckBox").forEach { it.click() }
+                                return@next Step.get(StepTag.STEP_9)
+                            }
+                        }
 
                     }
                 }

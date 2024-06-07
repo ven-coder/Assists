@@ -61,11 +61,11 @@ object OverManager : StepListener, GestureListener {
                 btnCloseLog.isVisible = false
                 btnOpenSocial.setOnClickListener {
                     beginStart(this)
-                    StepManager.execute(OpenWechatSocial::class.java, StepTag.STEP_1)
+                    StepManager.execute(OpenWechatSocial::class.java, StepTag.STEP_1, begin = true)
                 }
                 btnPublishSocial.setOnClickListener {
                     beginStart(this)
-                    StepManager.execute(PublishSocial::class.java, StepTag.STEP_1)
+                    StepManager.execute(PublishSocial::class.java, StepTag.STEP_1, begin = true)
                 }
                 btnStop.setOnClickListener {
                     stop()
@@ -81,15 +81,15 @@ object OverManager : StepListener, GestureListener {
                 }
                 btnScrollContacts.setOnClickListener {
                     beginStart(this)
-                    StepManager.execute(ScrollContacts::class.java, StepTag.STEP_1)
+                    StepManager.execute(ScrollContacts::class.java, StepTag.STEP_1, begin = true)
                 }
                 btnClickBottomTab.setOnClickListener {
                     beginStart(this)
-                    StepManager.execute(GestureBottomTab::class.java, StepTag.STEP_1)
+                    StepManager.execute(GestureBottomTab::class.java, StepTag.STEP_1, begin = true)
                 }
                 btnScrollSocial.setOnClickListener {
                     beginStart(this)
-                    StepManager.execute(GestureScrollSocial::class.java, StepTag.STEP_1)
+                    StepManager.execute(GestureScrollSocial::class.java, StepTag.STEP_1, begin = true)
                 }
                 root.setOnCloseClickListener {
                     clear()
@@ -98,12 +98,13 @@ object OverManager : StepListener, GestureListener {
 
                 btnAntForestEnergy.setOnClickListener {
                     beginStart(this)
-                    StepManager.execute(AntForestEnergy::class.java, StepTag.STEP_1)
+                    StepManager.execute(AntForestEnergy::class.java, StepTag.STEP_1, begin = true)
                 }
             }
 
         }
     }
+
     fun show() {
         viewMainOver ?: let {
             viewMainOver = createView()
@@ -129,22 +130,10 @@ object OverManager : StepListener, GestureListener {
     }
 
     override fun onGestureBegin(startLocation: FloatArray, endLocation: FloatArray) {
-        viewMainOver?.root?.let {
-            val viewXY = IntArray(2)
-            it.getLocationOnScreen(viewXY)
-            if (startLocation[0] >= viewXY[0] &&
-                startLocation[0] <= viewXY[0] + it.measuredWidth &&
-                startLocation[1] >= viewXY[1] &&
-                startLocation[1] <= viewXY[1] + it.measuredHeight
-            ) {
-                Assists.gestureBeginDelay = 1000L
-                viewMainOver?.root?.switchNotTouchable()
-            }
-        }
+
     }
 
     override fun onGestureEnd() {
-        viewMainOver?.root?.switchTouchable()
     }
 
     override fun onStepStop() {

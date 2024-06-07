@@ -13,9 +13,11 @@ import com.blankj.utilcode.util.FileIOUtils
 import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ResourceUtils
+import com.ven.assists.Assists
 import com.ven.assists.AssistsWindowManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.opencv.core.Point
@@ -34,8 +36,10 @@ class CaptureLayout @JvmOverloads constructor(
     private var rectRight = 800f
     private var rectBottom = 800f
 
+    val paintList = arrayListOf<PaintWrapper>()
+
     init {
-        setBackgroundColor(Color.parseColor("#80000000"))
+        setBackgroundColor(Color.parseColor("#00000000"))
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -53,29 +57,54 @@ class CaptureLayout @JvmOverloads constructor(
             return false
         }
         if (ev.action == MotionEvent.ACTION_UP) {
-            AssistsWindowManager.removeView(this)
+            AssistsWindowManager.pop()
             return false
         }
         return super.dispatchTouchEvent(ev)
     }
 
-    fun setPoint(point: Point, width: Int, height: Int) {
-        GlobalScope.launch {
-            withContext(Dispatchers.IO) {
-                rectLeft = point.x.toFloat()
-                rectTop = point.y.toFloat() - BarUtils.getStatusBarHeight()
-                rectRight = rectLeft + width
-                rectBottom = rectTop + height
-                withContext(Dispatchers.Main) {
-                    invalidate()
-                }
-            }
+    suspend fun setPoint(point: Point, width: Int, height: Int) {
+        paintList.add(PaintWrapper().apply {
+            rectLeft = point.x.toFloat()
+            rectTop = point.y.toFloat() - BarUtils.getStatusBarHeight()
+            rectRight = rectLeft + width
+            rectBottom = rectTop + height
+        })
+        withContext(Dispatchers.Main) {
+            invalidate()
         }
+    }
+
+    fun addPoint(point: Point, width: Int, height: Int) {
+        paintList.add(PaintWrapper().apply {
+            rectLeft = point.x.toFloat()
+            rectTop = point.y.toFloat() - BarUtils.getStatusBarHeight()
+            rectRight = rectLeft + width
+            rectBottom = rectTop + height
+        })
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawRect(rectLeft, rectTop, rectRight, rectBottom, paint)
+
+        paintList.forEach {
+            canvas.drawRect(it.rectLeft, it.rectTop, it.rectRight, it.rectBottom, it.paint)
+
+        }
+
+    }
+
+    class PaintWrapper {
+        val paint = Paint().apply {
+            color = Color.RED
+            style = Paint.Style.STROKE
+            strokeWidth = 5f
+        }
+
+        var rectLeft = 0f
+        var rectTop = 0f
+        var rectRight = 0f
+        var rectBottom = 0f
     }
 
 }
