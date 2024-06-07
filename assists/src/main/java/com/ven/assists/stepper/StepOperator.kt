@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 class StepOperator(
     val implClassName: String,
     val step: Int,
-    val next: (stepOperator: StepOperator) -> Step,
+    val next: suspend (stepOperator: StepOperator) -> Step,
     val isRunCoroutineIO: Boolean = false
 ) {
     var repeatCount = 0
@@ -56,7 +56,7 @@ class StepOperator(
         }
     }
 
-    private fun onStep(next: (stepOperator: StepOperator) -> Step): Step {
+    private suspend fun onStep(next: suspend (stepOperator: StepOperator) -> Step): Step {
         StepManager.stepListeners.forEach { if (it.onIntercept(this)) return Step.none }
         StepManager.stepListeners.forEach { it.onStep(this) }
         repeatCount++

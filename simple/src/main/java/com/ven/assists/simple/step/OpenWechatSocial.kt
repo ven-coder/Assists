@@ -60,7 +60,7 @@ class OpenWechatSocial : StepImpl() {
                 return@next Step.none
             }
             Assists.findByText("朋友圈封面，点按两次修改封面").forEach {
-                OverManager.log("已进入朋友圈")
+                OverManager.log("已进入朋友圈，已停止")
                 return@next Step.none
             }
             if (it.repeatCount==5) {

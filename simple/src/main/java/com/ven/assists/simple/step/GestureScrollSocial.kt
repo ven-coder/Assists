@@ -8,12 +8,14 @@ import com.ven.assists.Assists.click
 import com.ven.assists.Assists.findFirstParentClickable
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.Assists.log
+import com.ven.assists.AssistsWindowManager
 import com.ven.assists.simple.App
 import com.ven.assists.simple.OverManager
 import com.ven.assists.stepper.Step
 import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
 import com.ven.assists.stepper.StepManager
+import kotlinx.coroutines.delay
 
 class GestureScrollSocial : StepImpl() {
     override fun onImpl(collector: StepCollector) {
@@ -34,7 +36,6 @@ class GestureScrollSocial : StepImpl() {
                 ) {
                     OverManager.log("已打开微信主页，点击【发现】")
                     it.parent.parent.click()
-                    StepManager.execute(this::class.java, StepTag.STEP_3)
                     return@next Step.get(StepTag.STEP_3)
                 }
             }
@@ -78,16 +79,19 @@ class GestureScrollSocial : StepImpl() {
             }
             return@next Step.repeat
         }.next(StepTag.STEP_5) {
-
+            AssistsWindowManager.switchNotTouchableAll()
+            runIO { delay(250) }
             val x = ScreenUtils.getAppScreenWidth() / 2F
             val distance = ScreenUtils.getAppScreenHeight() / 2F
             val startY = distance + distance / 2F
             val endY = distance - distance / 2F
             OverManager.log("滑动：$x/$startY,$x/$endY")
-            val delay = Assists.gesture(
+            Assists.gesture(
                 floatArrayOf(x, startY), floatArrayOf(x, endY), 0, 2000L
             )
-            return@next Step.get(StepTag.STEP_5)
+            AssistsWindowManager.switchTouchableAll()
+            runIO { delay(1000) }
+            return@next Step.repeat
         }
     }
 }

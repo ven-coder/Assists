@@ -21,9 +21,9 @@ class StepCollector(private val implClassName: String) {
      * @param next
      */
     fun next(
-        stepTag: Int=0,
+        stepTag: Int,
         isRunCoroutineIO: Boolean = false,
-        next: (stepOperator: StepOperator)->Step
+        next: suspend (stepOperator: StepOperator)->Step
     ): StepCollector {
         stepOperatorMap[stepTag] = StepOperator(
             implClassName,

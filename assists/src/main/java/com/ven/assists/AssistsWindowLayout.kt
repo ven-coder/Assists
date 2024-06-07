@@ -85,7 +85,7 @@ class AssistsWindowLayout @JvmOverloads constructor(
 
     init {
 
-        setBackgroundColor(Color.parseColor("#80000000"))
+        setBackgroundColor(Color.parseColor("#4D000000"))
 
         assistsWindowLayoutWrapperBinding = AssistsWindowLayoutWrapperBinding.inflate(LayoutInflater.from(getContext()), this).apply {
             ivMove.setOnTouchListener(onTouchMoveListener)

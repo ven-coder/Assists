@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import java.util.Collections
 
 object AssistsWindowManager {
@@ -48,13 +49,22 @@ object AssistsWindowManager {
         }
     }
 
+    fun showLastView() {
+        viewList.lastOrNull()?.let {
+            it.view.isVisible = true
+        }
+        switchTouchableAll()
+    }
 
-    fun addView(view: View?, params: ViewGroup.LayoutParams) {
+
+    fun addView(view: View?, params: ViewGroup.LayoutParams, isStack: Boolean = false) {
         view ?: return
-        viewList.forEach {
-            it.view.isInvisible = true
-            if (it.view is AssistsWindowLayout) {
-                it.view.switchNotTouchable()
+        if (!isStack) {
+            viewList.forEach {
+                it.view.isInvisible = true
+                if (it.view is AssistsWindowLayout) {
+                    it.view.switchNotTouchable()
+                }
             }
         }
 
