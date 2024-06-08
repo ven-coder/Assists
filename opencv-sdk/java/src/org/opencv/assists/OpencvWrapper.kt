@@ -1,11 +1,10 @@
-﻿package com.ven.assists
+﻿package org.opencv.assists
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
-import com.blankj.utilcode.util.PathUtils
+import com.ven.assists.Assists
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
@@ -16,7 +15,6 @@ import org.opencv.core.Point
 import org.opencv.core.Rect
 import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
-import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import kotlin.math.abs
@@ -27,9 +25,9 @@ object OpencvWrapper {
     fun init() {
         Assists.coroutine.launch {
             if (OpenCVLoader.initLocal()) {
-                LogUtils.d("OpenCV loaded successfully")
+                LogUtils.dTag("123456","OpenCV loaded successfully")
             } else {
-                LogUtils.d("OpenCV initialization failed!")
+                LogUtils.dTag("123456","OpenCV initialization failed!")
             }
         }
     }
@@ -165,14 +163,5 @@ object OpencvWrapper {
                 }
             }
         }
-    }
-
-    class MinMaxLocResultWrapper(val minMaxLocResult: Core.MinMaxLocResult, val targetMat: Mat?) {
-
-    }
-
-
-    class ResultWrapper(val result: Mat, val targetMat: Mat?) {
-
     }
 }

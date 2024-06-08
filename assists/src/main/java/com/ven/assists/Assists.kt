@@ -140,7 +140,6 @@ object Assists {
     fun init(application: Application) {
         application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
         LogUtils.getConfig().globalTag = LOG_TAG
-        OpencvWrapper.init()
     }
 
     /**

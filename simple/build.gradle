@@ -12,12 +12,14 @@ android {
         versionName "1.0.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
-        ndk {
-            //noinspection ChromeOsAbiSupport
-            abiFilters "armeabi-v7a"
-        }
+//        ndk {
+//            //noinspection ChromeOsAbiSupport
+//            abiFilters "armeabi-v7a"
+//        }
     }
     buildTypes {
+        debug {
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -38,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':assists')
     implementation project(':opencv-sdk')
     implementation "androidx.room:room-runtime:2.4.3"

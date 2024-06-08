@@ -91,19 +91,19 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 def openCVersionName = "4.9.0"
 def openCVersionCode = ((4 * 100 + 9) * 100 + 0) * 10 + 0
 
-println "OpenCV: " +openCVersionName + " " + project.buildscript.sourceFile
+println "OpenCV: " + openCVersionName + " " + project.buildscript.sourceFile
 
 android {
     namespace 'org.opencv'
-    compileSdkVersion 31
+    compileSdk 34
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 31
+        minSdk 24
 
         versionCode openCVersionCode
         versionName openCVersionName
@@ -121,7 +121,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    
 
     buildTypes {
         debug {
@@ -168,7 +167,7 @@ android {
 
     externalNativeBuild {
         cmake {
-            path (project.projectDir.toString() + '/libcxx_helper/CMakeLists.txt')
+            path(project.projectDir.toString() + '/libcxx_helper/CMakeLists.txt')
         }
     }
 }
@@ -181,8 +180,8 @@ publishing {
             version = '4.9.0'
 
             afterEvaluate {
-               from components.release
-           }
+                from components.release
+            }
         }
     }
     repositories {
@@ -194,4 +193,6 @@ publishing {
 }
 
 dependencies {
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation project(':assists')
 }
