@@ -41,8 +41,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':assists')
-    implementation project(':opencv-sdk')
+//    implementation project(':assists')
+    implementation 'com.github.ven-coder:Assists:3.0.0'
+    implementation project(':assists-opencv')
     implementation "androidx.room:room-runtime:2.4.3"
     implementation 'androidx.room:room-ktx:2.4.3'
     implementation 'com.github.mrmike:ok2curl:0.8.0'
