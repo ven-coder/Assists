@@ -173,18 +173,20 @@ android {
     }
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.ven.assists'
+            artifactId = 'opencv'
+            version = '3.0.0'
+
+            afterEvaluate {
                 from components.release
-                groupId = 'com.ven.assists.opencv'
-                artifactId = 'assists-opencv'
-                version = '0.0.1'
             }
         }
     }
 }
+
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.13.1'
