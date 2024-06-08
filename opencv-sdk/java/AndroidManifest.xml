@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.opencv">
+    package="com.ven.assists.opencv">
 
     <application>
         <provider
-            android:name=".assists.AssistsOpencvFileProvider"
+            android:name="org.opencv.assists.AssistsOpencvFileProvider"
             android:authorities="${applicationId}.assistsopencv.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

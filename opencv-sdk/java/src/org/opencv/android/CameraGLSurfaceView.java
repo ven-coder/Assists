@@ -1,6 +1,6 @@
 package org.opencv.android;
 
-import org.opencv.R;
+import com.ven.assists.opencv.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -2,8 +2,8 @@ package org.opencv.android;
 
 import java.util.List;
 
-import org.opencv.BuildConfig;
-import org.opencv.R;
+import com.ven.assists.opencv.BuildConfig;
+import com.ven.assists.opencv.R;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 

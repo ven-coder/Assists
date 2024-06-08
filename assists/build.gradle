@@ -1,12 +1,16 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'maven-publish'
 android {
     namespace 'com.ven.assists.base'
     compileSdk 34
 
     defaultConfig {
         minSdk 24
+
+        versionCode 1
+        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -30,6 +34,19 @@ android {
     }
 }
 
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.ven.assists.base'
+                artifactId = 'assists-base'
+                version = '3.0.0'
+            }
+        }
+    }
+}
+
 dependencies {
     implementation 'androidx.core:core-ktx:1.13.1'
     implementation 'androidx.activity:activity-ktx:1.9.0'
@@ -37,5 +54,3 @@ dependencies {
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.22')
     api 'com.blankj:utilcodex:1.31.1'
 }
-
-apply from: rootProject.file("gradle/maven-publish.gradle")
