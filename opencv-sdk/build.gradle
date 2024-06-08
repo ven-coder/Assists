@@ -92,6 +92,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'maven-publish'
 
 def openCVersionName = "4.9.0"
 def openCVersionCode = ((4 * 100 + 9) * 100 + 0) * 10 + 0
@@ -99,7 +100,7 @@ def openCVersionCode = ((4 * 100 + 9) * 100 + 0) * 10 + 0
 println "OpenCV: " + openCVersionName + " " + project.buildscript.sourceFile
 
 android {
-    namespace 'org.opencv'
+    namespace 'com.ven.assists.opencv'
     compileSdk 34
 
     defaultConfig {
@@ -172,22 +173,15 @@ android {
     }
 }
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId = 'org.opencv'
-            artifactId = 'opencv'
-            version = '4.9.0'
-
-            afterEvaluate {
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
                 from components.release
+                groupId = 'com.ven.assists.opencv'
+                artifactId = 'assists-opencv'
+                version = '0.0.1'
             }
-        }
-    }
-    repositories {
-        maven {
-            name = 'myrepo'
-            url = "${project.buildDir}/repo"
         }
     }
 }
