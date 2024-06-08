@@ -1,20 +1,14 @@
 package com.ven.assists.simple.step
 
-import android.util.Log
 import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.LogUtils
-import com.blankj.utilcode.util.PathUtils
-import com.blankj.utilcode.util.ResourceUtils
 import com.ven.assists.Assists
 import com.ven.assists.Assists.click
 import com.ven.assists.Assists.containsText
 import com.ven.assists.Assists.findById
 import com.ven.assists.Assists.findByText
 import com.ven.assists.Assists.findFirstParentClickable
-import com.ven.assists.Assists.log
 import com.ven.assists.AssistsServiceListener
 import com.ven.assists.AssistsWindowManager
-import com.ven.assists.OpencvWrapper
 import com.ven.assists.simple.CaptureLayout
 import com.ven.assists.simple.OverManager
 import com.ven.assists.stepper.Step
@@ -25,17 +19,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.opencv.core.Core
-import org.opencv.core.CvType
+import org.opencv.assists.OpencvWrapper
 import org.opencv.core.Mat
-import org.opencv.core.Point
 import org.opencv.core.Rect
 import org.opencv.core.Scalar
-import org.opencv.imgcodecs.Imgcodecs
-import org.opencv.imgproc.Imgproc
-import java.io.File
-import java.util.Collections
-import kotlin.math.abs
 
 
 class AntForestEnergy : StepImpl(), AssistsServiceListener {
