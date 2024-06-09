@@ -34,19 +34,51 @@ android {
     }
 }
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId = 'com.ven.assists'
-            artifactId = 'base'
-            version = '3.0.0'
+//publishing {
+//    publications {
+//        release(MavenPublication) {
+//            groupId = 'com.ven.assists'
+//            artifactId = 'base'
+//            version = '3.0.0'
+//
+//            afterEvaluate {
+//                from components.release
+//            }
+//
+//            artifact(source: android.libraries.libraryVariants) {
+//                builtBy android.libraryVariants
+//            }
+//        }
+//    }
+//}
 
-            afterEvaluate {
+afterEvaluate {
+    publishing {
+        publications {
+            aar(MavenPublication) {
                 from components.release
+
+                groupId = 'com.github.ven-coder'
+                artifactId = 'assists-base'
+                version = '3.0.3'
+
+                pom.withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+
+                    configurations.implementation.allDependencies.each { dep ->
+                        if (dep.group != null && dep.name != null) {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', dep.group)
+                            dependencyNode.appendNode('artifactId', dep.name)
+                            dependencyNode.appendNode('version', dep.version)
+                        }
+                    }
+                }
             }
         }
     }
 }
+
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.13.1'
