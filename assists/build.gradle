@@ -60,7 +60,7 @@ afterEvaluate {
 
                 groupId = 'com.github.ven-coder'
                 artifactId = 'assists-base'
-                version = '3.0.3'
+                version = '3.0.4'
 
                 pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
