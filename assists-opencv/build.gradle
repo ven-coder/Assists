@@ -173,19 +173,19 @@ android {
     }
 }
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId = 'com.ven.assists'
-            artifactId = 'opencv'
-            version = '3.0.3'
-
-            afterEvaluate {
-                from components.release
-            }
-        }
-    }
-}
+//publishing {
+//    publications {
+//        release(MavenPublication) {
+//            groupId = 'com.ven.assists'
+//            artifactId = 'opencv'
+//            version = '3.0.3'
+//
+//            afterEvaluate {
+//                from components.release
+//            }
+//        }
+//    }
+//}
 
 
 afterEvaluate {
@@ -196,7 +196,7 @@ afterEvaluate {
 
                 groupId = 'com.github.ven-coder'
                 artifactId = 'assists-opencv'
-                version = '3.0.3'
+                version = '3.0.4'
 
                 pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
