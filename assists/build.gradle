@@ -34,24 +34,6 @@ android {
     }
 }
 
-//publishing {
-//    publications {
-//        release(MavenPublication) {
-//            groupId = 'com.ven.assists'
-//            artifactId = 'base'
-//            version = '3.0.0'
-//
-//            afterEvaluate {
-//                from components.release
-//            }
-//
-//            artifact(source: android.libraries.libraryVariants) {
-//                builtBy android.libraryVariants
-//            }
-//        }
-//    }
-//}
-
 afterEvaluate {
     publishing {
         publications {
@@ -60,7 +42,7 @@ afterEvaluate {
 
                 groupId = 'com.github.ven-coder'
                 artifactId = 'assists-base'
-                version = '3.0.4'
+                version = '3.0.0'
 
                 pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
