@@ -19,7 +19,7 @@ Android无障碍服务（AccessibilityService）开发框架，快速开发复�
 ## v3.0.0更新日志
 1. 步骤器重构：支持协程、执行下一步方式改为直接指定
 2. 获取屏幕图像
-3. 集成opencv，封装图像匹配，结合获取屏幕图像匹配当前屏幕元素
+3. 集成opencv，封装图像匹配
 
 v2.0.0版本[查看这里](https://github.com/ven-coder/Assists/tree/release-2.0.0)
 
