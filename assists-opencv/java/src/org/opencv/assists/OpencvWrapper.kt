@@ -5,6 +5,9 @@ import android.graphics.BitmapFactory
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.ven.assists.Assists
+import com.ven.assists.AssistsServiceListener
+import com.ven.assists.ScreenCaptureService
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
@@ -25,9 +28,9 @@ object OpencvWrapper {
     fun init() {
         Assists.coroutine.launch {
             if (OpenCVLoader.initLocal()) {
-                LogUtils.dTag("123456","OpenCV loaded successfully")
+                LogUtils.dTag("123456", "OpenCV loaded successfully")
             } else {
-                LogUtils.dTag("123456","OpenCV initialization failed!")
+                LogUtils.dTag("123456", "OpenCV initialization failed!")
             }
         }
     }
@@ -103,15 +106,15 @@ object OpencvWrapper {
      */
     fun createMask(
         source: Mat,
-        lowerGreen: Scalar,
-        upperGreen: Scalar,
+        lowerScalar: Scalar,
+        upperScalar: Scalar,
         requisiteExtraRectList: List<Rect> = arrayListOf(),
         redundantExtraRectList: List<Rect> = arrayListOf()
     ): Mat {
         val hsvImage = Mat()
         Imgproc.cvtColor(source, hsvImage, Imgproc.COLOR_BGR2HSV)
         val mask = Mat()
-        Core.inRange(hsvImage, lowerGreen, upperGreen, mask)
+        Core.inRange(hsvImage, lowerScalar, upperScalar, mask)
         requisiteExtraRectList.forEach {
             Imgproc.rectangle(mask, it, Scalar(0.0), -1)
         }
@@ -125,8 +128,8 @@ object OpencvWrapper {
     /**
      * 获取屏幕图像
      */
-    fun getScreen(): Mat {
-        val screenBitmap = Assists.screenCaptureService?.toBitmap()
+    fun getScreen(): Mat? {
+        val screenBitmap = Assists.screenCaptureService?.toBitmap() ?: return null
         val screenMat = Mat()
         Utils.bitmapToMat(screenBitmap, screenMat)
         Imgproc.cvtColor(screenMat, screenMat, Imgproc.COLOR_RGBA2BGR)
