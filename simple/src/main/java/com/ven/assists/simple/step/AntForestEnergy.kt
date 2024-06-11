@@ -9,6 +9,7 @@ import com.ven.assists.Assists.findByText
 import com.ven.assists.Assists.findFirstParentClickable
 import com.ven.assists.AssistsServiceListener
 import com.ven.assists.AssistsWindowManager
+import com.ven.assists.ScreenCaptureService
 import com.ven.assists.simple.CaptureLayout
 import com.ven.assists.simple.OverManager
 import com.ven.assists.stepper.Step
@@ -110,6 +111,10 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
             }
             delay(500)
             val screenMat = OpencvWrapper.getScreen()
+            if (screenMat == null) {
+                overLog("识别失败，无法获取屏幕图像")
+                return@next Step.none
+            }
             runMain {
                 AssistsWindowManager.showLastView()
             }
@@ -207,7 +212,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                 }
 
             }
-            return@next Step.none
+            return@next Step.repeat
         }
     }
 
@@ -221,6 +226,5 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
         Assists.coroutine.launch {
             overLog("屏幕录制已开启")
         }
-        StepManager.execute(this::class.java, StepTag.STEP_2)
     }
 }
