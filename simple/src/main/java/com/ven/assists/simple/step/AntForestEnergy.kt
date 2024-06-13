@@ -182,7 +182,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                 val mask = OpencvWrapper.createMask(it, Scalar(10.0, 100.0, 100.0), Scalar(30.0, 255.0, 255.0))
                 val result = OpencvWrapper.matchTemplateFromScreenToMinMaxLoc(screenMat, it, mask)
                 result?.let {
-                    if (it.maxVal > 0.95) {
+                    if (it.maxVal > 0.99) {
                         val point = it.maxLoc
                         runMain {
                             Assists.service?.let {
@@ -208,6 +208,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                         return@next Step.get(StepTag.STEP_4)
                     } else {
                         overLog("未匹配到找能量入口，已停止")
+                        return@next Step.none
                     }
                 }
 
@@ -225,6 +226,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
     override fun screenCaptureEnable() {
         Assists.coroutine.launch {
             overLog("屏幕录制已开启")
+            StepManager.execute(AntForestEnergy::class.java, StepTag.STEP_2)
         }
     }
 }
