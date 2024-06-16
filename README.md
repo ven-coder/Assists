@@ -198,7 +198,7 @@ OpencvWrapper.getResultWithThreshold(
 ## Demo下载
 扫码下载
 <br/>
-<img src="https://github.com/ven-coder/Assists/assets/27257149/b79e53b0-9dab-4568-acc8-c1a915b5fcdb" width=200/>
+<img src="https://github.com/ven-coder/Assists/assets/27257149/c4ce8c21-ac8b-4d3f-bfe4-257a525fb3c5" width=200/>
 
 [&#128229;直接下载](https://www.pgyer.com/1zaijG)
 
