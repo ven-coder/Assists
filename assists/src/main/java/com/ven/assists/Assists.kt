@@ -474,13 +474,21 @@ object Assists {
      * 控制台输出元素信息
      */
     fun AccessibilityNodeInfo.log(tag: String = LOG_TAG) {
-        Log.d(
-            tag, "text:$text / " +
-                    "contentDescription:$contentDescription / " +
-                    "viewIdResourceName:$viewIdResourceName / " +
-                    "isFocused:$isFocused / " +
-                    "isScrollable:$isScrollable / " +
-                    "isEnabled:$isEnabled"
-        )
+
+        StringBuilder().apply {
+            append("-------------------------------------\n")
+            append("位置:left=${getBoundsInScreen().left}, top=${getBoundsInScreen().top}, right=${getBoundsInScreen().right}, bottom=${getBoundsInScreen().bottom} \n")
+            append("文本:$text \n")
+            append("内容描述:$contentDescription \n")
+            append("id:$viewIdResourceName \n")
+            append("类型:${className} \n")
+            append("是否已经获取到到焦点:$isFocused \n")
+            append("是否可滚动:$isScrollable \n")
+            append("是否可点击:$isClickable \n")
+            append("是否可用:$isEnabled \n")
+            append("是否可用:$isEnabled \n")
+            Log.d(tag, toString())
+        }
     }
+
 }

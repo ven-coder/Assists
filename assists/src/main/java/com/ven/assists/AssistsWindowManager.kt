@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import com.blankj.utilcode.util.LogUtils
 import java.util.Collections
 
 object AssistsWindowManager {
@@ -57,7 +58,7 @@ object AssistsWindowManager {
     }
 
 
-    fun addView(view: View?, params: ViewGroup.LayoutParams, isStack: Boolean = false) {
+    fun addView(view: View?, params: ViewGroup.LayoutParams = createLayoutParams(), isStack: Boolean = false) {
         view ?: return
         if (!isStack) {
             viewList.forEach {
@@ -74,6 +75,9 @@ object AssistsWindowManager {
 
     fun addAssistsWindowLayout(view: AssistsWindowLayout?) {
         view ?: return
+        viewList.forEach {
+            if (it.view == view) return
+        }
         viewList.forEach {
             it.view.isInvisible = true
             if (it.view is AssistsWindowLayout) {
@@ -93,18 +97,22 @@ object AssistsWindowManager {
 
     fun removeView(view: View?) {
         view ?: return
-        windowManager.removeView(view)
-        for (viewWrapper in viewList) {
-            if (viewWrapper.view == view) {
-                viewList.remove(viewWrapper)
-                break
+        try {
+            windowManager.removeView(view)
+            for (viewWrapper in viewList) {
+                if (viewWrapper.view == view) {
+                    viewList.remove(viewWrapper)
+                    break
+                }
             }
-        }
-        viewList.lastOrNull()?.let {
-            it.view.isInvisible = false
-            if (it.view is AssistsWindowLayout) {
-                it.view.switchTouchable()
+            viewList.lastOrNull()?.let {
+                it.view.isInvisible = false
+                if (it.view is AssistsWindowLayout) {
+                    it.view.switchTouchable()
+                }
             }
+        } catch (e: Throwable) {
+            LogUtils.e(e)
         }
     }
 
