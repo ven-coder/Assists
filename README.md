@@ -40,7 +40,7 @@ v2.0.0版本[查看这里](https://github.com/ven-coder/Assists/tree/release-2.0
 ## 使用
 ### 1. 添加库
 #### 1.1 Clone或下载源码
-版本v3.0.0：https://github.com/ven-coder/Assists/releases/tag/3.0.1
+版本v3.0.1：[https://github.com/ven-coder/Assists/releases/tag/3.0.1](https://github.com/ven-coder/Assists/archive/refs/tags/3.0.1.zip)
 
 
 #### 1.2 导入依赖库
