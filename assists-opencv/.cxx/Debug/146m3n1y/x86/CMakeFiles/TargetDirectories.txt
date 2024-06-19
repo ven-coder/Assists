@@ -1,3 +1,0 @@
-C:/Users/VenUse/Downloads/opencv-4.9.0-android-sdk/OpenCV-android-sdk/sdk/.cxx/Debug/146m3n1y/x86/CMakeFiles/opencv_jni_shared.dir
-C:/Users/VenUse/Downloads/opencv-4.9.0-android-sdk/OpenCV-android-sdk/sdk/.cxx/Debug/146m3n1y/x86/CMakeFiles/edit_cache.dir
-C:/Users/VenUse/Downloads/opencv-4.9.0-android-sdk/OpenCV-android-sdk/sdk/.cxx/Debug/146m3n1y/x86/CMakeFiles/rebuild_cache.dir

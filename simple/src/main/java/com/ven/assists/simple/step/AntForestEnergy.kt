@@ -16,11 +16,11 @@ import com.ven.assists.stepper.Step
 import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
 import com.ven.assists.stepper.StepManager
+import com.ven.assists_opcv.OpencvWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.opencv.assists.OpencvWrapper
 import org.opencv.core.Mat
 import org.opencv.core.Rect
 import org.opencv.core.Scalar

@@ -42,7 +42,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':assists')
-    implementation project(':assists-opencv')
+    implementation project(':assists-opcv')
     implementation "androidx.room:room-runtime:2.4.3"
     implementation 'androidx.room:room-ktx:2.4.3'
     implementation 'com.github.mrmike:ok2curl:0.8.0'

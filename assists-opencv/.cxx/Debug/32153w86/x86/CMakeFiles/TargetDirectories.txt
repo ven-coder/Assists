@@ -1,3 +1,0 @@
-C:/Users/VenUse/StudioProjects/Assists/assists-opencv/.cxx/Debug/32153w86/x86/CMakeFiles/opencv_jni_shared.dir
-C:/Users/VenUse/StudioProjects/Assists/assists-opencv/.cxx/Debug/32153w86/x86/CMakeFiles/edit_cache.dir
-C:/Users/VenUse/StudioProjects/Assists/assists-opencv/.cxx/Debug/32153w86/x86/CMakeFiles/rebuild_cache.dir

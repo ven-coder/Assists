@@ -1,7 +1,0 @@
-[
-{
-  "directory": "C:/Users/VenUse/Downloads/opencv-4.9.0-android-sdk/OpenCV-android-sdk/sdk/.cxx/Debug/146m3n1y/x86",
-  "command": "C:\\Users\\VenUse\\AppData\\Local\\Android\\Sdk\\ndk\\23.1.7779620\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=i686-none-linux-android21 --gcc-toolchain=C:/Users/VenUse/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/VenUse/AppData/Local/Android/Sdk/ndk/23.1.7779620/toolchains/llvm/prebuilt/windows-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles\\opencv_jni_shared.dir\\dummy.cpp.o -c C:\\Users\\VenUse\\Downloads\\opencv-4.9.0-android-sdk\\OpenCV-android-sdk\\sdk\\libcxx_helper\\dummy.cpp",
-  "file": "C:\\Users\\VenUse\\Downloads\\opencv-4.9.0-android-sdk\\OpenCV-android-sdk\\sdk\\libcxx_helper\\dummy.cpp"
-}
-]
