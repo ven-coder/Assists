@@ -164,16 +164,16 @@ OpencvWrapper.createMask(
 
 ### 模板匹配
 ```OpencvWrapper.matchTemplate(image: Mat?, template: Mat?, mask: Mat? = null)```
-> ```image``` 大图图像<br/>
-> ```template``` 模板图像，即小图<br/>
-> ```mask``` 掩膜<br/>
+> ```image```大图图像<br/>
+> ```template```模板图像，即小图<br/>
+> ```mask```掩膜<br/>
 > 返回所有匹配结果，按需求进行筛选
 
 ### 模板匹配获取最佳结果
 ```OpencvWrapper.matchTemplateFromScreenToMinMaxLoc(image: Mat?, template: Mat?, mask: Mat? = null)```
-> ```image``` 大图图像<br/>
-> ```template``` 模板图像，即小图<br/>
-> ```mask``` 掩膜<br/>
+> ```image```大图图像<br/>
+> ```template```模板图像，即小图<br/>
+> ```mask```掩膜<br/>
 > 返回最佳匹配结果
 
 ### 筛选匹配结果获取达到阈值的匹配结果
@@ -185,10 +185,10 @@ OpencvWrapper.getResultWithThreshold(
         ignoreY: Double = -1.0,
     )
 ```
-> ```result``` 匹配结果<br/>
-> ```threshold``` 匹配值，范围0-1，0最低匹配值，1最高匹配值<br/>
-> ```ignoreX``` 忽略的x轴范围<br/>
-> ```ignoreY``` 忽略的y轴范围<br/>
+> ```result```匹配结果<br/>
+> ```threshold```匹配值，范围0-1，0最低匹配值，1最高匹配值<br/>
+> ```ignoreX```忽略的x轴范围<br/>
+> ```ignoreY```忽略的y轴范围<br/>
 > 返回符合条件的匹配坐标列表
 
 #### 以上具体的使用最好直接查看demo源码
@@ -208,6 +208,19 @@ OpencvWrapper.getResultWithThreshold(
 |:---------:|:-----------:|
 | <img src="https://github.com/ven-coder/Assists/assets/27257149/841b3b8f-9aff-4d71-af62-3b743cce1112" width=200/>    | <img src="https://github.com/ven-coder/Assists/assets/27257149/542e51d1-9f22-4381-b011-618fc0cef959" width=200/>
 
+## 我的付费社群
+付费社群提供的服务：
+1. 完整易于阅读的开发文档（补充中...）
+2. Assists开发指导
+3. 开发疑难问答
+4. 基于Assists开发的抖音养号，小红书养号，支付宝能量收集，支付宝农场，无线远程控制等源码（补充中...）
+5. 群友互助资源对接
+
+> 付费社群于2024.6.19刚刚创建，部分资料服务正在补充中，但是对于开发指导、疑难问答服务我会竭尽所能服务好大家
+##### 微信扫扫即可加入
+![aaaa](https://github.com/ven-coder/Assists/assets/27257149/7ae8e825-f489-46e3-96f0-ed03d12db9e8)
+
+##### 定制开发可直接联系个人微信：x39598
 
 # License
 [GNU General Public License v3.0](https://github.com/ven-coder/Assists/blob/master/LICENSE)
