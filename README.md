@@ -218,7 +218,7 @@ OpencvWrapper.getResultWithThreshold(
 
 > 付费社群于2024.6.19刚刚创建，部分资料服务正在补充中，但是对于开发指导、疑难问答服务我会竭尽所能服务好大家
 ##### 微信扫扫即可加入
-![aaaa](https://github.com/ven-coder/Assists/assets/27257149/7ae8e825-f489-46e3-96f0-ed03d12db9e8)
+<img src="https://github.com/ven-coder/Assists/assets/27257149/7ae8e825-f489-46e3-96f0-ed03d12db9e8" width=200/>
 
 ##### 定制开发可直接联系个人微信：x39598
 
