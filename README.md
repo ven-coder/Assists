@@ -16,7 +16,7 @@ Android无障碍服务（AccessibilityService）开发框架，快速开发复�
 
 在这个框架下开发Android无障碍服务业务可以让你的业务开发更加快速、逻辑更加健壮且容易维护。
 
-## v3.0.0更新日志
+## v3.0.1更新日志
 1. 步骤器重构：支持协程、执行下一步方式改为直接指定
 2. 获取屏幕图像
 3. 集成opencv，封装图像匹配
@@ -40,11 +40,11 @@ v2.0.0版本[查看这里](https://github.com/ven-coder/Assists/tree/release-2.0
 ## 使用
 ### 1. 添加库
 #### 1.1 Clone或下载源码
-版本v3.0.0：https://github.com/ven-coder/Assists/releases/tag/3.0.0
+版本v3.0.0：https://github.com/ven-coder/Assists/releases/tag/3.0.1
 
 
 #### 1.2 导入依赖库
-解压后以module方式导入assists，opencv图像识别为可选库，如果需要使用到图像识别可导入其中的assists-opencv
+解压后以module方式导入assists，opencv图像识别为可选库，如果需要使用到图像识别可导入其中的assists-opcv
 <img src="https://github.com/ven-coder/Assists/assets/27257149/592dc0e1-8764-42e5-bede-2be2dfa9ccb8" width=400/>
 <br/>
 <img src="https://github.com/ven-coder/Assists/assets/27257149/9705e28c-8ff7-4678-bb57-7e475e5c131b" width=400/>
@@ -55,7 +55,7 @@ v2.0.0版本[查看这里](https://github.com/ven-coder/Assists/tree/release-2.0
 dependencies {
     ...其他依赖
     implementation project(':assists')
-    implementation project(':assists-opencv')//图像识别库，可选，按需添加
+    implementation project(':assists-opcv')//图像识别库，可选，按需添加
 }
 ```
 
@@ -206,7 +206,7 @@ OpencvWrapper.getResultWithThreshold(
 
 | 交流群 | 个人微信 |
 |:---------:|:-----------:|
-| <img src="https://github.com/ven-coder/Assists/assets/27257149/0a787479-d65b-4365-9642-19c1f5e890f6" width=200/>    | <img src="https://github.com/ven-coder/Assists/assets/27257149/542e51d1-9f22-4381-b011-618fc0cef959" width=200/>
+| <img src="https://github.com/ven-coder/Assists/assets/27257149/841b3b8f-9aff-4d71-af62-3b743cce1112" width=200/>    | <img src="https://github.com/ven-coder/Assists/assets/27257149/542e51d1-9f22-4381-b011-618fc0cef959" width=200/>
 
 
 # License
