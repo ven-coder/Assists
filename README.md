@@ -196,7 +196,7 @@ OpencvWrapper.getResultWithThreshold(
 #### 更多开发文档请查看：[https://github.com/ven-coder/Assists/wiki](https://github.com/ven-coder/Assists/wiki)
 
 ## Demo下载
-扫码下载
+扫码下载（由于加入opencv且未对abi进行过滤所以安装包有134M）
 <br/>
 <img src="https://github.com/ven-coder/Assists/assets/27257149/c4ce8c21-ac8b-4d3f-bfe4-257a525fb3c5" width=200/>
 
