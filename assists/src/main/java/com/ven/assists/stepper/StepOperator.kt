@@ -11,12 +11,14 @@ class StepOperator(
     val implClassName: String,
     val step: Int,
     val next: suspend (stepOperator: StepOperator) -> Step,
-    val isRunCoroutineIO: Boolean = false
+    val isRunCoroutineIO: Boolean = false,
+    var data: Any? = null
 ) {
     var repeatCount = 0
         private set
 
-    fun execute(delay: Long) {
+    fun execute(delay: Long, data: Any? = null) {
+        this.data = data
         if (StepManager.isStop) {
             StepManager.stepListeners.forEach { it.onStepStop() }
             return
@@ -48,9 +50,9 @@ class StepOperator(
 
             else -> {
                 nextStep.stepImpl?.let {
-                    StepManager.execute(it::class.java, nextStep.tag)
+                    StepManager.execute(it.name, nextStep.tag, data = nextStep.data)
                 } ?: let {
-                    StepManager.execute(implClassName, nextStep.tag)
+                    StepManager.execute(implClassName, nextStep.tag, data = nextStep.data)
                 }
             }
         }

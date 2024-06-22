@@ -2,6 +2,7 @@ package com.ven.assists
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
@@ -15,7 +16,7 @@ class AssistsService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        LogUtils.d("onServiceConnected")
+        Log.d(Assists.LOG_TAG, "\nonServiceConnected")
         Assists.service = this
         AssistsWindowManager.init(this)
         Assists.serviceListeners.forEach { it.onServiceConnected(this) }

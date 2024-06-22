@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
 
 class PublishSocial : StepImpl() {
     override fun onImpl(collector: StepCollector) {
-        collector.next(StepTag.STEP_1) {
+        collector.next(StepTag.STEP_1) { it ->
             OverManager.log("启动微信")
             Intent().apply {
                 addCategory(Intent.CATEGORY_LAUNCHER)
@@ -32,29 +32,40 @@ class PublishSocial : StepImpl() {
                 component = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")
                 Assists.service?.startActivity(this)
             }
-            return@next Step.get(StepTag.STEP_2)
+            it.data?.let {
+                OverManager.log("PublishSocial STEP_1 收到数据：$it")
+            }
+            return@next Step.get(StepTag.STEP_2, data = "字符串数据：2")
         }.next(StepTag.STEP_2) {
+
+            it.data?.let {
+                OverManager.log("收到数据：$it")
+            }
             Assists.findByText("发现").forEach {
                 val screen = it.getBoundsInScreen()
                 if (screen.left > 630 && screen.top > 1850) {
                     OverManager.log("已打开微信主页，点击【发现】")
                     it.parent.parent.click()
-                    return@next Step.get(StepTag.STEP_3)
+                    return@next Step.get(StepTag.STEP_3, data = "字符串数据：3333")
 
                 }
             }
 
             if (Assists.getPackageName() == App.TARGET_PACKAGE_NAME) {
                 Assists.back()
-                return@next Step.get(StepTag.STEP_2)
+                return@next Step.get(StepTag.STEP_2, data = "字符串数据：22222")
             }
 
             if (it.repeatCount == 5) {
-                return@next Step.get(StepTag.STEP_1)
+                return@next Step.get(StepTag.STEP_1, data = "字符串数据：1111111")
             }
 
             return@next Step.repeat
         }.next(StepTag.STEP_3) {
+
+            it.data?.let {
+                OverManager.log("收到数据：$it")
+            }
             Assists.findByText("朋友圈").forEach {
                 it.log()
                 val screen = it.getBoundsInScreen()

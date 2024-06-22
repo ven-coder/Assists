@@ -36,17 +36,24 @@ object StepManager {
             }
         }
 
-    fun <T : StepImpl> execute(stepImpl: Class<T>, stepTag: Int, delay: Long = DEFAULT_STEP_DELAY, begin: Boolean = false) {
-        execute(stepImpl.name, stepTag, delay, begin)
+    fun <T : StepImpl> execute(stepImpl: Class<T>, stepTag: Int, delay: Long = DEFAULT_STEP_DELAY, data: Any? = null, begin: Boolean = false) {
+        execute(stepImpl.name, stepTag, delay, data = data, begin = begin)
     }
 
 
-    fun execute(implClassName: String, stepTag: Int, delay: Long = DEFAULT_STEP_DELAY, begin: Boolean = false) {
+    fun execute(implClassName: String, stepTag: Int, delay: Long = DEFAULT_STEP_DELAY, data: Any? = null, begin: Boolean = false) {
         if (begin) isStop = false
         if (isStop) return
-        Log.d(Assists.LOG_TAG, "execute->${implClassName}:$stepTag-delay:$delay")
+        StringBuilder().apply {
+            append("\n>>>>>>>>>>>>execute>>>>>>>>>>>")
+            append("\n${implClassName}:$stepTag")
+            append("\ndelay:$delay")
+            append("\ndata:$data")
+            append("\n")
+            Log.d(Assists.LOG_TAG, toString())
+        }
         stepCollector[implClassName] ?: register(implClassName)
-        stepCollector[implClassName]?.get(stepTag)?.execute(delay)
+        stepCollector[implClassName]?.get(stepTag)?.execute(delay, data = data)
     }
 
     /**

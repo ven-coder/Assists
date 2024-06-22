@@ -65,7 +65,7 @@ object OverManager : StepListener, GestureListener {
                 }
                 btnPublishSocial.setOnClickListener {
                     beginStart(this)
-                    StepManager.execute(PublishSocial::class.java, StepTag.STEP_1, begin = true)
+                    StepManager.execute(PublishSocial::class.java, StepTag.STEP_1, begin = true, data = "字符串数据：1")
                 }
                 btnStop.setOnClickListener {
                     stop()
