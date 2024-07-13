@@ -4,7 +4,7 @@ class Step private constructor(
     val tag: Int,
     val stepImpl: Class<Any>? = null,
     var data: Any? = null,
-    delay: Long = StepManager.DEFAULT_STEP_DELAY,
+    var delay: Long = StepManager.DEFAULT_STEP_DELAY,
 ) {
     companion object {
         val none = Step(-1)

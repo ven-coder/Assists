@@ -1,7 +1,9 @@
 package com.ven.assists.stepper
 
 import android.os.CountDownTimer
+import android.util.Log
 import com.blankj.utilcode.util.LogUtils
+import com.ven.assists.Assists
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,18 +43,23 @@ class StepOperator(
     private fun onNextStep(nextStep: Step) {
         when (nextStep) {
             Step.none -> {
-
+                StringBuilder().apply {
+                    append("\n>>>>>>>>>>>>execute>>>>>>>>>>>")
+                    append("\nStep.none（停止）")
+                    append("\n")
+                    Log.d(Assists.LOG_TAG, toString())
+                }
             }
 
             Step.repeat -> {
-                StepManager.execute(implClassName, step)
+                StepManager.execute(implClassName, step, delay = nextStep.delay)
             }
 
             else -> {
                 nextStep.stepImpl?.let {
-                    StepManager.execute(it.name, nextStep.tag, data = nextStep.data)
+                    StepManager.execute(it.name, nextStep.tag, data = nextStep.data, delay = nextStep.delay)
                 } ?: let {
-                    StepManager.execute(implClassName, nextStep.tag, data = nextStep.data)
+                    StepManager.execute(implClassName, nextStep.tag, data = nextStep.data, delay = nextStep.delay)
                 }
             }
         }

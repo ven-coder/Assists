@@ -28,6 +28,8 @@ class AssistsWindowLayout @JvmOverloads constructor(
     var closeClickListener: (() -> Boolean)? = null
     var minHeight = -1
     var minWidth = -1
+    var initLocationX = 0
+    var initLocationY = 0
 
     private val onTouchScaleListener = object : OnTouchListener {
         override fun onTouch(v: View?, event: MotionEvent): Boolean {
@@ -85,7 +87,7 @@ class AssistsWindowLayout @JvmOverloads constructor(
 
     init {
 
-        setBackgroundColor(Color.parseColor("#4D000000"))
+//        setBackgroundColor(Color.parseColor("#4D000000"))
 
         assistsWindowLayoutWrapperBinding = AssistsWindowLayoutWrapperBinding.inflate(LayoutInflater.from(getContext()), this).apply {
             ivMove.setOnTouchListener(onTouchMoveListener)
@@ -127,7 +129,6 @@ class AssistsWindowLayout @JvmOverloads constructor(
             }
         }
     }
-
     fun setCenter() {
         if (measuredWidth > 0 && measuredHeight > 0) {
             val x = (ScreenUtils.getScreenWidth() - measuredWidth) / 2

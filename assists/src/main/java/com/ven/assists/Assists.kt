@@ -34,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
 object Assists {
 
@@ -215,10 +216,25 @@ object Assists {
         return false
     }
 
+    /**
+     * 获取元素文本列表，包括text，content-desc
+     */
+    fun AccessibilityNodeInfo?.getAllText(text: String): ArrayList<String> {
+        if (this == null) return arrayListOf()
+        val texts = arrayListOf<String>()
+        getText()?.let {
+            texts.add(it.toString())
+        }
+        contentDescription?.let {
+            texts.add(it.toString())
+        }
+        return texts
+    }
+
 
     /**
      * 根据类型查找元素
-     * @param className 完整类名，如[com.ven.assist.Assists]
+     * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
      * @return 所有符合条件的元素
      */
     fun findByTags(className: String): List<AccessibilityNodeInfo> {
@@ -233,7 +249,7 @@ object Assists {
 
     /**
      * 在当前元素范围下，根据类型查找元素
-     * @param className 完整类名，如[com.ven.assist.Assists]
+     * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
      * @return 所有符合条件的元素
      */
     fun AccessibilityNodeInfo.findByTags(className: String): List<AccessibilityNodeInfo> {
@@ -244,6 +260,33 @@ object Assists {
             }
         }
         return nodeList
+    }
+
+    /**
+     * 根据类型查找首个符合条件的父元素
+     * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
+     * @return 所有符合条件的元素
+     */
+    fun AccessibilityNodeInfo.findFirstParentByTags(className: String): AccessibilityNodeInfo? {
+        val nodeList = arrayListOf<AccessibilityNodeInfo>()
+        findFirstParentByTags(className, nodeList)
+        return nodeList.firstOrNull()
+    }
+
+
+    /**
+     * 递归根据类型查找首个符合条件的父元素
+     * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
+     * @param container 存放结果容器
+     */
+    fun AccessibilityNodeInfo.findFirstParentByTags(className: String, container: ArrayList<AccessibilityNodeInfo>) {
+        getParent()?.let {
+            if (TextUtils.equals(className, it.className)) {
+                container.add(it)
+            } else {
+                it.findFirstParentByTags(className, container)
+            }
+        }
     }
 
     /**
@@ -289,12 +332,24 @@ object Assists {
      * 查找可点击的父元素
      */
     private fun AccessibilityNodeInfo.findFirstParentClickable(nodeInfo: Array<AccessibilityNodeInfo?>) {
-        if (parent.isClickable) {
+        if (parent?.isClickable==true) {
             nodeInfo[0] = parent
             return
         } else {
-            parent.findFirstParentClickable(nodeInfo)
+            parent?.findFirstParentClickable(nodeInfo)
         }
+    }
+
+    /**
+     * 获取当前元素下的子元素（不包括子元素中的子元素）
+     */
+    fun AccessibilityNodeInfo.getChildren(): ArrayList<AccessibilityNodeInfo> {
+        val nodes = arrayListOf<AccessibilityNodeInfo>()
+        for (i in 0 until this.childCount) {
+            val child = getChild(i)
+            nodes.add(child)
+        }
+        return nodes
     }
 
     /**
@@ -440,6 +495,7 @@ object Assists {
      * 粘贴文本到当前元素
      */
     fun AccessibilityNodeInfo.paste(text: String?) {
+        performAction(AccessibilityNodeInfo.ACTION_FOCUS)
         service?.let {
             val clip = ClipData.newPlainText("${System.currentTimeMillis()}", text)
             val clipboardManager = (it.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)

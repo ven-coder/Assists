@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_1"
     android:orientation="vertical">
 
     <LinearLayout
@@ -27,7 +28,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
 
                     <Button
                         android:id="@+id/btn_ant_forest_energy"

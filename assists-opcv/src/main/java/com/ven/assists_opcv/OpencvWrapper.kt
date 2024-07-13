@@ -44,7 +44,6 @@ object OpencvWrapper {
         val method = Imgproc.TM_CCORR_NORMED
         if (mask == null) {
             Imgproc.matchTemplate(image, template, result, method)
-
         } else {
             Imgproc.matchTemplate(image, template, result, method, mask)
 
