@@ -99,6 +99,10 @@ class AssistsWindowLayout @JvmOverloads constructor(
             }
         }
 
+//        layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+//                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+//                or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+
         layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
                 or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
@@ -129,6 +133,7 @@ class AssistsWindowLayout @JvmOverloads constructor(
             }
         }
     }
+
     fun setCenter() {
         if (measuredWidth > 0 && measuredHeight > 0) {
             val x = (ScreenUtils.getScreenWidth() - measuredWidth) / 2

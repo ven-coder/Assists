@@ -2,11 +2,18 @@ package com.ven.assists.simple
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.accessibility.AccessibilityEvent
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.FileIOUtils
 import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.LogUtils
@@ -20,6 +27,11 @@ import com.bumptech.glide.Glide
 import com.ven.assists.GestureListener
 import com.ven.assists.Assists
 import com.ven.assists.Assists.click
+import com.ven.assists.Assists.containsText
+import com.ven.assists.Assists.getBoundsInScreen
+import com.ven.assists.Assists.getNodes
+import com.ven.assists.Assists.log
+import com.ven.assists.AssistsServiceListener
 import com.ven.assists.AssistsWindowManager
 import com.ven.assists.simple.databinding.ViewMainOverBinding
 import com.ven.assists.simple.databinding.ViewMatchImageBinding
@@ -50,6 +62,7 @@ import org.opencv.imgproc.Imgproc
 object OverManager : StepListener, GestureListener {
     @SuppressLint("StaticFieldLeak")
     private var viewMainOver: ViewMainOverBinding? = null
+    private var autoAnswerWechatCallListener: AssistsServiceListener? = null
 
     private fun createView(): ViewMainOverBinding? {
         return Assists.service?.let { it ->
@@ -59,6 +72,79 @@ object OverManager : StepListener, GestureListener {
                 llOption.isVisible = true
                 llLog.isVisible = false
                 btnCloseLog.isVisible = false
+                btn1.setOnClickListener {
+
+                    if (btn1.tag is View) {
+                        AssistsWindowManager.removeView(btn1.tag as View)
+                        btn1.setText("禁止下拉通知栏")
+                        btn1.tag = null
+                        return@setOnClickListener
+                    }
+
+                    val layoutParams = AssistsWindowManager.createLayoutParams()
+                    layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+                            or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                            or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+                    layoutParams.width = ScreenUtils.getScreenWidth()
+                    layoutParams.height = BarUtils.getStatusBarHeight()
+                    AssistsWindowManager.addView(View(Assists.service!!).apply {
+                        btn1.tag = this
+                        setBackgroundColor(Color.parseColor("#80000000"))
+                        setLayoutParams(ViewGroup.LayoutParams(ScreenUtils.getScreenWidth(), BarUtils.getStatusBarHeight()))
+                    }, layoutParams, isStack = true)
+                    btn1.setText("解除禁止下拉通知栏")
+                }
+                btn2.setOnClickListener {
+                    beginStart(this)
+                    Assists.coroutine.launch {
+                        delay(1000)
+                        withContext(Dispatchers.Main) {
+                            OverManager.log("监听并自动接听微信电话...")
+                        }
+                    }
+
+                    autoAnswerWechatCallListener ?: let {
+                        autoAnswerWechatCallListener = object : AssistsServiceListener {
+                            override fun onAccessibilityEvent(event: AccessibilityEvent) {
+                                if (event.packageName == "com.tencent.mm") {
+                                    var isInCall = false
+                                    event.source?.getNodes()?.forEach {
+                                        if (it.containsText("邀请你语音通话") || it.containsText("邀请你视频通话")) {
+                                            it.log()
+                                            it.getBoundsInScreen().let {
+                                                Log.d(Assists.LOG_TAG, "收到微信通话：${it.top}/${ScreenUtils.getScreenHeight()}, ${it.bottom}/${ScreenUtils.getScreenHeight()*0.7}")
+                                                if (it.bottom < ScreenUtils.getScreenHeight() * 0.13) {
+                                                    isInCall = true
+                                                    Log.d(Assists.LOG_TAG, "收到微信通话通知")
+                                                }
+                                                if (it.top > ScreenUtils.getScreenHeight() * 0.60 && it.bottom < ScreenUtils.getScreenHeight() * 0.75) {
+                                                    isInCall = true
+                                                    Log.d(Assists.LOG_TAG, "收到微信通话界面")
+                                                }
+                                            }
+                                        }
+                                        if (isInCall && it.containsText("接听") && it.className == "android.widget.ImageButton") {
+                                            it.click()
+                                        }
+                                        if (isInCall && it.containsText("接听") && it.className == "android.widget.Button") {
+
+                                            it.getBoundsInScreen().let {
+                                                Assists.coroutine.launch {
+                                                    Log.d(Assists.LOG_TAG, "收到微信通话界面：点击")
+                                                    Assists.gestureClick(it.left + 20f, it.top + 20f)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (!Assists.serviceListeners.contains(autoAnswerWechatCallListener)) {
+                        Assists.serviceListeners.add(autoAnswerWechatCallListener!!)
+                    }
+
+                }
                 btnOpenSocial.setOnClickListener {
                     beginStart(this)
                     StepManager.execute(OpenWechatSocial::class.java, StepTag.STEP_1, begin = true)
@@ -145,6 +231,7 @@ object OverManager : StepListener, GestureListener {
             showOption()
             return
         }
+        Assists.serviceListeners.remove(autoAnswerWechatCallListener)
         StepManager.isStop = true
         isAutoScrollLog = false
         viewMainOver?.btnStop?.isVisible = false

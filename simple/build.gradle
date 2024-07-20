@@ -17,8 +17,18 @@ android {
 //            abiFilters "armeabi-v7a"
 //        }
     }
+
+    signingConfigs {
+        debug {
+            storeFile file('assists_simple_key.jks')
+            storePassword '123456'
+            keyAlias 'key0'
+            keyPassword '123456'
+        }
+    }
     buildTypes {
         debug {
+            signingConfig signingConfigs.debug
         }
         release {
             minifyEnabled false
