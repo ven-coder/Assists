@@ -101,6 +101,11 @@ object OverManager : StepListener, GestureListener {
                         withContext(Dispatchers.Main) {
                             OverManager.log("监听并自动接听微信电话...")
                         }
+
+                        while (true) {
+
+                            delay(1000)
+                        }
                     }
 
                     autoAnswerWechatCallListener ?: let {
@@ -112,14 +117,11 @@ object OverManager : StepListener, GestureListener {
                                         if (it.containsText("邀请你语音通话") || it.containsText("邀请你视频通话")) {
                                             it.log()
                                             it.getBoundsInScreen().let {
-                                                Log.d(Assists.LOG_TAG, "收到微信通话：${it.top}/${ScreenUtils.getScreenHeight()}, ${it.bottom}/${ScreenUtils.getScreenHeight()*0.7}")
-                                                if (it.bottom < ScreenUtils.getScreenHeight() * 0.13) {
+                                                if (it.bottom < ScreenUtils.getScreenHeight() * 0.2) {
                                                     isInCall = true
-                                                    Log.d(Assists.LOG_TAG, "收到微信通话通知")
                                                 }
-                                                if (it.top > ScreenUtils.getScreenHeight() * 0.60 && it.bottom < ScreenUtils.getScreenHeight() * 0.75) {
+                                                if (it.top > ScreenUtils.getScreenHeight() * 0.50 && it.bottom < ScreenUtils.getScreenHeight() * 0.8) {
                                                     isInCall = true
-                                                    Log.d(Assists.LOG_TAG, "收到微信通话界面")
                                                 }
                                             }
                                         }
@@ -130,8 +132,16 @@ object OverManager : StepListener, GestureListener {
 
                                             it.getBoundsInScreen().let {
                                                 Assists.coroutine.launch {
-                                                    Log.d(Assists.LOG_TAG, "收到微信通话界面：点击")
+                                                    withContext(Dispatchers.Main){
+                                                        AssistsWindowManager.switchNotTouchableAll()
+                                                    }
+                                                    delay(100)
                                                     Assists.gestureClick(it.left + 20f, it.top + 20f)
+                                                    delay(100)
+
+                                                    withContext(Dispatchers.Main){
+                                                        AssistsWindowManager.switchTouchableAll()
+                                                    }
                                                 }
                                             }
                                         }
