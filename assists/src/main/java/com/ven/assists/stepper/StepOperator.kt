@@ -43,6 +43,7 @@ class StepOperator(
     private fun onNextStep(nextStep: Step) {
         when (nextStep) {
             Step.none -> {
+                repeatCount = 0
                 StringBuilder().apply {
                     append("\n>>>>>>>>>>>>execute>>>>>>>>>>>")
                     append("\nStep.none（停止）")
@@ -52,12 +53,14 @@ class StepOperator(
             }
 
             Step.repeat -> {
+                repeatCount++
                 StepManager.execute(implClassName, step, delay = nextStep.delay)
             }
 
             else -> {
-                nextStep.stepImpl?.let {
-                    StepManager.execute(it.name, nextStep.tag, data = nextStep.data, delay = nextStep.delay)
+                repeatCount = 0
+                nextStep.stepImplClass?.let {
+                    StepManager.execute(it, nextStep.tag, data = nextStep.data, delay = nextStep.delay)
                 } ?: let {
                     StepManager.execute(implClassName, nextStep.tag, data = nextStep.data, delay = nextStep.delay)
                 }
@@ -68,7 +71,6 @@ class StepOperator(
     private suspend fun onStep(next: suspend (stepOperator: StepOperator) -> Step): Step {
         StepManager.stepListeners.forEach { if (it.onIntercept(this)) return Step.none }
         StepManager.stepListeners.forEach { it.onStep(this) }
-        repeatCount++
         return next.invoke(this)
     }
 }
