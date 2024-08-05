@@ -5,3 +5,31 @@ include ':assists-opcv'
 include ':sample-host'
 include ':sample-constant'
 include ':sample-host-lib'
+include ':sample-app'
+include ':sample-base'
+include ':sample-base-lib'
+include ':sample-loader'
+include ':sample-runtime'
+includeBuild 'coding'
+
+includeSample()
+
+def includeSample() {
+    include 'sample-loader',
+            'sample-runtime',
+            'pinnedheaderexpandablelistview',
+            'slidingmenu',
+            'sample-base-lib',
+            'sample-base',
+            'sample-app'
+    project(':sample-loader').projectDir = file('sample-plugin/sample-loader')
+    project(':sample-runtime').projectDir = file('sample-plugin/sample-runtime')
+    project(':pinnedheaderexpandablelistview').projectDir = file('sample-plugin/third-party/pinnedheaderexpandablelistview')
+    project(':slidingmenu').projectDir = file('sample-plugin/third-party/slidingmenu')
+    project(':sample-base-lib').projectDir = file('sample-plugin/sample-base-lib')
+    project(':sample-base').projectDir = file('sample-plugin/sample-base')
+    project(':sample-app').projectDir = file('sample-plugin/sample-app')
+}
+
+include ':sample-manager'
+//include ':aar-to-jar-plugin'

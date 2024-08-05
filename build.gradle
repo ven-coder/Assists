@@ -13,6 +13,8 @@ buildscript {
     }
     repositories {
         mavenLocal()
+
+//        maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
         maven { url "https://maven.aliyun.com/repository/public" }
         maven { url 'https://repo1.maven.org/maven2/' }
@@ -25,16 +27,18 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10"
 
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath 'com.tencent.shadow.coding:aar-to-jar-plugin'
+        classpath 'com.tencent.shadow.coding:common-jar-settings'
 //        classpath 'com.github.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
 //        classpath 'com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:7.1.2'
 
     }
 }
 apply from: 'buildScripts/gradle/common.gradle'
-
 allprojects {
     repositories {
         mavenLocal()
+//        maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
         maven { url "https://maven.aliyun.com/repository/public" }
         maven { url 'https://repo1.maven.org/maven2/' }

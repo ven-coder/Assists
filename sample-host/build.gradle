@@ -44,8 +44,9 @@ dependencies {
     implementation "commons-io:commons-io:$commons_io_android_version"//sample-host从assets中复制插件用的
     implementation "org.slf4j:slf4j-api:$slf4j_version"
 
-    implementation 'com.tencent.shadow.core:common'
-    implementation 'com.tencent.shadow.dynamic:dynamic-host'
+//    implementation 'com.tencent.shadow.core:common'
+//    implementation 'com.tencent.shadow.dynamic:dynamic-host'
+    implementation "com.tencent.shadow.dynamic:host:0.0.1"
     implementation project(':sample-constant')
     implementation project(':sample-host-lib')
 }
@@ -67,30 +68,30 @@ def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
 
 def generateAssets(generateAssetsTask, buildType) {
 
-//    def moduleName = 'sample-manager'
-//    def pluginManagerApkFile = file(
-//            "${project(":sample-manager").getBuildDir()}" +
-//                    "/outputs/apk/${buildType}/" +
-//                    "${moduleName}-${buildType}.apk"
-//    )
-//    generateAssetsTask.dependsOn createCopyTask(
-//            ':sample-manager',
-//            buildType,
-//            moduleName,
-//            'pluginmanager.apk',
-//            pluginManagerApkFile,
-//            "assemble${buildType.capitalize()}"
-//    )
-//
-//    def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
-//    generateAssetsTask.dependsOn createCopyTask(
-//            ':sample-app',
-//            buildType,
-//            'plugin-zip',
-//            "plugin-${buildType}.zip",
-//            pluginZip,
-//            "package${buildType.capitalize()}Plugin"
-//    )
+    def moduleName = 'sample-manager'
+    def pluginManagerApkFile = file(
+            "${project(":sample-manager").getBuildDir()}" +
+                    "/outputs/apk/${buildType}/" +
+                    "${moduleName}-${buildType}.apk"
+    )
+    generateAssetsTask.dependsOn createCopyTask(
+            ':sample-manager',
+            buildType,
+            moduleName,
+            'pluginmanager.apk',
+            pluginManagerApkFile,
+            "assemble${buildType.capitalize()}"
+    )
+
+    def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
+    generateAssetsTask.dependsOn createCopyTask(
+            ':sample-app',
+            buildType,
+            'plugin-zip',
+            "plugin-${buildType}.zip",
+            pluginZip,
+            "package${buildType.capitalize()}Plugin"
+    )
 
 
 }

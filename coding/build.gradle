@@ -1,0 +1,36 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+//buildscript不能从其他gradle文件中apply，所以这段buildscript脚本存在于多个子构建中。
+//请更新buildscript时同步更新。
+buildscript {
+    loadVersions:
+    {// 读取versions.properties到ext中，供项目中直接用变量引用版本号
+        def versions_properties_path = '../buildScripts/gradle/versions.properties'
+        def versions = new Properties()
+        versions.load(file(versions_properties_path).newReader())
+        versions.forEach { key, stringValue ->
+            def value = stringValue?.isInteger() ? stringValue as Integer : stringValue
+            ext.set(key, value)
+        }
+    }
+    repositories {
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            mavenCentral()
+        }
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$build_gradle_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+apply from: '../buildScripts/gradle/common.gradle'
+
+allprojects {
+    group 'com.tencent.shadow.coding'
+}
+
+tasks.create('test').dependsOn subprojects.collect { it.getTasksByName('test', false) }
+

@@ -1,0 +1,6 @@
+include 'code-generator'
+include 'aar-to-jar-plugin'
+include 'common-jar-settings'
+include 'get-android-jar'
+include 'android-jar'
+include 'java-build-config'
