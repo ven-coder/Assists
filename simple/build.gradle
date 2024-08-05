@@ -55,4 +55,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
     implementation 'com.lzy.net:okgo:3.0.4'
     implementation "com.squareup.okhttp3:logging-interceptor:4.10.0"
+
+    implementation "com.tencent.shadow.dynamic:host:0.0.1"
+    implementation "commons-io:commons-io:2.5"
+    implementation "org.slf4j:slf4j-api:1.7.25"
 }

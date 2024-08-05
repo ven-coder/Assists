@@ -1,0 +1,36 @@
+def gitShortRev() {
+    def gitCommit = ""
+    def proc = "git rev-parse --short HEAD".execute()
+    proc.in.eachLine { line -> gitCommit = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    return gitCommit
+}
+
+allprojects {
+    def versionName, versionSuffix
+    if ("${System.env.CI}".equalsIgnoreCase("true")) {
+        versionName = System.getenv("GITHUB_REF_SLUG")
+    } else {
+        versionName = project.VERSION_NAME
+    }
+
+    if ("${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")) {
+        versionSuffix = ""
+    } else if ("${System.env.CI}".equalsIgnoreCase("true")) {
+        versionSuffix = "-${System.env.GITHUB_SHA_SHORT}-SNAPSHOT"
+    } else {
+        versionSuffix = "-${gitShortRev()}-SNAPSHOT"
+    }
+    ext.ARTIFACT_VERSION = "0.0.1"
+    ext.TEST_HOST_APP_APPLICATION_ID = 'com.tencent.shadow.test.hostapp'
+    ext.SAMPLE_HOST_APP_APPLICATION_ID = 'com.tencent.shadow.sample.host'
+    repositories {
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            mavenCentral()
+        }
+    }
+}

@@ -1,0 +1,3 @@
+/Users/dev/StudioProjects/Assists/assists-opencv/.cxx/Debug/o686m3d5/x86/CMakeFiles/rebuild_cache.dir
+/Users/dev/StudioProjects/Assists/assists-opencv/.cxx/Debug/o686m3d5/x86/CMakeFiles/edit_cache.dir
+/Users/dev/StudioProjects/Assists/assists-opencv/.cxx/Debug/o686m3d5/x86/CMakeFiles/opencv_jni_shared.dir
