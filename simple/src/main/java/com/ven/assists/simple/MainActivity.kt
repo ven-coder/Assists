@@ -1,6 +1,7 @@
 package com.ven.assists.simple
 
 import android.app.WallpaperManager
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
                     OverManager.show()
                 } else {
                     Assists.openAccessibilitySetting()
+                    startActivity(Intent(this@MainActivity, SettingGuideActivity::class.java))
                 }
             }
         }

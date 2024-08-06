@@ -49,4 +49,14 @@
         <!-- 背景透明 -->
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+    <style name="TransparentActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 设置窗口背景为透明 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <!--        <item name="android:windowFullscreen">true</item>-->
+    </style>
+
 </resources>

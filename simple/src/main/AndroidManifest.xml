@@ -52,6 +52,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SettingGuideActivity" android:theme="@style/TransparentActivityTheme"/>
 
         <service
             android:name="com.ven.assists.AssistsService"
