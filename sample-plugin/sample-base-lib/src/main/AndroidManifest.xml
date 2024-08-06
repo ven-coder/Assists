@@ -8,6 +8,7 @@
         <activity
             android:name="com.tencent.shadow.sample.plugin.app.lib.gallery.splash.SplashActivity"
             android:theme="@style/CustomActivityTheme"
+            android:exported="true"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTask">
             <intent-filter>

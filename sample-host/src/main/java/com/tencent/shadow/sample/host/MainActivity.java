@@ -72,7 +72,6 @@ public class MainActivity extends Activity {
                         break;
                     case Constant.PART_KEY_PLUGIN_ANOTHER_APP:
                         intent.putExtra(Constant.KEY_PLUGIN_PART_KEY, partKey);
-                        ;
                         break;
                 }
 
