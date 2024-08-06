@@ -27,6 +27,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -35,6 +36,9 @@ import androidx.annotation.Nullable;
 import com.tencent.shadow.sample.plugin.app.lib.base.R;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.util.PluginChecker;
+import com.ven.assists.Assists;
+
+import java.util.ArrayList;
 
 public class UseCaseSummaryFragment extends Fragment {
 
@@ -104,6 +108,19 @@ public class UseCaseSummaryFragment extends Fragment {
         mStartCase = (Button) view.findViewById(R.id.start_case);
         mCaseSummary = (TextView) view.findViewById(R.id.case_summary);
         mEnvironment = (TextView) view.findViewById(R.id.environment);
+        view.findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Assists.getService() == null) {
+                    Assists.openAccessibilitySetting();
+                } else {
+                    ArrayList<AccessibilityNodeInfo> nodes = Assists.INSTANCE.getAllNodes();
+                    for (AccessibilityNodeInfo nodeInfo : nodes) {
+                        Assists.INSTANCE.log(nodeInfo, Assists.INSTANCE.getLOG_TAG());
+                    }
+                }
+            }
+        });
 
         mEnvironment.setText(PluginChecker.isPluginMode() ? "当前环境：插件模式" : "当前环境：独立安装");
     }

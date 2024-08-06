@@ -28,6 +28,7 @@ android {
 
 dependencies {
     implementation project(":slidingmenu")
+    implementation project(":assists")
     implementation project(":pinnedheaderexpandablelistview")
     implementation "com.android.support:support-annotations:$android_support_annotations_version"
     api "com.android.support:support-v4:$android_support_version"
