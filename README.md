@@ -211,7 +211,7 @@ OpencvWrapper.getResultWithThreshold(
 
 | 交流群 | 个人微信 |
 |:---------:|:-----------:|
-| <img src="https://github.com/user-attachments/assets/f0e2bc44-183c-40fb-a8fc-2d829eebdbbb" width=200/>    | <img src="https://github.com/ven-coder/Assists/assets/27257149/542e51d1-9f22-4381-b011-618fc0cef959" width=200/>
+| <img src="https://github.com/user-attachments/assets/9d1beb7a-f506-4197-bcac-12f8021b891f" width=200/>    | <img src="https://github.com/ven-coder/Assists/assets/27257149/542e51d1-9f22-4381-b011-618fc0cef959" width=200/>
 
 ## 我的付费社群
 付费社群提供的服务：
