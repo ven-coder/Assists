@@ -59,6 +59,7 @@
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <!--      android:priority="10000" 可提高服务在设置中的权重，排在前面     -->
             <intent-filter android:priority="10000">
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>

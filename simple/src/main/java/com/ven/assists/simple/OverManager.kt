@@ -69,6 +69,7 @@ object OverManager : StepListener, GestureListener {
             Assists.gestureListeners.add(this)
             StepManager.stepListeners.add(this)
             ViewMainOverBinding.inflate(LayoutInflater.from(it)).apply {
+                parent.assistsWindowLayoutWrapperBinding.tvTitle.text = "AssistsSimple"
                 llOption.isVisible = true
                 llLog.isVisible = false
                 btnCloseLog.isVisible = false
@@ -132,14 +133,14 @@ object OverManager : StepListener, GestureListener {
 
                                             it.getBoundsInScreen().let {
                                                 Assists.coroutine.launch {
-                                                    withContext(Dispatchers.Main){
+                                                    withContext(Dispatchers.Main) {
                                                         AssistsWindowManager.switchNotTouchableAll()
                                                     }
                                                     delay(100)
                                                     Assists.gestureClick(it.left + 20f, it.top + 20f)
                                                     delay(100)
 
-                                                    withContext(Dispatchers.Main){
+                                                    withContext(Dispatchers.Main) {
                                                         AssistsWindowManager.switchTouchableAll()
                                                     }
                                                 }
