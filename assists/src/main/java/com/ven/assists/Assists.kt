@@ -20,6 +20,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
@@ -71,6 +72,7 @@ object Assists {
     //手势监听
     val gestureListeners: ArrayList<GestureListener> = arrayListOf()
 
+    private var appRectInScreen: Rect? = null
 
     var screenCaptureService: ScreenCaptureService? = null
         set(value) {
@@ -79,6 +81,7 @@ object Assists {
             }
             field = value
         }
+
 
     private val activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
@@ -332,7 +335,7 @@ object Assists {
      * 查找可点击的父元素
      */
     private fun AccessibilityNodeInfo.findFirstParentClickable(nodeInfo: Array<AccessibilityNodeInfo?>) {
-        if (parent?.isClickable==true) {
+        if (parent?.isClickable == true) {
             nodeInfo[0] = parent
             return
         } else {
@@ -503,9 +506,34 @@ object Assists {
             clipboardManager.primaryClip
             performAction(AccessibilityNodeInfo.ACTION_PASTE)
         }
-
     }
 
+    /**
+     * 选择输入框文本
+     * @param selectionStart 文本起始下标
+     * @param selectionEnd 文本结束下标
+     * @return 执行结果，true成功，false失败
+     */
+    fun AccessibilityNodeInfo.selectionText(selectionStart: Int, selectionEnd: Int): Boolean {
+        val selectionArgs = Bundle()
+        selectionArgs.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, selectionStart)
+        selectionArgs.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, selectionEnd)
+        return performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selectionArgs)
+    }
+
+    /**
+     * 修改输入框文本内容
+     * @return 执行结果，true成功，false失败
+     */
+    fun AccessibilityNodeInfo.setNodeText(text: String?): Boolean {
+        text ?: return false
+        return performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, bundleOf().apply {
+            putCharSequence(
+                AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                text
+            )
+        })
+    }
 
     /**
      * 根据基准分辨率宽度获取对应当前分辨率的x坐标
@@ -524,6 +552,45 @@ object Assists {
             screenHeight = baseHeight
         }
         return (y.toFloat() / baseHeight * screenHeight).toInt()
+    }
+
+
+    /**
+     * 获取当前app在屏幕中的位置，如果找不到android:id/content节点则为空
+     */
+    fun getAppBoundsInScreen(): Rect? {
+        return service?.let {
+            return@let findById("android:id/content").firstOrNull()?.getBoundsInScreen()
+        }
+    }
+
+
+    /**
+     * 初始化当前app在屏幕中的位置
+     */
+    fun initAppBoundsInScreen(): Rect? {
+        return getAppBoundsInScreen().apply {
+            appRectInScreen = this
+        }
+    }
+
+    /**
+     * 获取当前app在屏幕中的宽度，获取前需要先执行initAppBoundsInScreen，避免getAppBoundsInScreen每次获取新的会耗时
+     */
+    fun getAppWidthInScreen(): Int {
+        return appRectInScreen?.let {
+            return@let it.right - it.left
+        } ?: ScreenUtils.getScreenWidth()
+    }
+
+
+    /**
+     * 获取当前app在屏幕中的高度，获取前需要先执行initAppBoundsInScreen，避免getAppBoundsInScreen每次获取新的会耗时
+     */
+    fun getAppHeightInScreen(): Int {
+        return appRectInScreen?.let {
+            return@let it.bottom - it.top
+        } ?: ScreenUtils.getScreenHeight()
     }
 
     /**
