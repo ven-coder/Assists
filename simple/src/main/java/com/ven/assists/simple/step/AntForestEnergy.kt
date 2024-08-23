@@ -121,10 +121,13 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
             val capBeginY = (screenMat.height() * 0.2).toInt()
             val capEndY = screenMat.height() * 0.18
             val capMat = Mat(screenMat, Rect(0, capBeginY, screenMat.width(), capEndY.toInt()))
+
+            //注意，模板截取时需要以当前手机设备分辨率一致大小的情况下截取，否则影响匹配准确率
             val temp3 = OpencvWrapper.getTemplateFromAssets("temp3.jpg") ?: Mat()
             val lowerGreen = Scalar(35.0, 100.0, 100.0)
             val upperGreen = Scalar(85.0, 255.0, 255.0)
             val textRect = Rect(temp3.width() / 2 - 85 / 2, temp3.height() / 2 - 85 / 2, 85, 60)
+            //生成掩膜，仅匹配指定区域
             val sphereMask = OpencvWrapper.createMask(
                 temp3,
                 lowerGreen,
