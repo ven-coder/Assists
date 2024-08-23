@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.ven.assists.AssistsWindowLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_1"
@@ -31,26 +32,27 @@
 
 
                     <Button
+                        android:id="@+id/btn_ant_forest_energy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorAccent"
+                        android:text="蚂蚁森林能量自动收集"
+                        android:textColor="@color/colorPrimary" />
+
+                    <Button
                         android:id="@+id/btn_1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorAccent"
                         android:text="禁止下拉通知栏"
                         android:textColor="@color/colorPrimary" />
+
                     <Button
                         android:id="@+id/btn_2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorAccent"
                         android:text="自动接听微信电话"
-                        android:textColor="@color/colorPrimary" />
-
-                    <Button
-                        android:id="@+id/btn_ant_forest_energy"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="@color/colorAccent"
-                        android:text="蚂蚁森林能量自动收集"
                         android:textColor="@color/colorPrimary" />
 
                     <Button

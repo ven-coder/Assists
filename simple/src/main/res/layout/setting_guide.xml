@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -33,6 +34,17 @@
                 android:layout_marginBottom="20dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="引导示例"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -98,7 +110,7 @@
                         android:layout_width="wrap_content"
 
                         android:layout_height="wrap_content"
-                        android:text="【自动点击连点器】"
+                        android:text="【AssistsSimple】"
                         android:textColor="#009688"
                         android:textSize="16sp" />
 
@@ -133,11 +145,10 @@
                 </LinearLayout>
 
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_marginTop="15dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
                     android:background="@drawable/bg_2"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -153,7 +164,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:padding="15dp"
-                        android:text="自动点击连点器"
+                        android:text="AssistsSimple"
                         android:textColor="#000000"
                         android:textSize="16sp" />
 
