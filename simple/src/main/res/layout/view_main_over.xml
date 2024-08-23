@@ -32,6 +32,14 @@
 
 
                     <Button
+                        android:id="@+id/btn_setting_guide"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorAccent"
+                        android:text="无障碍服务开启引导示例"
+                        android:textColor="@color/colorPrimary" />
+
+                    <Button
                         android:id="@+id/btn_ant_forest_energy"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
