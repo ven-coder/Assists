@@ -195,6 +195,22 @@ object Assists {
     }
 
     /**
+     * 根据文本查找所有文本相同的元素
+     */
+    fun findByTextAllMatch(text: String): List<AccessibilityNodeInfo> {
+        val listResult = arrayListOf<AccessibilityNodeInfo>()
+        val list = service?.rootInActiveWindow?.findByText(text)
+        list?.let {
+            it.forEach {
+                if (TextUtils.equals(it.text, text)) {
+                    listResult.add(it)
+                }
+            }
+        }
+        return listResult
+    }
+
+    /**
      * 在当前元素范围下，通过文本查找所有符合条件元素
      */
     fun AccessibilityNodeInfo?.findByText(text: String): List<AccessibilityNodeInfo> {
@@ -268,7 +284,6 @@ object Assists {
     /**
      * 根据类型查找首个符合条件的父元素
      * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
-     * @return 所有符合条件的元素
      */
     fun AccessibilityNodeInfo.findFirstParentByTags(className: String): AccessibilityNodeInfo? {
         val nodeList = arrayListOf<AccessibilityNodeInfo>()
@@ -362,7 +377,6 @@ object Assists {
      * @param endLocation 结束位置
      * @param startTime 开始间隔时间
      * @param duration 持续时间
-     * @return 执行手势动作总耗时
      */
     @JvmStatic
     suspend fun gesture(
@@ -381,9 +395,8 @@ object Assists {
     /**
      * 手势模拟
      * @param path 手势路径
-     * @param startTime 开始间隔时间
-     * @param duration 持续时间
-     * @return 执行手势动作总耗时
+     * @param startTime 开始间隔毫秒
+     * @param duration 持续毫秒
      */
     @JvmStatic
     suspend fun gesture(
@@ -436,9 +449,10 @@ object Assists {
 
     /**
      * 点击元素
+     * @return 执行结果，true成功，false失败
      */
-    fun AccessibilityNodeInfo.click() {
-        performAction(AccessibilityNodeInfo.ACTION_CLICK)
+    fun AccessibilityNodeInfo.click(): Boolean {
+        return performAction(AccessibilityNodeInfo.ACTION_CLICK)
     }
 
     /**
@@ -451,7 +465,8 @@ object Assists {
 
     /**
      * 点击屏幕指定位置
-     * @return 执行手势动作总耗时
+     * @param x 坐标
+     * @param y 坐标
      */
     suspend fun gestureClick(
         x: Float,
@@ -467,45 +482,51 @@ object Assists {
 
     /**
      * 返回
+     * @return 执行结果，true成功，false失败
      */
-    fun back() {
-        service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+    fun back(): Boolean {
+        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK) ?: false
     }
 
 
     /**
      * 回到主页
+     * @return 执行结果，true成功，false失败
      */
-    fun home() {
-        service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
+    fun home(): Boolean {
+        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME) ?: false
     }
 
     /**
      * 显示通知栏
+     * @return 执行结果，true成功，false失败
      */
-    fun notifications() {
-        service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS)
+    fun notifications(): Boolean {
+        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS) ?: false
     }
 
     /**
      * 最近任务
+     * @return 执行结果，true成功，false失败
      */
-    fun tasks() {
-        service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS)
+    fun tasks(): Boolean {
+        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS) ?: false
     }
 
     /**
      * 粘贴文本到当前元素
+     * @return 执行结果，true成功，false失败
      */
-    fun AccessibilityNodeInfo.paste(text: String?) {
+    fun AccessibilityNodeInfo.paste(text: String?): Boolean {
         performAction(AccessibilityNodeInfo.ACTION_FOCUS)
         service?.let {
             val clip = ClipData.newPlainText("${System.currentTimeMillis()}", text)
             val clipboardManager = (it.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
             clipboardManager.setPrimaryClip(clip)
             clipboardManager.primaryClip
-            performAction(AccessibilityNodeInfo.ACTION_PASTE)
+            return performAction(AccessibilityNodeInfo.ACTION_PASTE)
         }
+        return false
     }
 
     /**
@@ -592,6 +613,15 @@ object Assists {
             return@let it.bottom - it.top
         } ?: ScreenUtils.getScreenHeight()
     }
+
+    /**
+     * TODO 向前滚动列表
+     */
+
+    /**
+     * TODO 向后滚动列表
+     */
+
 
     /**
      * 控制台输出元素信息
