@@ -1,4 +1,4 @@
-# Assists v3.0.3
+# Assists v3.1.0
 Android无障碍服务（AccessibilityService）开发框架，快速开发复杂自动化任务、远程协助、监听等
 ***
 ## Android无障碍服务能做什么
@@ -14,38 +14,49 @@ Android无障碍服务（AccessibilityService）开发框架，快速开发复�
 
 按照Google官方文档继承实现的无障碍服务，对于复杂的自动化任务，不仅代码逻辑实现不清晰，后期的修改维护也会很头疼，所以在实践过程中实现了这个框架
 
-在这个框架下开发Android无障碍服务业务可以让你的业务开发更加快速、逻辑更加健壮且容易维护。
+使用这个框架下开发Android无障碍服务业务可以让你的业务开发更加快速、逻辑更加健壮且容易维护。
 
-## v3.0.3更新日志
-增加拓展api
-1. AccessibilityNodeInfo.getChildren() 获取当前元素下的子元素（不包括子元素中的子元素）
-2. AccessibilityNodeInfo.findFirstParentByTags 根据类型查找首个符合条件的父元素
+## 框架项目亮点
+1. 包装无障碍服务设置简单配置即可使用
+2. 利用kotlin拓展AccessibilityNodeInfo，使元素的操作更加简洁
+3. 结合kotlin协程封装步骤器，可使复杂自动化业务逻辑低耦合又不容易交叉出错且易于维护
+4. 利用框架实现各种示例供参考
 
-## v3.0.2更新日志
-1. 步骤器重构：**支持协程实现步骤事件流、步骤数据传递**
-2. 获取屏幕图像
-3. 集成opencv，封装图像匹配
+## v3.1.0更新日志-2024-8-25
+1. 示例新增无障碍服务开启引导、防止下拉通知栏、通知/Toast监听、微信电话自动接听
+2. 新增文本选择```AccessibilityNodeInfo.selectionText```
+3. 新增修改输入框文本内容```AccessibilityNodeInfo.setNodeText```
+4. 新增修改输入框文本内容```AccessibilityNodeInfo.setNodeText```
+5. 新增获取当前app在屏幕中的范围```AccessibilityNodeInfo.getAppBoundsInScreen```
+6. 新增获取当前app在屏幕中的宽度```AccessibilityNodeInfo.getAppWidthInScreen```
+7. 新增获取当前app在屏幕中的高度```AccessibilityNodeInfo.getAppHeightInScreen```
+8. 新增根据文本查找所有与文本相同的元素```AccessibilityNodeInfo.findByTextAllMatch```
+9. 新增使列表向前滚动```AccessibilityNodeInfo.scrollForward```
+10. 新增使列表向后滚动```AccessibilityNodeInfo.scrollBackward```
 
-v2.0.0版本[查看这里](https://github.com/ven-coder/Assists/tree/release-2.0.0)
+### [版本历史](https://github.com/ven-coder/Assists/wiki/%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC)
 
 ## 功能计划
-- 图像识别 （✅完成）
+- js支持（进行中...2024.8.25）
 - 图文识别
 - 录屏
-- js支持
 - vue.js支持
 - uniapp插件
 - flutter插件
+- 图像识别 （✅完成）
 
 ## Demo部分演示
-| 图像识别支付宝自动收能量 |自动发朋友圈|自动滑动朋友圈|
-|:-:|:-:|:-:|
-| <img src="https://github.com/ven-coder/Assists/assets/27257149/8d1d09b2-e4b3-44dc-b5df-68fcdcac7a62" width=250 /> |<img src="https://github.com/ven-coder/Assists/assets/27257149/4713656b-a8ff-4c99-9814-a0b883ebbe64" width=250 />|<img src="https://github.com/ven-coder/Assists/assets/27257149/056ef46b-8076-4f90-ab5a-263ff308f8e8" width=250 />
+| 图像识别支付宝自动收能量 |自动发朋友圈|自动滑动朋友圈| 无障碍服务开启引导 |
+|:-:|:-:|:-:|:-:|
+| <img src="https://github.com/ven-coder/Assists/assets/27257149/8d1d09b2-e4b3-44dc-b5df-68fcdcac7a62" width=180 /> |<img src="https://github.com/ven-coder/Assists/assets/27257149/4713656b-a8ff-4c99-9814-a0b883ebbe64" width=180 />|<img src="https://github.com/ven-coder/Assists/assets/27257149/056ef46b-8076-4f90-ab5a-263ff308f8e8" width=180 />| <img src="https://github.com/user-attachments/assets/9e20a757-8d8f-47e6-999b-8532b4e6827a" width=180 /> |
+防止下拉通知栏|通知/Toast监听|自动接听微信电话|
+|<img src="https://github.com/user-attachments/assets/76613db4-c0a9-4ad8-abde-ec0ef8f7ed09" width=180 />|<img src="https://github.com/user-attachments/assets/cc6a861a-3512-43c0-9c1d-4e61229dc527" width=180 />|<img src="https://github.com/user-attachments/assets/25472235-8d6d-4327-9bc5-db47253b7f0e" width=180 />
+
 
 ## 使用
 ### 1. 添加库
 #### 1.1 Clone或下载源码
-版本v3.0.3：[https://github.com/ven-coder/Assists/releases/tag/3.0.3](https://github.com/ven-coder/Assists/archive/refs/tags/3.0.3.zip)
+版本v3.1.0：[https://github.com/ven-coder/Assists/releases/tag/3.1.0](https://github.com/ven-coder/Assists/releases/tag/3.1.0)
 
 
 #### 1.2 导入依赖库
@@ -145,60 +156,9 @@ class OpenWechat:StepImpl() {
 StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
 ```
 
-## 图像识别模块使用
-图像识别模块主要是对opencv的模板匹配api和Android的屏幕图像获取进行了一层封装，下面是所封装api的使用说明
-### 检查是否拥有录屏权限
-```Assists.isEnableScreenCapture()```
-### 请求录屏权限
-```Assists.requestScreenCapture()```
-### 获取屏幕图像
-```OpencvWrapper.getScreen()```
-### 通过Assets获取图像
-```OpencvWrapper.getTemplateFromAssets()```
-### 创建掩膜
-```
-OpencvWrapper.createMask(
-        source: Mat, //原图像
-        lowerScalar: Scalar, 可操作区域最低rgb
-        upperScalar: Scalar, 可操作区域最高rgb
-        requisiteExtraRectList: List<Rect> = arrayListOf(), //不可操作区域
-        redundantExtraRectList: List<Rect> = arrayListOf() //可操作区域，即图像匹配有效区域
-    )
-```
->添加掩膜进行模板匹配可大大提高匹配准确度，掩膜是一个黑白色的图像，白色为匹配的区域，黑色为不匹配区域，通过仅匹配关键区域提高匹配准确度
+#### 以上具体使用最好直接查看Simple源码
 
-### 模板匹配
-```OpencvWrapper.matchTemplate(image: Mat?, template: Mat?, mask: Mat? = null)```
-> ```image```大图图像<br/>
-> ```template```模板图像，即小图<br/>
-> ```mask```掩膜<br/>
-> 返回所有匹配结果，按需求进行筛选
-
-### 模板匹配获取最佳结果
-```OpencvWrapper.matchTemplateFromScreenToMinMaxLoc(image: Mat?, template: Mat?, mask: Mat? = null)```
-> ```image```大图图像<br/>
-> ```template```模板图像，即小图<br/>
-> ```mask```掩膜<br/>
-> 返回最佳匹配结果
-
-### 筛选匹配结果获取达到阈值的匹配结果
-```
-OpencvWrapper.getResultWithThreshold(
-        result: Mat,
-        threshold: Double,
-        ignoreX: Double = -1.0,
-        ignoreY: Double = -1.0,
-    )
-```
-> ```result```匹配结果<br/>
-> ```threshold```匹配值，范围0-1，0最低匹配值，1最高匹配值<br/>
-> ```ignoreX```忽略的x轴范围<br/>
-> ```ignoreY```忽略的y轴范围<br/>
-> 返回符合条件的匹配坐标列表
-
-#### 以上具体的使用最好直接查看demo源码
-
-#### 更多开发文档请查看：[https://github.com/ven-coder/Assists/wiki](https://github.com/ven-coder/Assists/wiki)
+#### 这里有些不是很完整的文档：[https://github.com/ven-coder/Assists/wiki](https://github.com/ven-coder/Assists/wiki)
 
 ## Demo下载
 扫码下载（由于加入opencv且未对abi进行过滤所以安装包有134M）
