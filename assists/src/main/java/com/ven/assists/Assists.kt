@@ -42,9 +42,6 @@ object Assists {
     //日志TAG
     var LOG_TAG = "assists_log"
 
-    //手势执行延迟回调
-    var gestureBeginDelay = 0L
-
     val screenRequestLaunchers: HashMap<Activity, ActivityResultLauncher<Intent>> = hashMapOf()
 
     private var job = Job()
@@ -68,9 +65,6 @@ object Assists {
     var service: AssistsService? = null
 
     val serviceListeners: ArrayList<AssistsServiceListener> = arrayListOf()
-
-    //手势监听
-    val gestureListeners: ArrayList<GestureListener> = arrayListOf()
 
     private var appRectInScreen: Rect? = null
 
@@ -385,7 +379,6 @@ object Assists {
         startTime: Long,
         duration: Long,
     ) {
-        gestureListeners.forEach { it.onGestureBegin(startLocation, endLocation) }
         val path = Path()
         path.moveTo(startLocation[0], startLocation[1])
         path.lineTo(endLocation[0], endLocation[1])
@@ -415,19 +408,11 @@ object Assists {
 
             override fun onCancelled(gestureDescription: GestureDescription) {
                 deferred.complete(0)
-                gestureListeners.forEach { it.onGestureCancelled() }
-                gestureListeners.forEach { it.onGestureEnd() }
             }
         }, null) ?: let {
             deferred.complete(0)
         }
         val result = deferred.await()
-        if (result == 1) {
-            gestureListeners.forEach { it.onGestureCompleted() }
-        } else {
-            gestureListeners.forEach { it.onGestureCancelled() }
-        }
-        gestureListeners.forEach { it.onGestureEnd() }
     }
 
     /**
@@ -615,13 +600,20 @@ object Assists {
     }
 
     /**
-     * TODO 向前滚动列表
+     * 向前滚动（需元素是可滚动的）
+     * @return 执行结果，true成功，false失败。false可作为滚动到底部或顶部依据
      */
+    fun AccessibilityNodeInfo.scrollForward(): Boolean {
+        return performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+    }
 
     /**
-     * TODO 向后滚动列表
+     * 向后滚动（需元素是可滚动的）
+     * @return 执行结果，true成功，false失败。false可作为滚动到底部或顶部依据
      */
-
+    fun AccessibilityNodeInfo.scrollBackward(): Boolean {
+        return performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+    }
 
     /**
      * 控制台输出元素信息

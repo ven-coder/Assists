@@ -9,6 +9,7 @@ import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.blankj.utilcode.util.BarUtils
+import com.blankj.utilcode.util.LogUtils
 import com.ven.assists.Assists
 import com.ven.assists.Assists.getNodes
 import com.ven.assists.Assists.log
@@ -48,6 +49,13 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
             viewBind.btnOption.text = "显示操作浮窗"
         } else {
             viewBind.btnOption.text = "开启服务"
+        }
+    }
+
+    override fun onAccessibilityEvent(event: AccessibilityEvent) {
+        super.onAccessibilityEvent(event)
+        if (event.eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
+
         }
     }
 

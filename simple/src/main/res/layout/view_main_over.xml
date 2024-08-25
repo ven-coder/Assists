@@ -40,11 +40,12 @@
                         android:textColor="@color/colorPrimary" />
 
                     <Button
-                        android:id="@+id/btn_ant_forest_energy"
+                        android:id="@+id/btn_notification"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorAccent"
-                        android:text="蚂蚁森林能量自动收集"
+                        android:text="通知监听（包括Toast）"
+                        android:textAllCaps="false"
                         android:textColor="@color/colorPrimary" />
 
                     <Button
@@ -110,6 +111,15 @@
                         android:text="自动抢红包"
                         android:textColor="@color/colorPrimary"
                         android:visibility="gone" />
+
+                    <Button
+                        android:id="@+id/btn_ant_forest_energy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorAccent"
+                        android:text="蚂蚁森林能量自动收集"
+                        android:textColor="@color/colorPrimary" />
+
 
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>

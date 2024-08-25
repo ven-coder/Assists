@@ -25,7 +25,6 @@ import com.blankj.utilcode.util.SizeUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.bumptech.glide.Glide
-import com.ven.assists.GestureListener
 import com.ven.assists.Assists
 import com.ven.assists.Assists.click
 import com.ven.assists.Assists.containsText
@@ -60,14 +59,23 @@ import org.opencv.core.Mat
 import org.opencv.core.Rect
 import org.opencv.imgproc.Imgproc
 
-object OverManager : StepListener, GestureListener {
+object OverManager : StepListener {
     @SuppressLint("StaticFieldLeak")
     private var viewMainOver: ViewMainOverBinding? = null
     private var autoAnswerWechatCallListener: AssistsServiceListener? = null
+    private val notificationListener = object : AssistsServiceListener {
+        override fun onAccessibilityEvent(event: AccessibilityEvent) {
+            super.onAccessibilityEvent(event)
+            if (event.eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
+                event.text.forEach {
+                    OverManager.log("监听到通知：${it}")
+                }
+            }
+        }
+    }
 
     private fun createView(): ViewMainOverBinding? {
         return Assists.service?.let { it ->
-            Assists.gestureListeners.add(this)
             StepManager.stepListeners.add(this)
             ViewMainOverBinding.inflate(LayoutInflater.from(it)).apply {
                 initView(this)
@@ -90,6 +98,18 @@ object OverManager : StepListener, GestureListener {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     })
 
+            }
+            btnNotification.setOnClickListener {
+                beginStart(this)
+                if (!Assists.serviceListeners.contains(notificationListener)) {
+                    Assists.serviceListeners.add(notificationListener)
+                }
+                Assists.coroutine.launch {
+                    delay(1000)
+                    withContext(Dispatchers.Main) {
+                        OverManager.log("通知监听中...")
+                    }
+                }
             }
             btn1.setOnClickListener {
                 if (btn1.tag is View) {
@@ -119,11 +139,6 @@ object OverManager : StepListener, GestureListener {
                     withContext(Dispatchers.Main) {
                         OverManager.log("监听并自动接听微信电话...")
                     }
-
-                    while (true) {
-
-                        delay(1000)
-                    }
                 }
 
                 autoAnswerWechatCallListener ?: let {
@@ -144,10 +159,11 @@ object OverManager : StepListener, GestureListener {
                                         }
                                     }
                                     if (isInCall && it.containsText("接听") && it.className == "android.widget.ImageButton") {
+                                        OverManager.log("收到微信电话，接听")
                                         it.click()
                                     }
                                     if (isInCall && it.containsText("接听") && it.className == "android.widget.Button") {
-
+                                        OverManager.log("收到微信电话，接听")
                                         it.getBoundsInScreen().let {
                                             Assists.coroutine.launch {
                                                 withContext(Dispatchers.Main) {
@@ -221,10 +237,10 @@ object OverManager : StepListener, GestureListener {
         viewMainOver ?: let {
             viewMainOver = createView()
             var width = ScreenUtils.getScreenWidth() - 60
-            var height = SizeUtils.dp2px(400f)
+            var height = SizeUtils.dp2px(300f)
             viewMainOver?.root?.layoutParams?.width = width
             viewMainOver?.root?.layoutParams?.height = height
-            viewMainOver?.root?.minWidth = ScreenUtils.getScreenWidth() / 2
+            viewMainOver?.root?.minWidth = (ScreenUtils.getScreenWidth() * 0.6).toInt()
             viewMainOver?.root?.minHeight = height
             viewMainOver?.root?.setCenter()
             AssistsWindowManager.addAssistsWindowLayout(viewMainOver?.root)
@@ -239,13 +255,6 @@ object OverManager : StepListener, GestureListener {
             btnCloseLog.isVisible = false
             btnStop.isVisible = true
         }
-    }
-
-    override fun onGestureBegin(startLocation: FloatArray, endLocation: FloatArray) {
-
-    }
-
-    override fun onGestureEnd() {
     }
 
     override fun onStepStop() {
@@ -275,7 +284,6 @@ object OverManager : StepListener, GestureListener {
     }
 
     fun clear() {
-        Assists.gestureListeners.remove(this)
         StepManager.stepListeners.remove(this)
         viewMainOver = null
     }
