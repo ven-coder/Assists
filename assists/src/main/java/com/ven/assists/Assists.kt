@@ -20,6 +20,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
@@ -40,9 +41,6 @@ object Assists {
 
     //日志TAG
     var LOG_TAG = "assists_log"
-
-    //手势执行延迟回调
-    var gestureBeginDelay = 0L
 
     val screenRequestLaunchers: HashMap<Activity, ActivityResultLauncher<Intent>> = hashMapOf()
 
@@ -68,9 +66,7 @@ object Assists {
 
     val serviceListeners: ArrayList<AssistsServiceListener> = arrayListOf()
 
-    //手势监听
-    val gestureListeners: ArrayList<GestureListener> = arrayListOf()
-
+    private var appRectInScreen: Rect? = null
 
     var screenCaptureService: ScreenCaptureService? = null
         set(value) {
@@ -79,6 +75,7 @@ object Assists {
             }
             field = value
         }
+
 
     private val activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
@@ -192,6 +189,22 @@ object Assists {
     }
 
     /**
+     * 根据文本查找所有文本相同的元素
+     */
+    fun findByTextAllMatch(text: String): List<AccessibilityNodeInfo> {
+        val listResult = arrayListOf<AccessibilityNodeInfo>()
+        val list = service?.rootInActiveWindow?.findByText(text)
+        list?.let {
+            it.forEach {
+                if (TextUtils.equals(it.text, text)) {
+                    listResult.add(it)
+                }
+            }
+        }
+        return listResult
+    }
+
+    /**
      * 在当前元素范围下，通过文本查找所有符合条件元素
      */
     fun AccessibilityNodeInfo?.findByText(text: String): List<AccessibilityNodeInfo> {
@@ -265,7 +278,6 @@ object Assists {
     /**
      * 根据类型查找首个符合条件的父元素
      * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
-     * @return 所有符合条件的元素
      */
     fun AccessibilityNodeInfo.findFirstParentByTags(className: String): AccessibilityNodeInfo? {
         val nodeList = arrayListOf<AccessibilityNodeInfo>()
@@ -332,7 +344,7 @@ object Assists {
      * 查找可点击的父元素
      */
     private fun AccessibilityNodeInfo.findFirstParentClickable(nodeInfo: Array<AccessibilityNodeInfo?>) {
-        if (parent?.isClickable==true) {
+        if (parent?.isClickable == true) {
             nodeInfo[0] = parent
             return
         } else {
@@ -359,7 +371,6 @@ object Assists {
      * @param endLocation 结束位置
      * @param startTime 开始间隔时间
      * @param duration 持续时间
-     * @return 执行手势动作总耗时
      */
     @JvmStatic
     suspend fun gesture(
@@ -368,7 +379,6 @@ object Assists {
         startTime: Long,
         duration: Long,
     ) {
-        gestureListeners.forEach { it.onGestureBegin(startLocation, endLocation) }
         val path = Path()
         path.moveTo(startLocation[0], startLocation[1])
         path.lineTo(endLocation[0], endLocation[1])
@@ -378,9 +388,8 @@ object Assists {
     /**
      * 手势模拟
      * @param path 手势路径
-     * @param startTime 开始间隔时间
-     * @param duration 持续时间
-     * @return 执行手势动作总耗时
+     * @param startTime 开始间隔毫秒
+     * @param duration 持续毫秒
      */
     @JvmStatic
     suspend fun gesture(
@@ -399,19 +408,11 @@ object Assists {
 
             override fun onCancelled(gestureDescription: GestureDescription) {
                 deferred.complete(0)
-                gestureListeners.forEach { it.onGestureCancelled() }
-                gestureListeners.forEach { it.onGestureEnd() }
             }
         }, null) ?: let {
             deferred.complete(0)
         }
         val result = deferred.await()
-        if (result == 1) {
-            gestureListeners.forEach { it.onGestureCompleted() }
-        } else {
-            gestureListeners.forEach { it.onGestureCancelled() }
-        }
-        gestureListeners.forEach { it.onGestureEnd() }
     }
 
     /**
@@ -433,9 +434,10 @@ object Assists {
 
     /**
      * 点击元素
+     * @return 执行结果，true成功，false失败
      */
-    fun AccessibilityNodeInfo.click() {
-        performAction(AccessibilityNodeInfo.ACTION_CLICK)
+    fun AccessibilityNodeInfo.click(): Boolean {
+        return performAction(AccessibilityNodeInfo.ACTION_CLICK)
     }
 
     /**
@@ -448,7 +450,8 @@ object Assists {
 
     /**
      * 点击屏幕指定位置
-     * @return 执行手势动作总耗时
+     * @param x 坐标
+     * @param y 坐标
      */
     suspend fun gestureClick(
         x: Float,
@@ -464,48 +467,79 @@ object Assists {
 
     /**
      * 返回
+     * @return 执行结果，true成功，false失败
      */
-    fun back() {
-        service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+    fun back(): Boolean {
+        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK) ?: false
     }
 
 
     /**
      * 回到主页
+     * @return 执行结果，true成功，false失败
      */
-    fun home() {
-        service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
+    fun home(): Boolean {
+        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME) ?: false
     }
 
     /**
      * 显示通知栏
+     * @return 执行结果，true成功，false失败
      */
-    fun notifications() {
-        service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS)
+    fun notifications(): Boolean {
+        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS) ?: false
     }
 
     /**
      * 最近任务
+     * @return 执行结果，true成功，false失败
      */
-    fun tasks() {
-        service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS)
+    fun tasks(): Boolean {
+        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS) ?: false
     }
 
     /**
      * 粘贴文本到当前元素
+     * @return 执行结果，true成功，false失败
      */
-    fun AccessibilityNodeInfo.paste(text: String?) {
+    fun AccessibilityNodeInfo.paste(text: String?): Boolean {
         performAction(AccessibilityNodeInfo.ACTION_FOCUS)
         service?.let {
             val clip = ClipData.newPlainText("${System.currentTimeMillis()}", text)
             val clipboardManager = (it.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
             clipboardManager.setPrimaryClip(clip)
             clipboardManager.primaryClip
-            performAction(AccessibilityNodeInfo.ACTION_PASTE)
+            return performAction(AccessibilityNodeInfo.ACTION_PASTE)
         }
-
+        return false
     }
 
+    /**
+     * 选择输入框文本
+     * @param selectionStart 文本起始下标
+     * @param selectionEnd 文本结束下标
+     * @return 执行结果，true成功，false失败
+     */
+    fun AccessibilityNodeInfo.selectionText(selectionStart: Int, selectionEnd: Int): Boolean {
+        val selectionArgs = Bundle()
+        selectionArgs.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, selectionStart)
+        selectionArgs.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, selectionEnd)
+        return performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selectionArgs)
+    }
+
+    /**
+     * 修改输入框文本内容
+     * @return 执行结果，true成功，false失败
+     */
+    fun AccessibilityNodeInfo.setNodeText(text: String?): Boolean {
+        text ?: return false
+        return performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, bundleOf().apply {
+            putCharSequence(
+                AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                text
+            )
+        })
+    }
 
     /**
      * 根据基准分辨率宽度获取对应当前分辨率的x坐标
@@ -524,6 +558,61 @@ object Assists {
             screenHeight = baseHeight
         }
         return (y.toFloat() / baseHeight * screenHeight).toInt()
+    }
+
+
+    /**
+     * 获取当前app在屏幕中的位置，如果找不到android:id/content节点则为空
+     */
+    fun getAppBoundsInScreen(): Rect? {
+        return service?.let {
+            return@let findById("android:id/content").firstOrNull()?.getBoundsInScreen()
+        }
+    }
+
+
+    /**
+     * 初始化当前app在屏幕中的位置
+     */
+    fun initAppBoundsInScreen(): Rect? {
+        return getAppBoundsInScreen().apply {
+            appRectInScreen = this
+        }
+    }
+
+    /**
+     * 获取当前app在屏幕中的宽度，获取前需要先执行initAppBoundsInScreen，避免getAppBoundsInScreen每次获取新的会耗时
+     */
+    fun getAppWidthInScreen(): Int {
+        return appRectInScreen?.let {
+            return@let it.right - it.left
+        } ?: ScreenUtils.getScreenWidth()
+    }
+
+
+    /**
+     * 获取当前app在屏幕中的高度，获取前需要先执行initAppBoundsInScreen，避免getAppBoundsInScreen每次获取新的会耗时
+     */
+    fun getAppHeightInScreen(): Int {
+        return appRectInScreen?.let {
+            return@let it.bottom - it.top
+        } ?: ScreenUtils.getScreenHeight()
+    }
+
+    /**
+     * 向前滚动（需元素是可滚动的）
+     * @return 执行结果，true成功，false失败。false可作为滚动到底部或顶部依据
+     */
+    fun AccessibilityNodeInfo.scrollForward(): Boolean {
+        return performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+    }
+
+    /**
+     * 向后滚动（需元素是可滚动的）
+     * @return 执行结果，true成功，false失败。false可作为滚动到底部或顶部依据
+     */
+    fun AccessibilityNodeInfo.scrollBackward(): Boolean {
+        return performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
     }
 
     /**
