@@ -171,7 +171,7 @@ StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
 
 | 交流群 | 个人微信 |
 |:---------:|:-----------:|
-| <img src="https://github.com/user-attachments/assets/a2817499-97bb-42f3-955a-b9a34ed02258" width=200/>    | <img src="https://github.com/user-attachments/assets/2bc7904e-e982-494e-b3d6-6f7e7b70e3fc" width=200/>
+| <img src="https://github.com/user-attachments/assets/a2817499-97bb-42f3-955a-b9a34ed02258" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
 
 ## 我的付费社群
 付费社群提供的服务：
