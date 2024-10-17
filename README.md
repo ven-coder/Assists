@@ -185,7 +185,7 @@ StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
 ##### 微信扫扫即可加入
 <img src="https://github.com/ven-coder/Assists/assets/27257149/7ae8e825-f489-46e3-96f0-ed03d12db9e8" width=200/>
 
-##### 定制开发可直接联系个人微信：x87158
+##### 定制开发可直接联系个人微信：x39598
 
 # License
 [GNU General Public License v3.0](https://github.com/ven-coder/Assists/blob/master/LICENSE)
