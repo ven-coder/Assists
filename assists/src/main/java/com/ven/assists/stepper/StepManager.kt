@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.lang.reflect.InvocationTargetException
 
 
@@ -13,12 +14,16 @@ import java.lang.reflect.InvocationTargetException
  * 步骤管理器
  */
 object StepManager {
+    //步骤默认间隔时长
     var DEFAULT_STEP_DELAY = 1000L
 
-    var stepListeners: ArrayList<StepListener> = arrayListOf()
+    //步骤监听器
+    var stepListeners: StepListener? = null
 
     private val stepCollector: HashMap<String, StepCollector> = hashMapOf()
+
     private var job = Job()
+
     var coroutine: CoroutineScope = CoroutineScope(job + Dispatchers.IO)
         private set
         get() {
@@ -28,13 +33,23 @@ object StepManager {
             }
             return field
         }
+
+
+
+
+    /**
+     * 控制停止操作的变量
+     * 当设置为true时，将取消步骤器下的所有步骤（需要执行步骤时需要设置为false）
+     */
     var isStop = false
         set(value) {
             field = value
+            // 当设置为true时，取消协程
             if (field) {
                 coroutine.cancel()
             }
         }
+
 
     fun <T : StepImpl> execute(stepImpl: Class<T>, stepTag: Int, delay: Long = DEFAULT_STEP_DELAY, data: Any? = null, begin: Boolean = false) {
         execute(stepImpl.name, stepTag, delay, data = data, begin = begin)

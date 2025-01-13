@@ -12,7 +12,10 @@ import android.view.View
 import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.LinearLayout
+import androidx.core.view.children
 import com.blankj.utilcode.util.BarUtils
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SizeUtils
 import com.ven.assists.base.databinding.AssistsWindowLayoutWrapperBinding
@@ -20,7 +23,7 @@ import com.ven.assists.base.databinding.AssistsWindowLayoutWrapperBinding
 @SuppressLint("ClickableViewAccessibility")
 class AssistsWindowLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
-) : FrameLayout(context, attrs) {
+) : LinearLayout(context, attrs) {
     var layoutHeight: Int = 0
     var layoutWidth: Int = 0
     var downRawX = 0
@@ -83,13 +86,10 @@ class AssistsWindowLayout @JvmOverloads constructor(
     /**
      * 浮窗包装布局
      */
-    lateinit var assistsWindowLayoutWrapperBinding: AssistsWindowLayoutWrapperBinding
-
-    init {
 
 //        setBackgroundColor(Color.parseColor("#4D000000"))
-
-        assistsWindowLayoutWrapperBinding = AssistsWindowLayoutWrapperBinding.inflate(LayoutInflater.from(getContext()), this).apply {
+    var assistsWindowLayoutWrapperBinding: AssistsWindowLayoutWrapperBinding =
+        AssistsWindowLayoutWrapperBinding.inflate(LayoutInflater.from(getContext()), this).apply {
             ivMove.setOnTouchListener(onTouchMoveListener)
             ivScale.setOnTouchListener(onTouchScaleListener)
             ivClose.setOnClickListener {
@@ -99,13 +99,15 @@ class AssistsWindowLayout @JvmOverloads constructor(
             }
         }
 
-//        layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-//                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-//                or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+    init {
 
         layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+
+//        layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+//                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+//                or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
         layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
         layoutParams.gravity = Gravity.START or Gravity.TOP
@@ -116,6 +118,7 @@ class AssistsWindowLayout @JvmOverloads constructor(
         layoutParams.dimAmount = 0.0f
         //透明度0~1，数值越大越不透明
         layoutParams.alpha = 1f
+
     }
 
     fun setOnCloseClickListener(closeClickListener: () -> Boolean) {
@@ -124,13 +127,13 @@ class AssistsWindowLayout @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (childCount > 4) {
-            getChildAt(4).let {
-                (it.layoutParams as LayoutParams).apply {
-                    topMargin = SizeUtils.dp2px(40f)
-                    bottomMargin = SizeUtils.dp2px(40f)
-                }
-            }
+
+        if (childCount == 4) {
+            val view = getChildAt(3)
+            removeView(view)
+            assistsWindowLayoutWrapperBinding.flContainer.addView(view)
+        } else if (childCount > 4) {
+            throw RuntimeException("AssistWindowLayout can only contain one view")
         }
     }
 
@@ -173,9 +176,9 @@ class AssistsWindowLayout @JvmOverloads constructor(
      * 切换至可消费事件
      */
     fun switchTouchable() {
-        layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+        layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
         AssistsWindowManager.updateViewLayout(this, layoutParams)
     }
 

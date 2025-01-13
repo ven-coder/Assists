@@ -8,6 +8,7 @@
     tools:parentTag="com.ven.assists.AssistsWindowLayout">
 
     <LinearLayout
+        android:id="@+id/fl_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -50,18 +51,11 @@
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="40dp"
-        android:background="#898989" />
-
     <FrameLayout
         android:id="@+id/fl_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
-
 
     <ImageView
         android:id="@+id/iv_scale"

@@ -12,7 +12,7 @@ import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.LogUtils
 import com.ven.assists.Assists
 import com.ven.assists.Assists.getNodes
-import com.ven.assists.Assists.log
+import com.ven.assists.Assists.logNode
 import com.ven.assists.AssistsService
 import com.ven.assists.AssistsServiceListener
 import com.ven.assists.simple.databinding.ActivityMainBinding

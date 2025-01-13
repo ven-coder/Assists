@@ -11,6 +11,8 @@ import android.view.WindowManager
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.LogUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.Collections
 
 object AssistsWindowManager {
@@ -25,9 +27,14 @@ object AssistsWindowManager {
 
     fun createLayoutParams(): WindowManager.LayoutParams {
         val layoutParams = WindowManager.LayoutParams()
+//        layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+//                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+//                or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+
         layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+
         layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
         layoutParams.gravity = Gravity.START or Gravity.TOP
@@ -41,20 +48,25 @@ object AssistsWindowManager {
         return layoutParams
     }
 
-    fun hideAll() {
-        viewList.forEach {
-            it.view.isInvisible = true
-            if (it.view is AssistsWindowLayout) {
-                it.view.switchNotTouchable()
+    suspend fun hideAll() {
+        withContext(Dispatchers.Main) {
+            viewList.forEach {
+                it.view.isInvisible = true
+                if (it.view is AssistsWindowLayout) {
+                    it.view.switchNotTouchable()
+                }
             }
+
         }
     }
 
-    fun showLastView() {
-        viewList.lastOrNull()?.let {
-            it.view.isVisible = true
+    suspend fun showLastView() {
+        withContext(Dispatchers.Main) {
+            viewList.lastOrNull()?.let {
+                it.view.isVisible = true
+            }
+            switchTouchableAll()
         }
-        switchTouchableAll()
     }
 
 
@@ -123,13 +135,15 @@ object AssistsWindowManager {
     /**
      * 切换至不可消费事件
      */
-    fun switchNotTouchableAll() {
-        viewList.forEach {
-            if (it.layoutParams is WindowManager.LayoutParams) {
-                it.layoutParams.flags = (WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL)
-                updateViewLayout(it.view, it.layoutParams)
+    suspend fun switchNotTouchableAll() {
+        withContext(Dispatchers.Main){
+            viewList.forEach {
+                if (it.layoutParams is WindowManager.LayoutParams) {
+                    it.layoutParams.flags = (WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+                    updateViewLayout(it.view, it.layoutParams)
+                }
             }
         }
 
@@ -138,15 +152,20 @@ object AssistsWindowManager {
     /**
      * 切换至可消费事件
      */
-    fun switchTouchableAll() {
+    suspend fun switchTouchableAll() {
+        withContext(Dispatchers.Main) {
+            viewList.forEach {
+                if (it.layoutParams is WindowManager.LayoutParams) {
+                    it.layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+                            or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                            or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
 
-        viewList.forEach {
-            if (it.layoutParams is WindowManager.LayoutParams) {
-                it.layoutParams.flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
-                updateViewLayout(it.view, it.layoutParams)
+
+
+                    updateViewLayout(it.view, it.layoutParams)
+                }
             }
+
         }
     }
 

@@ -17,6 +17,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.ven.assists.base.R
@@ -25,10 +26,11 @@ import java.io.FileOutputStream
 import java.nio.ByteBuffer
 
 
+
 /**
  * 屏幕录制服务
  */
-class ScreenCaptureService : Service() {
+class MediaProjectionService : Service() {
 
     private var mMediaProjectionManager: MediaProjectionManager? = null
     private var imageReader: ImageReader? = null
@@ -45,7 +47,8 @@ class ScreenCaptureService : Service() {
             intent.getParcelableExtra<Intent>("rData")
         }
         startPushProjection(rCode, rData)
-        Assists.screenCaptureService = this
+        Assists.mediaProjectionService = this
+        LogUtils.d("enable screen capture")
         return super.onStartCommand(intent, flags, startId)
     }
 

@@ -30,7 +30,7 @@ import com.ven.assists.Assists.click
 import com.ven.assists.Assists.containsText
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.Assists.getNodes
-import com.ven.assists.Assists.log
+import com.ven.assists.Assists.logNode
 import com.ven.assists.AssistsServiceListener
 import com.ven.assists.AssistsWindowManager
 import com.ven.assists.simple.databinding.ViewMainOverBinding
@@ -76,7 +76,6 @@ object OverManager : StepListener {
 
     private fun createView(): ViewMainOverBinding? {
         return Assists.service?.let { it ->
-            StepManager.stepListeners.add(this)
             ViewMainOverBinding.inflate(LayoutInflater.from(it)).apply {
                 initView(this)
             }
@@ -148,7 +147,7 @@ object OverManager : StepListener {
                                 var isInCall = false
                                 event.source?.getNodes()?.forEach {
                                     if (it.containsText("邀请你语音通话") || it.containsText("邀请你视频通话")) {
-                                        it.log()
+                                        it.logNode()
                                         it.getBoundsInScreen().let {
                                             if (it.bottom < ScreenUtils.getScreenHeight() * 0.2) {
                                                 isInCall = true
@@ -284,7 +283,6 @@ object OverManager : StepListener {
     }
 
     fun clear() {
-        StepManager.stepListeners.remove(this)
         viewMainOver = null
     }
 

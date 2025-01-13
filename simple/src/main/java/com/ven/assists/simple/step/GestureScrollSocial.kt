@@ -7,7 +7,7 @@ import com.ven.assists.Assists
 import com.ven.assists.Assists.click
 import com.ven.assists.Assists.findFirstParentClickable
 import com.ven.assists.Assists.getBoundsInScreen
-import com.ven.assists.Assists.log
+import com.ven.assists.Assists.logNode
 import com.ven.assists.AssistsWindowManager
 import com.ven.assists.simple.App
 import com.ven.assists.simple.OverManager
@@ -50,7 +50,7 @@ class GestureScrollSocial : StepImpl() {
             return@next Step.repeat
         }.next(StepTag.STEP_3) {
             Assists.findByText("朋友圈").forEach {
-                it.log()
+                it.logNode()
                 val screen = it.getBoundsInScreen()
                 if (screen.left > 140 && screen.top > 240) {
                     OverManager.log("点击朋友圈")

@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 
 class StepOperator(
     val implClassName: String,
@@ -22,20 +23,29 @@ class StepOperator(
     fun execute(delay: Long, data: Any? = null) {
         this.data = data
         if (StepManager.isStop) {
-            StepManager.stepListeners.forEach { it.onStepStop() }
+            StepManager.stepListeners?.onStepStop()
             return
         }
         StepManager.coroutine.launch {
-            delay(delay)
-            if (isRunCoroutineIO) {
-                val nextStep = onStep(next)
-                onNextStep(nextStep)
-            } else {
-                var nextStep: Step
-                withContext(Dispatchers.Main) {
-                    nextStep = onStep(next)
+            runCatching {
+                delay(delay)
+                if (isRunCoroutineIO) {
+                    val nextStep = onStep(next)
+                    onNextStep(nextStep)
+                } else {
+                    var nextStep: Step
+                    withContext(Dispatchers.Main) {
+                        nextStep = onStep(next)
+                    }
+                    onNextStep(nextStep)
                 }
-                onNextStep(nextStep)
+            }.onFailure {
+                if (it is CancellationException) {
+                    LogUtils.e("步骤执行异常: 主动停止")
+                    return@launch
+                }
+                LogUtils.e("步骤执行异常", it)
+                StepManager.stepListeners?.onStepCatch(it)
             }
         }
     }
@@ -69,8 +79,8 @@ class StepOperator(
     }
 
     private suspend fun onStep(next: suspend (stepOperator: StepOperator) -> Step): Step {
-        StepManager.stepListeners.forEach { if (it.onIntercept(this)) return Step.none }
-        StepManager.stepListeners.forEach { it.onStep(this) }
+        StepManager.stepListeners?.onStepStart(this)
+        StepManager.stepListeners?.onIntercept(this)?.let { return it }
         return next.invoke(this)
     }
 }

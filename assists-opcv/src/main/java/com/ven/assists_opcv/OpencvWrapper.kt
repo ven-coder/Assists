@@ -2,12 +2,13 @@
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.view.accessibility.AccessibilityNodeInfo
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.ven.assists.Assists
-import com.ven.assists.AssistsServiceListener
-import com.ven.assists.ScreenCaptureService
-import kotlinx.coroutines.CompletableDeferred
+import com.ven.assists.Assists.getBoundsInScreen
+import com.ven.assists.AssistsWindowManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
@@ -28,9 +29,9 @@ object OpencvWrapper {
     fun init() {
         Assists.coroutine.launch {
             if (OpenCVLoader.initLocal()) {
-                LogUtils.dTag("123456", "OpenCV loaded successfully")
+                LogUtils.dTag(Assists.LOG_TAG, "OpenCV loaded successfully")
             } else {
-                LogUtils.dTag("123456", "OpenCV initialization failed!")
+                LogUtils.dTag(Assists.LOG_TAG, "OpenCV initialization failed!")
             }
         }
     }
@@ -127,12 +128,24 @@ object OpencvWrapper {
     /**
      * 获取屏幕图像
      */
-    fun getScreen(): Mat? {
-        val screenBitmap = Assists.screenCaptureService?.toBitmap() ?: return null
+    fun getScreenMat(): Mat? {
+        val screenBitmap = Assists.mediaProjectionService?.toBitmap() ?: return null
         val screenMat = Mat()
         Utils.bitmapToMat(screenBitmap, screenMat)
         Imgproc.cvtColor(screenMat, screenMat, Imgproc.COLOR_RGBA2BGR)
         return screenMat
+    }
+
+    fun getScreenBitmap(): Bitmap? {
+        return Assists.mediaProjectionService?.toBitmap()
+    }
+
+    suspend fun getScreenBitmapIgnoreFloatWindow(): Bitmap? {
+        AssistsWindowManager.hideAll()
+        delay(50)
+        val bitmap = Assists.mediaProjectionService?.toBitmap()
+        AssistsWindowManager.showLastView()
+        return bitmap
     }
 
     /**
@@ -165,5 +178,40 @@ object OpencvWrapper {
                 }
             }
         }
+    }
+
+    /**
+     * 悬挂函数，用于获取当前AccessibilityNodeInfo对象的屏幕截图
+     * 此函数通过获取节点在屏幕上的边界，然后截取相应区域的屏幕内容来生成Bitmap对象
+     * 如果节点的屏幕高度小于等于0，则返回null，表示无法获取有效的截图
+     *
+     * @return 截取的Bitmap对象，如果无法获取截图则返回null
+     */
+    suspend fun AccessibilityNodeInfo.getBitmap(): Bitmap? {
+        // 获取当前节点在屏幕上的边界
+        val screen = this.getBoundsInScreen()
+        // 如果屏幕高度小于等于0，说明无法获取有效的截图，直接返回null
+        if (screen.height() <= 0) return null
+        // 隐藏所有辅助视图，以避免影响截图结果
+        AssistsWindowManager.hideAll()
+        // 延迟100毫秒，等待视图隐藏完成
+        delay(100)
+        // 尝试获取整个屏幕的截图
+        getScreenBitmap()?.let {
+            // 显示最后一个辅助视图
+            AssistsWindowManager.showLastView()
+            // 从整个屏幕截图中裁剪出当前节点对应的区域
+            val bitmap = Bitmap.createBitmap(
+                it,
+                screen.left,
+                screen.top,
+                screen.width(),
+                screen.height(),
+            )
+            // 返回裁剪后的Bitmap对象
+            return bitmap
+        }
+        // 如果无法获取屏幕截图，则返回null
+        return null
     }
 }

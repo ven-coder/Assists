@@ -9,7 +9,6 @@ import com.ven.assists.Assists.findByText
 import com.ven.assists.Assists.findFirstParentClickable
 import com.ven.assists.AssistsServiceListener
 import com.ven.assists.AssistsWindowManager
-import com.ven.assists.ScreenCaptureService
 import com.ven.assists.simple.CaptureLayout
 import com.ven.assists.simple.OverManager
 import com.ven.assists.stepper.Step
@@ -110,7 +109,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                 AssistsWindowManager.hideAll()
             }
             delay(500)
-            val screenMat = OpencvWrapper.getScreen()
+            val screenMat = OpencvWrapper.getScreenMat()
             if (screenMat == null) {
                 overLog("识别失败，无法获取屏幕图像")
                 return@next Step.none

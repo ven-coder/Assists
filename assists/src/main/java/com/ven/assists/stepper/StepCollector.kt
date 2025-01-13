@@ -18,7 +18,7 @@ class StepCollector(private val implClassName: String) {
      * 循环步骤
      * @param stepTag 步骤序号
      * @param isRunCoroutineIO 是否在IO协程中执行
-     * @param next
+     * @param next 步骤逻辑
      */
     fun next(
         stepTag: Int,

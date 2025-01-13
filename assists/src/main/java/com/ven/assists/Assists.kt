@@ -24,25 +24,18 @@ import androidx.core.os.bundleOf
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
-import com.blankj.utilcode.util.ThreadUtils
-import com.ven.assists.stepper.ScreenCaptureAutoEnable
-import com.ven.assists.stepper.Step
-import com.ven.assists.stepper.StepCollector
-import com.ven.assists.stepper.StepManager
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
-import kotlin.random.Random
+import kotlinx.coroutines.launch
 
 object Assists {
 
     //日志TAG
     var LOG_TAG = "assists_log"
 
-    val screenRequestLaunchers: HashMap<Activity, ActivityResultLauncher<Intent>> = hashMapOf()
 
     private var job = Job()
 
@@ -57,6 +50,10 @@ object Assists {
             return field
         }
 
+    fun launch(block: suspend CoroutineScope.() -> Unit): Job {
+        return coroutine.launch(block = block)
+    }
+
 
     /**
      * 无障碍服务，未开启前为null，使用注意判空
@@ -68,75 +65,92 @@ object Assists {
 
     private var appRectInScreen: Rect? = null
 
-    var screenCaptureService: ScreenCaptureService? = null
+    var mediaProjectionService: MediaProjectionService? = null
         set(value) {
+            field = value
             if (value != null) {
                 serviceListeners.forEach { it.screenCaptureEnable() }
             }
-            field = value
         }
 
-
-    private val activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
-        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            if (activity is ComponentActivity) {
-                val screenRequestLauncher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                    if (result.resultCode == Activity.RESULT_OK) {
-                        val service = Intent(activity, ScreenCaptureService::class.java)
-                        service.putExtra("rCode", result.resultCode)
-                        service.putExtra("rData", result.data)
-                        activity.startService(service)
-                    }
-                }
-                screenRequestLaunchers[activity] = screenRequestLauncher
-            }
-        }
-
-        override fun onActivityStarted(activity: Activity) {
-        }
-
-        override fun onActivityResumed(activity: Activity) {
-        }
-
-        override fun onActivityPaused(activity: Activity) {
-        }
-
-        override fun onActivityStopped(activity: Activity) {
-        }
-
-        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-        }
-
-        override fun onActivityDestroyed(activity: Activity) {
-            screenRequestLaunchers.remove(activity)
-        }
+    /**
+     * 以下用于快捷判断元素是否是指定类型
+     */
+    fun AccessibilityNodeInfo.isFrameLayout(): Boolean {
+        return className == NodeClassValue.FrameLayout
     }
+
+    fun AccessibilityNodeInfo.isViewGroup(): Boolean {
+        return className == NodeClassValue.ViewGroup
+    }
+
+    fun AccessibilityNodeInfo.isView(): Boolean {
+        return className == NodeClassValue.View
+    }
+
+    fun AccessibilityNodeInfo.isImageView(): Boolean {
+        return className == NodeClassValue.ImageView
+    }
+
+    fun AccessibilityNodeInfo.isTextView(): Boolean {
+        return className == NodeClassValue.TextView
+    }
+
+    fun AccessibilityNodeInfo.isLinearLayout(): Boolean {
+        return className == NodeClassValue.LinearLayout
+    }
+
+    fun AccessibilityNodeInfo.isRelativeLayout(): Boolean {
+        return className == NodeClassValue.RelativeLayout
+    }
+
+    fun AccessibilityNodeInfo.isButton(): Boolean {
+        return className == NodeClassValue.Button
+    }
+
+    fun AccessibilityNodeInfo.isImageButton(): Boolean {
+        return className == NodeClassValue.ImageButton
+    }
+
+    fun AccessibilityNodeInfo.isEditText(): Boolean {
+        return className == NodeClassValue.EditText
+    }
+
+
+    fun AccessibilityNodeInfo.txt(): String {
+        return text?.toString() ?: ""
+    }
+
+    fun AccessibilityNodeInfo.des(): String {
+        return contentDescription?.toString() ?: ""
+    }
+
 
     /**
      * 请求录屏权限
      * @param isAutoEnable 是否自动通过，如果设置自动通过前提需要先开启无障碍服务（当前仅测试小米系统通过，其他机型系统未测试）
      */
-    fun requestScreenCapture(isAutoEnable: Boolean) {
-        screenCaptureService ?: let {
-            screenRequestLaunchers[ActivityUtils.getTopActivity()]?.launch(
-                (ActivityUtils.getTopActivity().getSystemService(AppCompatActivity.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager)
-                    .createScreenCaptureIntent()
-            )
+    suspend fun requestScreenCapture(isAutoEnable: Boolean): Boolean {
+        mediaProjectionService ?: let {
+            delay(1000)
             if (isAutoEnable && service != null) {
-                StepManager.execute(ScreenCaptureAutoEnable::class.java, 1)
+                findByText("立即开始").firstOrNull()?.let {
+                    val result = it.click()
+                    return result
+                }
             }
         }
+        return true
     }
 
     /**
      * 是否拥有录屏权限
      */
     fun isEnableScreenCapture(): Boolean {
-        return screenCaptureService != null
+        return mediaProjectionService != null
     }
 
     fun init(application: Application) {
-        application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
         LogUtils.getConfig().globalTag = LOG_TAG
     }
 
@@ -146,6 +160,7 @@ object Assists {
     @JvmStatic
     fun openAccessibilitySetting() {
         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         ActivityUtils.startActivity(intent)
     }
 
@@ -165,9 +180,24 @@ object Assists {
 
     /**
      * 通过id查找所有符合条件元素
+     * @param text 筛选返回符合指定文本的元素
      */
-    fun findById(id: String): List<AccessibilityNodeInfo> {
-        return service?.rootInActiveWindow?.findById(id) ?: arrayListOf()
+    fun findById(id: String, text: String? = null): List<AccessibilityNodeInfo> {
+        var nodeInfos = service?.rootInActiveWindow?.findById(id) ?: arrayListOf()
+
+        nodeInfos = text?.let {
+            nodeInfos.filter {
+
+                if (it.txt() == text) {
+                    return@filter true
+                }
+
+                return@filter false
+            }
+
+        } ?: let { nodeInfos }
+
+        return nodeInfos
     }
 
     /**
@@ -248,30 +278,90 @@ object Assists {
     /**
      * 根据类型查找元素
      * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
+     * @param viewId 筛选返回符合指定viewId的元素
+     * @param text 筛选返回符合指定文本的元素
+     * @param des 筛选返回符合指定描述文本的元素
      * @return 所有符合条件的元素
      */
-    fun findByTags(className: String): List<AccessibilityNodeInfo> {
-        val nodeList = arrayListOf<AccessibilityNodeInfo>()
+    fun findByTags(className: String, viewId: String? = null, text: String? = null, des: String? = null): List<AccessibilityNodeInfo> {
+        var nodeList = arrayListOf<AccessibilityNodeInfo>()
         getAllNodes().forEach {
             if (TextUtils.equals(className, it.className)) {
                 nodeList.add(it)
             }
         }
+        nodeList = viewId?.let {
+            return@let arrayListOf<AccessibilityNodeInfo>().apply {
+                addAll(nodeList.filter {
+                    return@filter it.viewIdResourceName == viewId
+                })
+            }
+        } ?: let {
+            return@let nodeList
+        }
+
+        nodeList = text?.let {
+            return@let arrayListOf<AccessibilityNodeInfo>().apply {
+                addAll(nodeList.filter {
+                    return@filter it.txt() == text
+                })
+            }
+        } ?: let { return@let nodeList }
+        nodeList = des?.let {
+            return@let arrayListOf<AccessibilityNodeInfo>().apply {
+                addAll(nodeList.filter {
+                    return@filter it.des() == des
+                })
+            }
+        } ?: let { return@let nodeList }
         return nodeList
     }
 
     /**
      * 在当前元素范围下，根据类型查找元素
      * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
+     * @param viewId 筛选返回符合指定viewId的元素
+     * @param text 筛选返回符合指定文本的元素
+     * @param des 筛选返回符合指定描述文本的元素
      * @return 所有符合条件的元素
      */
-    fun AccessibilityNodeInfo.findByTags(className: String): List<AccessibilityNodeInfo> {
-        val nodeList = arrayListOf<AccessibilityNodeInfo>()
+    fun AccessibilityNodeInfo.findByTags(
+        className: String,
+        viewId: String? = null,
+        text: String? = null,
+        des: String? = null
+    ): List<AccessibilityNodeInfo> {
+        var nodeList = arrayListOf<AccessibilityNodeInfo>()
         getNodes().forEach {
             if (TextUtils.equals(className, it.className)) {
                 nodeList.add(it)
             }
         }
+        nodeList = viewId?.let {
+            return@let arrayListOf<AccessibilityNodeInfo>().apply {
+                addAll(nodeList.filter {
+                    return@filter it.viewIdResourceName == viewId
+                })
+            }
+        } ?: let {
+            return@let nodeList
+        }
+
+        nodeList = text?.let {
+            return@let arrayListOf<AccessibilityNodeInfo>().apply {
+                addAll(nodeList.filter {
+                    return@filter it.txt() == text
+                })
+            }
+        } ?: let { return@let nodeList }
+        nodeList = des?.let {
+            return@let arrayListOf<AccessibilityNodeInfo>().apply {
+                addAll(nodeList.filter {
+                    return@filter it.des() == des
+                })
+            }
+        } ?: let { return@let nodeList }
+
         return nodeList
     }
 
@@ -371,6 +461,7 @@ object Assists {
      * @param endLocation 结束位置
      * @param startTime 开始间隔时间
      * @param duration 持续时间
+     * @return true 执行成功，false 执行失败
      */
     @JvmStatic
     suspend fun gesture(
@@ -378,11 +469,11 @@ object Assists {
         endLocation: FloatArray,
         startTime: Long,
         duration: Long,
-    ) {
+    ): Boolean {
         val path = Path()
         path.moveTo(startLocation[0], startLocation[1])
         path.lineTo(endLocation[0], endLocation[1])
-        gesture(path, startTime, duration)
+        return gesture(path, startTime, duration)
     }
 
     /**
@@ -390,13 +481,14 @@ object Assists {
      * @param path 手势路径
      * @param startTime 开始间隔毫秒
      * @param duration 持续毫秒
+     * @return true 执行成功，false 执行失败
      */
     @JvmStatic
     suspend fun gesture(
         path: Path,
         startTime: Long,
         duration: Long,
-    ) {
+    ): Boolean {
         val builder = GestureDescription.Builder()
         val strokeDescription = GestureDescription.StrokeDescription(path, startTime, duration)
         val gestureDescription = builder.addStroke(strokeDescription).build()
@@ -413,6 +505,7 @@ object Assists {
             deferred.complete(0)
         }
         val result = deferred.await()
+        return result == 1
     }
 
     /**
@@ -457,12 +550,39 @@ object Assists {
         x: Float,
         y: Float,
         duration: Long = 10
-    ) {
-        gesture(
+    ): Boolean {
+        return gesture(
             floatArrayOf(x, y), floatArrayOf(x, y),
             0,
             duration,
         )
+    }
+
+    /**
+     * 手势点击、长按当前元素
+     * @param offsetX x轴偏移量
+     * @param offsetY y轴偏移量
+     * @param switchWindowIntervalDelay 浮窗隐藏显示间隔时长
+     * @param duration 手势执行时长，需要长按就设置时间长点，默认点击时长
+     */
+    suspend fun AccessibilityNodeInfo.nodeGestureClick(
+        offsetX: Float = ScreenUtils.getScreenWidth() * 0.01953f,
+        offsetY: Float = ScreenUtils.getScreenWidth() * 0.01953f,
+        switchWindowIntervalDelay: Long = 100,
+        duration: Long = 25
+    ): Boolean {
+        AssistsWindowManager.switchNotTouchableAll()
+        delay(switchWindowIntervalDelay)
+        val rect = getBoundsInScreen()
+        val result = gesture(
+            floatArrayOf(rect.left.toFloat() + offsetX, rect.top.toFloat() + offsetY),
+            floatArrayOf(rect.left.toFloat() + offsetX, rect.top.toFloat() + offsetY),
+            0,
+            duration,
+        )
+        delay(switchWindowIntervalDelay)
+        AssistsWindowManager.switchTouchableAll()
+        return result
     }
 
     /**
@@ -618,11 +738,11 @@ object Assists {
     /**
      * 控制台输出元素信息
      */
-    fun AccessibilityNodeInfo.log(tag: String = LOG_TAG) {
-
+    fun AccessibilityNodeInfo.logNode(tag: String = LOG_TAG) {
         StringBuilder().apply {
+            val rect = getBoundsInScreen()
             append("-------------------------------------\n")
-            append("位置:left=${getBoundsInScreen().left}, top=${getBoundsInScreen().top}, right=${getBoundsInScreen().right}, bottom=${getBoundsInScreen().bottom} \n")
+            append("位置:left=${rect.left}, top=${rect.top}, right=${rect.right}, bottom=${rect.bottom} \n")
             append("文本:$text \n")
             append("内容描述:$contentDescription \n")
             append("id:$viewIdResourceName \n")
@@ -630,7 +750,6 @@ object Assists {
             append("是否已经获取到到焦点:$isFocused \n")
             append("是否可滚动:$isScrollable \n")
             append("是否可点击:$isClickable \n")
-            append("是否可用:$isEnabled \n")
             append("是否可用:$isEnabled \n")
             Log.d(tag, toString())
         }
