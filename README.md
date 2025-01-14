@@ -171,7 +171,7 @@ StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
 
 | 交流群| 个人微信 |
 |:---------:|:-----------:|
-| <img src="https://github.com/user-attachments/assets/44dae4e7-24a5-41dc-88c2-41018c864aa7" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
+| <img src="https://github.com/user-attachments/assets/9df0c1d2-8c48-44d3-af07-eea4871056ce" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
 1群已满200人，要进1群可加我拉进1群
 
 ## 我的付费社群
