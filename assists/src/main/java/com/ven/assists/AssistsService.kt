@@ -19,7 +19,7 @@ class AssistsService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        LogUtils.d(Assists.LOG_TAG, "onServiceConnected")
+        LogUtils.d(Assists.LOG_TAG, "assists service on service connected")
         Assists.service = this
         AssistsWindowManager.init(this)
         Assists.serviceListeners.forEach { it.onServiceConnected(this) }

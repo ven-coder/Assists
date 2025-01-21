@@ -40,13 +40,13 @@ class MediaProjectionService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val rCode = intent.getIntExtra("rCode", -1)
-        val rData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("rData", Intent::class.java)
+        val requestCode = intent.getIntExtra(MediaProjectionServiceManager.REQUEST_CODE, -1)
+        val requestData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(MediaProjectionServiceManager.REQUEST_DATA, Intent::class.java)
         } else {
-            intent.getParcelableExtra<Intent>("rData")
+            intent.getParcelableExtra<Intent>(MediaProjectionServiceManager.REQUEST_DATA)
         }
-        startPushProjection(rCode, rData)
+        startPushProjection(requestCode, requestData)
         Assists.mediaProjectionService = this
         LogUtils.d("enable screen capture")
         return super.onStartCommand(intent, flags, startId)
@@ -135,9 +135,7 @@ class MediaProjectionService : Service() {
     }
 
     private fun initNotificationChannel() {
-        var channelId: String? = null
-        // 8.0 以上需要特殊处理
-        channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel()
         } else {
             ""

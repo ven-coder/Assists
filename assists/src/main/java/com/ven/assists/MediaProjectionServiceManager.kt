@@ -9,20 +9,22 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import java.lang.ref.SoftReference
+import com.blankj.utilcode.util.ActivityUtils
 
-object MediaProjectionServiceWrapper {
+object MediaProjectionServiceManager {
+    const val REQUEST_CODE="request_code_media_projection"
+    const val REQUEST_DATA="request_data_media_projection"
 
-    private var requestLaunchers: ActivityResultLauncher<Intent>? = null
+    private var requestLaunchers = hashMapOf<Activity, ActivityResultLauncher<Intent>>()
 
     private val activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            if (activity is ComponentActivity && requestLaunchers == null) {
-                requestLaunchers = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (activity is ComponentActivity && requestLaunchers[activity] == null) {
+                requestLaunchers[activity] = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                     if (result.resultCode == Activity.RESULT_OK) {
                         val service = Intent(activity, MediaProjectionService::class.java)
-                        service.putExtra("rCode", result.resultCode)
-                        service.putExtra("rData", result.data)
+                        service.putExtra(REQUEST_CODE, result.resultCode)
+                        service.putExtra(REQUEST_DATA, result.data)
                         activity.startService(service)
                     }
                 }
@@ -45,16 +47,20 @@ object MediaProjectionServiceWrapper {
         }
 
         override fun onActivityDestroyed(activity: Activity) {
+            requestLaunchers.remove(activity)
         }
     }
 
     fun init(application: Application) {
-        requestLaunchers = null
+        requestLaunchers.clear()
         application.unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks)
         application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
     }
 
     fun request(autoAllow: Boolean = true) {
 
+        val projectionManager = ActivityUtils.getTopActivity().getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        val intent = projectionManager.createScreenCaptureIntent()
+        requestLaunchers[ActivityUtils.getTopActivity()]?.launch(intent)
     }
 }

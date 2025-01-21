@@ -1,28 +1,21 @@
 package com.ven.assists.simple
 
-import android.app.WallpaperManager
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.blankj.utilcode.util.BarUtils
-import com.blankj.utilcode.util.LogUtils
 import com.ven.assists.Assists
-import com.ven.assists.Assists.getNodes
-import com.ven.assists.Assists.logNode
 import com.ven.assists.AssistsService
 import com.ven.assists.AssistsServiceListener
+import com.ven.assists.MediaProjectionServiceManager
 import com.ven.assists.simple.databinding.ActivityMainBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import com.ven.assists.simple.databinding.MainControlBinding
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 
 class MainActivity : AppCompatActivity(), AssistsServiceListener {
@@ -39,6 +32,13 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
         }
     }
 
+    val mainControlBinding: MainControlBinding by lazy {
+        MainControlBinding.inflate(layoutInflater).apply {
+            root.layoutParams = ViewGroup.LayoutParams(-1, -1)
+            btnScreenCapture.setOnClickListener { MediaProjectionServiceManager.request() }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         checkServiceEnable()
@@ -46,9 +46,19 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
 
     private fun checkServiceEnable() {
         if (Assists.isAccessibilityServiceEnabled()) {
-            viewBind.btnOption.text = "显示操作浮窗"
+            viewBind.flContainer.indexOfChild(mainControlBinding.root).let {
+                if (it == -1) {
+                    viewBind.flContainer.addView(mainControlBinding.root)
+                }
+            }
+            viewBind.btnOption.isVisible = false
         } else {
-            viewBind.btnOption.text = "开启服务"
+            viewBind.flContainer.indexOfChild(mainControlBinding.root).let {
+                if (it > -1) {
+                    viewBind.flContainer.removeView(mainControlBinding.root)
+                }
+            }
+            viewBind.btnOption.isVisible = true
         }
     }
 

@@ -85,7 +85,7 @@ object OverManager : StepListener {
 
     private fun initView(viewMainOverBinding: ViewMainOverBinding) {
         with(viewMainOverBinding) {
-            parent.assistsWindowLayoutWrapperBinding.tvTitle.text = "AssistsSimple"
+//            parent.assistsWindowLayoutWrapperBinding.tvTitle.text = "AssistsSimple"
             llOption.isVisible = true
             llLog.isVisible = false
             btnCloseLog.isVisible = false
@@ -220,10 +220,10 @@ object OverManager : StepListener {
                 beginStart(this)
                 StepManager.execute(GestureScrollSocial::class.java, StepTag.STEP_1, begin = true)
             }
-            root.setOnCloseClickListener {
-                clear()
-                return@setOnCloseClickListener false
-            }
+//            root.setOnCloseClickListener {
+//                clear()
+//                return@setOnCloseClickListener false
+//            }
 
             btnAntForestEnergy.setOnClickListener {
                 beginStart(this)
@@ -239,10 +239,10 @@ object OverManager : StepListener {
             var height = SizeUtils.dp2px(300f)
             viewMainOver?.root?.layoutParams?.width = width
             viewMainOver?.root?.layoutParams?.height = height
-            viewMainOver?.root?.minWidth = (ScreenUtils.getScreenWidth() * 0.6).toInt()
-            viewMainOver?.root?.minHeight = height
-            viewMainOver?.root?.setCenter()
-            AssistsWindowManager.addAssistsWindowLayout(viewMainOver?.root)
+//            viewMainOver?.root?.minWidth = (ScreenUtils.getScreenWidth() * 0.6).toInt()
+//            viewMainOver?.root?.minHeight = height
+//            viewMainOver?.root?.setCenter()
+//            AssistsWindowManager.addAssistsWindowLayout(viewMainOver?.root)
         }
     }
 

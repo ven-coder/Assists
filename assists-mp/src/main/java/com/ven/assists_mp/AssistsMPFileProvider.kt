@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.core.content.FileProvider
 import com.ven.assists.MediaProjectionServiceManager
 
-class AssistsOpencvFileProvider : FileProvider() {
+class AssistsMPFileProvider : FileProvider() {
     override fun onCreate(): Boolean {
         val applicationContext = context?.applicationContext
         if (applicationContext is Application) {

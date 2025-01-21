@@ -65,6 +65,9 @@ object Assists {
 
     private var appRectInScreen: Rect? = null
 
+    /**
+     * 屏幕录制服务
+     */
     var mediaProjectionService: MediaProjectionService? = null
         set(value) {
             field = value

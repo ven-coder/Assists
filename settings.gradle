@@ -1,4 +1,4 @@
 include ':simple'
 include ':assists'
-//include ':assists-opencv'
 include ':assists-opcv'
+include ':assists-mp'
