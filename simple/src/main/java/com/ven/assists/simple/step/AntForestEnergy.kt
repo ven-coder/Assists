@@ -34,12 +34,12 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
             Assists.serviceListeners.add(this)
         }
         collector.next(StepTag.STEP_1) {
-            if (Assists.isEnableScreenCapture()) {
-                overLog("屏幕录制已开启")
-                return@next Step.get(StepTag.STEP_2)
-            }
-            overLog("开启屏幕录制")
-            Assists.requestScreenCapture(true)
+//            if (Assists.isEnableScreenCapture()) {
+//                overLog("屏幕录制已开启")
+//                return@next Step.get(StepTag.STEP_2)
+//            }
+//            overLog("开启屏幕录制")
+//            Assists.requestScreenCapture(true)
             return@next Step.none
         }.next(StepTag.STEP_2) {
             overLog("启动支付宝")

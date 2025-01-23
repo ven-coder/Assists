@@ -2,7 +2,6 @@ package com.ven.assists
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
-import android.app.Activity
 import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -10,16 +9,11 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Path
 import android.graphics.Rect
-import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
-import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
@@ -64,17 +58,6 @@ object Assists {
     val serviceListeners: ArrayList<AssistsServiceListener> = arrayListOf()
 
     private var appRectInScreen: Rect? = null
-
-    /**
-     * 屏幕录制服务
-     */
-    var mediaProjectionService: MediaProjectionService? = null
-        set(value) {
-            field = value
-            if (value != null) {
-                serviceListeners.forEach { it.screenCaptureEnable() }
-            }
-        }
 
     /**
      * 以下用于快捷判断元素是否是指定类型
@@ -128,30 +111,6 @@ object Assists {
         return contentDescription?.toString() ?: ""
     }
 
-
-    /**
-     * 请求录屏权限
-     * @param isAutoEnable 是否自动通过，如果设置自动通过前提需要先开启无障碍服务（当前仅测试小米系统通过，其他机型系统未测试）
-     */
-    suspend fun requestScreenCapture(isAutoEnable: Boolean): Boolean {
-        mediaProjectionService ?: let {
-            delay(1000)
-            if (isAutoEnable && service != null) {
-                findByText("立即开始").firstOrNull()?.let {
-                    val result = it.click()
-                    return result
-                }
-            }
-        }
-        return true
-    }
-
-    /**
-     * 是否拥有录屏权限
-     */
-    fun isEnableScreenCapture(): Boolean {
-        return mediaProjectionService != null
-    }
 
     fun init(application: Application) {
         LogUtils.getConfig().globalTag = LOG_TAG

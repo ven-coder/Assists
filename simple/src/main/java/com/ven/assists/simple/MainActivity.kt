@@ -1,6 +1,7 @@
 package com.ven.assists.simple
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.ViewGroup
@@ -8,14 +9,21 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.BarUtils
+import com.blankj.utilcode.util.ImageUtils
+import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.PathUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.ven.assists.Assists
 import com.ven.assists.AssistsService
 import com.ven.assists.AssistsServiceListener
-import com.ven.assists.MediaProjectionServiceManager
 import com.ven.assists.simple.databinding.ActivityMainBinding
 import com.ven.assists.simple.databinding.MainControlBinding
+import com.ven.assists_mp.MPManager
+import com.ven.assists_mp.MPManager.onEnable
+import com.ven.assists_mp.MPService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.File
 
 
 class MainActivity : AppCompatActivity(), AssistsServiceListener {
@@ -35,7 +43,19 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
     val mainControlBinding: MainControlBinding by lazy {
         MainControlBinding.inflate(layoutInflater).apply {
             root.layoutParams = ViewGroup.LayoutParams(-1, -1)
-            btnScreenCapture.setOnClickListener { MediaProjectionServiceManager.request() }
+            btnScreenCapture.setOnClickListener {
+                MPManager.request()
+            }
+            btnTakeScreenshot.setOnClickListener {
+                runCatching {
+                    val file = MPManager.takeScreenshot2File()
+                    startActivity(Intent(this@MainActivity, ScreenshotReviewActivity::class.java).apply {
+                        putExtra("path",file?.path)
+                    })
+                }.onFailure {
+                    ToastUtils.showShort("截图失败，尝试请求授予屏幕录制后重试")
+                }
+            }
         }
     }
 

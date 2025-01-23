@@ -16,7 +16,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorAccent"
-            android:text="开启屏幕录制" />
+            android:text="请求屏幕录制" />
+        <Button
+            android:id="@+id/btn_take_screenshot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorAccent"
+            android:text="截取屏幕" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -129,24 +129,24 @@ object OpencvWrapper {
      * 获取屏幕图像
      */
     fun getScreenMat(): Mat? {
-        val screenBitmap = Assists.mediaProjectionService?.toBitmap() ?: return null
+//        val screenBitmap = Assists.mediaProjectionService?.toBitmap() ?: return null
         val screenMat = Mat()
-        Utils.bitmapToMat(screenBitmap, screenMat)
+//        Utils.bitmapToMat(screenBitmap, screenMat)
         Imgproc.cvtColor(screenMat, screenMat, Imgproc.COLOR_RGBA2BGR)
         return screenMat
     }
 
-    fun getScreenBitmap(): Bitmap? {
-        return Assists.mediaProjectionService?.toBitmap()
-    }
-
-    suspend fun getScreenBitmapIgnoreFloatWindow(): Bitmap? {
-        AssistsWindowManager.hideAll()
-        delay(50)
-        val bitmap = Assists.mediaProjectionService?.toBitmap()
-        AssistsWindowManager.showLastView()
-        return bitmap
-    }
+//    fun getScreenBitmap(): Bitmap? {
+//        return Assists.mediaProjectionService?.toBitmap()
+//    }
+//
+//    suspend fun getScreenBitmapIgnoreFloatWindow(): Bitmap? {
+//        AssistsWindowManager.hideAll()
+//        delay(50)
+//        val bitmap = Assists.mediaProjectionService?.toBitmap()
+//        AssistsWindowManager.showLastView()
+//        return bitmap
+//    }
 
     /**
      * 从Assets获取图像
@@ -197,20 +197,20 @@ object OpencvWrapper {
         // 延迟100毫秒，等待视图隐藏完成
         delay(100)
         // 尝试获取整个屏幕的截图
-        getScreenBitmap()?.let {
-            // 显示最后一个辅助视图
-            AssistsWindowManager.showLastView()
-            // 从整个屏幕截图中裁剪出当前节点对应的区域
-            val bitmap = Bitmap.createBitmap(
-                it,
-                screen.left,
-                screen.top,
-                screen.width(),
-                screen.height(),
-            )
-            // 返回裁剪后的Bitmap对象
-            return bitmap
-        }
+//        getScreenBitmap()?.let {
+//            // 显示最后一个辅助视图
+//            AssistsWindowManager.showLastView()
+//            // 从整个屏幕截图中裁剪出当前节点对应的区域
+//            val bitmap = Bitmap.createBitmap(
+//                it,
+//                screen.left,
+//                screen.top,
+//                screen.width(),
+//                screen.height(),
+//            )
+//            // 返回裁剪后的Bitmap对象
+//            return bitmap
+//        }
         // 如果无法获取屏幕截图，则返回null
         return null
     }

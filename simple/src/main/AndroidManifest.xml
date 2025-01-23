@@ -53,6 +53,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SettingGuideActivity" android:theme="@style/TransparentActivityTheme"/>
+        <activity android:name=".ScreenshotReviewActivity" />
 
         <service
             android:name="com.ven.assists.AssistsService"

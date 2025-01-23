@@ -1,15 +1,13 @@
-package com.ven.assists_opcv
+package com.ven.assists_mp
 
 import android.app.Application
 import androidx.core.content.FileProvider
-import com.ven.assists.MediaProjectionServiceManager
 
-class AssistsMPFileProvider : FileProvider() {
+class MPFileProvider : FileProvider() {
     override fun onCreate(): Boolean {
         val applicationContext = context?.applicationContext
         if (applicationContext is Application) {
-            OpencvWrapper.init()
-            MediaProjectionServiceManager.init(applicationContext)
+            MPManager.init(applicationContext)
         }
         return super.onCreate()
     }
