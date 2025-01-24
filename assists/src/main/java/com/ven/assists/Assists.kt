@@ -533,7 +533,6 @@ object Assists {
         switchWindowIntervalDelay: Long = 100,
         duration: Long = 25
     ): Boolean {
-        AssistsWindowManager.switchNotTouchableAll()
         delay(switchWindowIntervalDelay)
         val rect = getBoundsInScreen()
         val result = gesture(
@@ -543,7 +542,6 @@ object Assists {
             duration,
         )
         delay(switchWindowIntervalDelay)
-        AssistsWindowManager.switchTouchableAll()
         return result
     }
 

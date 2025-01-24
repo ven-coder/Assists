@@ -124,7 +124,7 @@ object OverManager : StepListener {
                         or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
                 layoutParams.width = ScreenUtils.getScreenWidth()
                 layoutParams.height = BarUtils.getStatusBarHeight()
-                AssistsWindowManager.addView(View(Assists.service!!).apply {
+                AssistsWindowManager.add(View(Assists.service!!).apply {
                     btn1.tag = this
                     setBackgroundColor(Color.parseColor("#80000000"))
                     setLayoutParams(ViewGroup.LayoutParams(ScreenUtils.getScreenWidth(), BarUtils.getStatusBarHeight()))
@@ -166,14 +166,14 @@ object OverManager : StepListener {
                                         it.getBoundsInScreen().let {
                                             Assists.coroutine.launch {
                                                 withContext(Dispatchers.Main) {
-                                                    AssistsWindowManager.switchNotTouchableAll()
+                                                    AssistsWindowManager.untouchableByAll()
                                                 }
                                                 delay(100)
                                                 Assists.gestureClick(it.left + 20f, it.top + 20f)
                                                 delay(100)
 
                                                 withContext(Dispatchers.Main) {
-                                                    AssistsWindowManager.switchTouchableAll()
+                                                    AssistsWindowManager.touchableByAll()
                                                 }
                                             }
                                         }

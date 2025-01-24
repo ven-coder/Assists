@@ -24,18 +24,21 @@
             android:backgroundTint="@color/colorAccent"
             android:text="截取屏幕" />
         <Button
+            android:id="@+id/btn_disable_pull_notification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorAccent"
             android:text="禁止下拉通知栏" />
 
         <Button
+            android:id="@+id/btn_listener_notification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorAccent"
             android:text="通知监听（包括Toast）"
             android:textAllCaps="false" />
         <Button
+            android:id="@+id/btn_collect_energy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorAccent"

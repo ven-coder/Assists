@@ -79,7 +79,7 @@ class GestureScrollSocial : StepImpl() {
             }
             return@next Step.repeat
         }.next(StepTag.STEP_5) {
-            AssistsWindowManager.switchNotTouchableAll()
+            AssistsWindowManager.untouchableByAll()
             runIO { delay(250) }
             val x = ScreenUtils.getAppScreenWidth() / 2F
             val distance = ScreenUtils.getAppScreenHeight() / 2F
@@ -89,7 +89,7 @@ class GestureScrollSocial : StepImpl() {
             Assists.gesture(
                 floatArrayOf(x, startY), floatArrayOf(x, endY), 0, 2000L
             )
-            AssistsWindowManager.switchTouchableAll()
+            AssistsWindowManager.touchableByAll()
             runIO { delay(1000) }
             return@next Step.repeat
         }

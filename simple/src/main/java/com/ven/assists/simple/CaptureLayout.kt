@@ -57,7 +57,11 @@ class CaptureLayout @JvmOverloads constructor(
             return false
         }
         if (ev.action == MotionEvent.ACTION_UP) {
-            AssistsWindowManager.pop()
+            Assists.launch {
+                withContext(Dispatchers.Main) {
+                    AssistsWindowManager.pop()
+                }
+            }
             return false
         }
         return super.dispatchTouchEvent(ev)

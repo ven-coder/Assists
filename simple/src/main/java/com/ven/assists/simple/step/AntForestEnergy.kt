@@ -115,7 +115,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                 return@next Step.none
             }
             runMain {
-                AssistsWindowManager.showLastView()
+                AssistsWindowManager.showTop()
             }
             val capBeginY = (screenMat.height() * 0.2).toInt()
             val capEndY = screenMat.height() * 0.18
@@ -144,7 +144,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
 
             runMain {
                 Assists.service?.let { it ->
-                    AssistsWindowManager.addView(CaptureLayout(it).apply {
+                    AssistsWindowManager.add(CaptureLayout(it).apply {
                         points.forEach {
                             it.y += capBeginY
                             addPoint(it, temp3.width(), temp3.height())
@@ -162,15 +162,15 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
             } else {
                 delay(500)
                 overLog("开始点击能量球")
-                runMain { AssistsWindowManager.switchNotTouchableAll() }
+                runMain { AssistsWindowManager.untouchableByAll() }
                 delay(500)
                 points.forEach {
                     overLog("点击第 ${points.indexOf(it) + 1} 个能量球（${it.x + temp3.width() / 2},${it.y + temp3.height() / 2}）")
-                    runMain { AssistsWindowManager.switchNotTouchableAll() }
+                    runMain { AssistsWindowManager.untouchableByAll() }
                     delay(250)
                     Assists.gestureClick((it.x + temp3.width() / 2).toFloat(), (it.y + temp3.height() / 2).toFloat())
                     delay(250)
-                    runMain { AssistsWindowManager.switchTouchableAll() }
+                    runMain { AssistsWindowManager.touchableByAll() }
                     delay(250)
                 }
                 overLog("能量球点击完毕")
@@ -188,13 +188,13 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                         val point = it.maxLoc
                         runMain {
                             Assists.service?.let {
-                                AssistsWindowManager.addView(CaptureLayout(it).apply {
+                                AssistsWindowManager.add(CaptureLayout(it).apply {
                                     addPoint(point, templateMat.width(), templateMat.height())
                                     invalidate()
                                 }, AssistsWindowManager.createLayoutParams(), isStack = true)
                             }
                         }
-                        runMain { AssistsWindowManager.switchNotTouchableAll() }
+                        runMain { AssistsWindowManager.untouchableByAll() }
                         delay(250)
                         overLog("点击找能量")
                         delay(250)

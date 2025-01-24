@@ -2,8 +2,10 @@ package com.ven.assists.simple
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
 import androidx.appcompat.app.AppCompatActivity
@@ -12,10 +14,12 @@ import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.PathUtils
+import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.ven.assists.Assists
 import com.ven.assists.AssistsService
 import com.ven.assists.AssistsServiceListener
+import com.ven.assists.AssistsWindowManager
 import com.ven.assists.simple.databinding.ActivityMainBinding
 import com.ven.assists.simple.databinding.MainControlBinding
 import com.ven.assists_mp.MPManager
@@ -40,6 +44,8 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
         }
     }
 
+    private var disableNotificationView: View? = null
+
     val mainControlBinding: MainControlBinding by lazy {
         MainControlBinding.inflate(layoutInflater).apply {
             root.layoutParams = ViewGroup.LayoutParams(-1, -1)
@@ -50,11 +56,33 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
                 runCatching {
                     val file = MPManager.takeScreenshot2File()
                     startActivity(Intent(this@MainActivity, ScreenshotReviewActivity::class.java).apply {
-                        putExtra("path",file?.path)
+                        putExtra("path", file?.path)
                     })
                 }.onFailure {
                     ToastUtils.showShort("截图失败，尝试请求授予屏幕录制后重试")
                 }
+            }
+
+
+            btnDisablePullNotification.setOnClickListener {
+                disableNotificationView?.let {
+                    AssistsWindowManager.removeView(it)
+                    disableNotificationView = null
+                    btnDisablePullNotification.setText("禁止下拉通知栏")
+                    return@setOnClickListener
+                }
+                disableNotificationView = View(Assists.service).apply {
+                    setBackgroundColor(Color.parseColor("#80000000"))
+                    layoutParams = ViewGroup.LayoutParams(-1, BarUtils.getStatusBarHeight())
+                }
+                AssistsWindowManager.add(view = disableNotificationView, params = AssistsWindowManager.createLayoutParams().apply {
+                    width = -1
+                    height = BarUtils.getStatusBarHeight()
+                })
+                btnDisablePullNotification.setText("允许下拉通知栏")
+            }
+            btnListenerNotification.setOnClickListener {
+
             }
         }
     }
@@ -91,6 +119,7 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
 
     override fun onServiceConnected(service: AssistsService) {
         onBackApp()
+        checkServiceEnable()
     }
 
     private fun onBackApp() {
