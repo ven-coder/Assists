@@ -1,7 +1,6 @@
 package com.ven.assists.simple
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
@@ -11,10 +10,6 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.BarUtils
-import com.blankj.utilcode.util.ImageUtils
-import com.blankj.utilcode.util.LogUtils
-import com.blankj.utilcode.util.PathUtils
-import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.ven.assists.Assists
 import com.ven.assists.AssistsService
@@ -22,15 +17,14 @@ import com.ven.assists.AssistsServiceListener
 import com.ven.assists.AssistsWindowManager
 import com.ven.assists.simple.databinding.ActivityMainBinding
 import com.ven.assists.simple.databinding.MainControlBinding
+import com.ven.assists.simple.overlays.OverlayMain
 import com.ven.assists_mp.MPManager
-import com.ven.assists_mp.MPManager.onEnable
-import com.ven.assists_mp.MPService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
 
 
 class MainActivity : AppCompatActivity(), AssistsServiceListener {
+    private var isActivityResumed = false
     val viewBind: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater).apply {
             btnOption.setOnClickListener {
@@ -39,6 +33,19 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
                 } else {
                     Assists.openAccessibilitySetting()
                     startActivity(Intent(this@MainActivity, SettingGuideActivity::class.java))
+                }
+            }
+            btnOverlay.setOnClickListener {
+                OverlayMain.onClose = {
+                    OverlayMain.hide()
+                    btnOverlay.setText("显示操作浮窗")
+                }
+                if (OverlayMain.showed) {
+                    OverlayMain.hide()
+                    btnOverlay.setText("显示操作浮窗")
+                } else {
+                    OverlayMain.show()
+                    btnOverlay.setText("关闭操作浮窗")
                 }
             }
         }
@@ -75,7 +82,7 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
                     setBackgroundColor(Color.parseColor("#80000000"))
                     layoutParams = ViewGroup.LayoutParams(-1, BarUtils.getStatusBarHeight())
                 }
-                AssistsWindowManager.add(view = disableNotificationView, params = AssistsWindowManager.createLayoutParams().apply {
+                AssistsWindowManager.add(view = disableNotificationView, layoutParams = AssistsWindowManager.createLayoutParams().apply {
                     width = -1
                     height = BarUtils.getStatusBarHeight()
                 })
@@ -89,24 +96,24 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
 
     override fun onResume() {
         super.onResume()
+        isActivityResumed = true
         checkServiceEnable()
     }
 
+    override fun onPause() {
+        super.onPause()
+        isActivityResumed = false
+    }
+
     private fun checkServiceEnable() {
+        if (!isActivityResumed) return
         if (Assists.isAccessibilityServiceEnabled()) {
-            viewBind.flContainer.indexOfChild(mainControlBinding.root).let {
-                if (it == -1) {
-                    viewBind.flContainer.addView(mainControlBinding.root)
-                }
-            }
             viewBind.btnOption.isVisible = false
+            viewBind.btnOverlay.isVisible = true
         } else {
-            viewBind.flContainer.indexOfChild(mainControlBinding.root).let {
-                if (it > -1) {
-                    viewBind.flContainer.removeView(mainControlBinding.root)
-                }
-            }
             viewBind.btnOption.isVisible = true
+            viewBind.btnOverlay.isVisible = false
+            viewBind.btnOverlay.text = "显示操作浮窗"
         }
     }
 
@@ -132,7 +139,6 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
     }
 
     override fun onUnbind() {
-        OverManager.clear()
         checkServiceEnable()
     }
 

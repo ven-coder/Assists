@@ -105,18 +105,23 @@ object AssistsWindowManager {
     }
 
 
-    fun add(view: View?, params: WindowManager.LayoutParams = createLayoutParams(), isStack: Boolean = true, isTouchable: Boolean = true) {
+    fun add(windowWrapper: AssistsWindowWrapper?, isStack: Boolean = true, isTouchable: Boolean = true) {
+        windowWrapper ?: return
+        add(view = windowWrapper.getView(), layoutParams = windowWrapper.wmlp, isStack = isStack, isTouchable = isTouchable)
+    }
+
+    fun add(view: View?, layoutParams: WindowManager.LayoutParams = createLayoutParams(), isStack: Boolean = true, isTouchable: Boolean = true) {
         view ?: return
         if (!isStack) {
             viewList.lastOrNull()?.let { it.view.isInvisible = true }
         }
-        windowManager.addView(view, params)
+        windowManager.addView(view, layoutParams)
         if (isTouchable) {
-            params.touchableByLayoutParams()
+            layoutParams.touchableByLayoutParams()
         } else {
-            params.untouchableByLayoutParams()
+            layoutParams.untouchableByLayoutParams()
         }
-        viewList.add(ViewWrapper(view, params))
+        viewList.add(ViewWrapper(view, layoutParams))
     }
 
     fun push(view: View?, params: WindowManager.LayoutParams = createLayoutParams()) {
@@ -140,6 +145,20 @@ object AssistsWindowManager {
         } catch (e: Throwable) {
             LogUtils.e(e)
         }
+    }
+
+    fun contains(view: View): Boolean {
+        return viewList.find {
+            return@find view == it.view
+        } != null
+    }
+
+    fun isVisible(view: View): Boolean {
+        return viewList.find {
+            return@find view == it.view
+        }?.let {
+            return@let it.view.isVisible
+        } ?: false
     }
 
     fun updateViewLayout(view: View, params: ViewGroup.LayoutParams) {

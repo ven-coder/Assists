@@ -7,18 +7,27 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_option"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorAccent"
-        android:text="开启服务"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/fl_container"
-        android:layout_width="match_parent"
-        android:background="#ffffff"
-        android:layout_height="match_parent"/>
+        <Button
+            android:id="@+id/btn_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorAccent"
+            android:text="开启服务" />
+
+        <Button
+            android:id="@+id/btn_overlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorAccent"
+            android:text="显示操作浮窗" />
+
+    </LinearLayout>
 
 </FrameLayout>
