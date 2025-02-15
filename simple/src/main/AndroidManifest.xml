@@ -52,8 +52,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SettingGuideActivity" android:theme="@style/TransparentActivityTheme"/>
+        <activity
+            android:name=".SettingGuideActivity"
+            android:theme="@style/TransparentActivityTheme" />
         <activity android:name=".ScreenshotReviewActivity" />
+        <activity
+            android:name=".TestActivity"
+            android:launchMode="singleInstance"
+
+            />
 
         <service
             android:name="com.ven.assists.AssistsService"

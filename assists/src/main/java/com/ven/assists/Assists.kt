@@ -494,6 +494,13 @@ object Assists {
     fun AccessibilityNodeInfo.click(): Boolean {
         return performAction(AccessibilityNodeInfo.ACTION_CLICK)
     }
+    /**
+     * 长按元素
+     * @return 执行结果，true成功，false失败
+     */
+    fun AccessibilityNodeInfo.longClick(): Boolean {
+        return performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)
+    }
 
     /**
      * 手势长按元素所处的位置

@@ -1,18 +1,26 @@
 package com.ven.assists.simple.overlays
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.ven.assists.Assists
+import com.ven.assists.Assists.click
+import com.ven.assists.Assists.longClick
+import com.ven.assists.Assists.nodeGestureClick
 import com.ven.assists.AssistsServiceListener
 import com.ven.assists.AssistsWindowManager
 import com.ven.assists.AssistsWindowWrapper
+import com.ven.assists.simple.TestActivity
 import com.ven.assists.simple.databinding.MainControlBinding
 import com.ven.assists.simple.databinding.MainOverlayBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 object OverlayMain : AssistsServiceListener {
 
@@ -21,7 +29,36 @@ object OverlayMain : AssistsServiceListener {
         private set
         get() {
             if (field == null) {
-                field = MainOverlayBinding.inflate(LayoutInflater.from(Assists.service))
+                field = MainOverlayBinding.inflate(LayoutInflater.from(Assists.service)).apply {
+                    btnClick.setOnClickListener {
+                        Assists.coroutine.launch {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java))
+                            delay(1000)
+                            Assists.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.click()
+                        }
+                    }
+                    btnGestureClick.setOnClickListener {
+                        Assists.coroutine.launch {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java))
+                            delay(1000)
+                            Assists.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.nodeGestureClick()
+                        }
+                    }
+                    btnLongClick.setOnClickListener {
+                        Assists.coroutine.launch {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java))
+                            delay(1000)
+                            Assists.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.longClick()
+                        }
+                    }
+                    btnGestureLongClick.setOnClickListener {
+                        Assists.coroutine.launch {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java))
+                            delay(1000)
+                            Assists.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.nodeGestureClick(duration = 1000)
+                        }
+                    }
+                }
             }
             return field
         }
