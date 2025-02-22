@@ -8,6 +8,7 @@ import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.ven.assists.Assists
 import com.ven.assists.simple.databinding.SettingGuideBinding
+import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -18,7 +19,7 @@ class SettingGuideActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         BarUtils.setStatusBarColor(this, Color.TRANSPARENT)
-        Assists.coroutine.launch {
+        CoroutineWrapper.launch {
             delay(500)
             withContext(Dispatchers.Main) {
                 SettingGuideBinding.inflate(layoutInflater).apply {

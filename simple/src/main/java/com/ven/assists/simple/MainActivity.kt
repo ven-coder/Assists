@@ -3,6 +3,7 @@ package com.ven.assists.simple
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.BarUtils
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.ven.assists.Assists
 import com.ven.assists.AssistsService
@@ -19,9 +21,12 @@ import com.ven.assists.AssistsWindowManager
 import com.ven.assists.simple.databinding.ActivityMainBinding
 import com.ven.assists.simple.databinding.MainControlBinding
 import com.ven.assists.simple.overlays.OverlayMain
+import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists_mp.MPManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import android.widget.LinearLayout
+import android.widget.Button
 
 
 class MainActivity : AppCompatActivity(), AssistsServiceListener {
@@ -95,6 +100,8 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
         }
     }
 
+    private lateinit var drawingView: MultiTouchDrawingView
+
     override fun onResume() {
         super.onResume()
         isActivityResumed = true
@@ -120,9 +127,10 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         super.onAccessibilityEvent(event)
-        if (event.eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
+//        if (event.eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
+//
+//        }
 
-        }
     }
 
     override fun onServiceConnected(service: AssistsService) {
@@ -131,7 +139,7 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
     }
 
     private fun onBackApp() {
-        Assists.coroutine.launch {
+        CoroutineWrapper.launch {
             while (Assists.getPackageName() != packageName) {
                 Assists.back()
                 delay(500)

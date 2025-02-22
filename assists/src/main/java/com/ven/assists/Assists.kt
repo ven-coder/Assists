@@ -9,11 +9,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Path
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
@@ -26,33 +29,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object Assists {
-
-    //日志TAG
     var LOG_TAG = "assists_log"
-
-
-    private var job = Job()
-
-    //协程域
-    var coroutine: CoroutineScope = CoroutineScope(job + Dispatchers.IO)
-        private set
-        get() {
-            if (job.isCancelled || !job.isActive) {
-                job = Job()
-                field = CoroutineScope(job + Dispatchers.IO)
-            }
-            return field
-        }
-
-    fun launch(block: suspend CoroutineScope.() -> Unit): Job {
-        return coroutine.launch(block = block)
-    }
-
 
     /**
      * 无障碍服务，未开启前为null，使用注意判空
      */
-    @JvmStatic
     var service: AssistsService? = null
 
     val serviceListeners: ArrayList<AssistsServiceListener> = arrayListOf()
@@ -224,7 +205,7 @@ object Assists {
     /**
      * 获取元素文本列表，包括text，content-desc
      */
-    fun AccessibilityNodeInfo?.getAllText(text: String): ArrayList<String> {
+    fun AccessibilityNodeInfo?.getAllText(): ArrayList<String> {
         if (this == null) return arrayListOf()
         val texts = arrayListOf<String>()
         getText()?.let {
@@ -393,7 +374,7 @@ object Assists {
     }
 
     /**
-     * 查找可点击的父元素
+     * 查找首个可点击的父元素
      */
     private fun AccessibilityNodeInfo.findFirstParentClickable(nodeInfo: Array<AccessibilityNodeInfo?>) {
         if (parent?.isClickable == true) {
@@ -417,6 +398,35 @@ object Assists {
     }
 
     /**
+     * 分发手势
+     * @param untouchableWindowDelay 切换窗口不可触摸后延长执行的时间
+     * @param callback 回调
+     */
+    suspend fun dispatchGesture(
+        gesture: GestureDescription,
+        callback: AccessibilityService.GestureResultCallback? = null,
+        handler: Handler? = null,
+        untouchableWindowDelay: Long = 100,
+    ) {
+        val gestureResultCallback = object : AccessibilityService.GestureResultCallback() {
+            override fun onCompleted(gestureDescription: GestureDescription?) {
+                AssistsWindowManager.touchableByAll()
+                callback?.onCompleted(gestureDescription)
+            }
+
+            override fun onCancelled(gestureDescription: GestureDescription?) {
+                AssistsWindowManager.touchableByAll()
+                callback?.onCancelled(gestureDescription)
+            }
+        }
+        service?.let {
+            AssistsWindowManager.untouchableByAll()
+            delay(untouchableWindowDelay)
+            it.dispatchGesture(gesture, gestureResultCallback, handler)
+        }
+    }
+
+    /**
      * 手势模拟，点或直线
      *
      * @param startLocation 开始位置，长度为2的数组，下标 0为 x坐标，下标 1为 y坐标
@@ -425,7 +435,6 @@ object Assists {
      * @param duration 持续时间
      * @return true 执行成功，false 执行失败
      */
-    @JvmStatic
     suspend fun gesture(
         startLocation: FloatArray,
         endLocation: FloatArray,
@@ -445,7 +454,6 @@ object Assists {
      * @param duration 持续毫秒
      * @return true 执行成功，false 执行失败
      */
-    @JvmStatic
     suspend fun gesture(
         path: Path,
         startTime: Long,
@@ -480,20 +488,13 @@ object Assists {
     }
 
     /**
-     * 手势点击元素所处的位置
-     */
-    suspend fun AccessibilityNodeInfo.gestureClick() {
-        val rect = getBoundsInScreen()
-        gestureClick(rect.left + 15F, rect.top + 15F, 10)
-    }
-
-    /**
      * 点击元素
      * @return 执行结果，true成功，false失败
      */
     fun AccessibilityNodeInfo.click(): Boolean {
         return performAction(AccessibilityNodeInfo.ACTION_CLICK)
     }
+
     /**
      * 长按元素
      * @return 执行结果，true成功，false失败
@@ -503,17 +504,10 @@ object Assists {
     }
 
     /**
-     * 手势长按元素所处的位置
-     */
-    suspend fun AccessibilityNodeInfo.gestureLongClick() {
-        val rect = getBoundsInScreen()
-        gestureClick(rect.left + 15F, rect.top + 15F, 1000)
-    }
-
-    /**
      * 点击屏幕指定位置
      * @param x 坐标
      * @param y 坐标
+     * @param duration 持续时间，单位毫秒
      */
     suspend fun gestureClick(
         x: Float,

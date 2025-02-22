@@ -15,6 +15,7 @@ import com.ven.assists.stepper.Step
 import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
 import com.ven.assists.stepper.StepManager
+import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists_opcv.OpencvWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -226,7 +227,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
     }
 
     override fun screenCaptureEnable() {
-        Assists.coroutine.launch {
+        CoroutineWrapper.launch {
             overLog("屏幕录制已开启")
             StepManager.execute(AntForestEnergy::class.java, StepTag.STEP_2)
         }

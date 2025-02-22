@@ -8,6 +8,7 @@ import com.blankj.utilcode.util.LogUtils
 import com.ven.assists.Assists
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.AssistsWindowManager
+import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
@@ -27,7 +28,7 @@ import kotlin.math.abs
 object OpencvWrapper {
 
     fun init() {
-        Assists.coroutine.launch {
+        CoroutineWrapper.launch {
             if (OpenCVLoader.initLocal()) {
                 LogUtils.dTag(Assists.LOG_TAG, "OpenCV loaded successfully")
             } else {

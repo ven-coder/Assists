@@ -44,6 +44,7 @@ import com.ven.assists.simple.step.ScrollContacts
 import com.ven.assists.simple.step.StepTag
 import com.ven.assists.stepper.StepListener
 import com.ven.assists.stepper.StepManager
+import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -103,7 +104,7 @@ object OverManager : StepListener {
                 if (!Assists.serviceListeners.contains(notificationListener)) {
                     Assists.serviceListeners.add(notificationListener)
                 }
-                Assists.coroutine.launch {
+                CoroutineWrapper.launch {
                     delay(1000)
                     withContext(Dispatchers.Main) {
                         OverManager.log("通知监听中...")
@@ -133,7 +134,7 @@ object OverManager : StepListener {
             }
             btn2.setOnClickListener {
                 beginStart(this)
-                Assists.coroutine.launch {
+                CoroutineWrapper.launch {
                     delay(1000)
                     withContext(Dispatchers.Main) {
                         OverManager.log("监听并自动接听微信电话...")
@@ -164,7 +165,7 @@ object OverManager : StepListener {
                                     if (isInCall && it.containsText("接听") && it.className == "android.widget.Button") {
                                         OverManager.log("收到微信电话，接听")
                                         it.getBoundsInScreen().let {
-                                            Assists.coroutine.launch {
+                                            CoroutineWrapper.launch {
                                                 withContext(Dispatchers.Main) {
                                                     AssistsWindowManager.untouchableByAll()
                                                 }

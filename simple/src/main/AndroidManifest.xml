@@ -58,9 +58,10 @@
         <activity android:name=".ScreenshotReviewActivity" />
         <activity
             android:name=".TestActivity"
-            android:launchMode="singleInstance"
-
-            />
+            android:launchMode="singleInstance" />
+        <activity
+            android:name=".MultiTouchDrawingActivity"
+            android:launchMode="singleInstance" />
 
         <service
             android:name="com.ven.assists.AssistsService"

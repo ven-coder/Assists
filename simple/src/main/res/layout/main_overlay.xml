@@ -2,74 +2,200 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
-    <com.google.android.flexbox.FlexboxLayout
-        android:id="@+id/fl_content"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:flexWrap="wrap">
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btn_click"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
-            android:text="点击" />
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/fl_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:flexWrap="wrap">
 
-        <Button
-            android:id="@+id/btn_gesture_click"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
-            android:text="手势点击" />
-        <Button
-            android:id="@+id/btn_long_click"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
-            android:text="长按" />
-        <Button
-            android:id="@+id/btn_gesture_long_click"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
-            android:text="手势长按" />
-        <Button
+            <Button
+                android:id="@+id/btn_click"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="点击" />
 
-            android:id="@+id/btn_screen_capture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
-            android:text="请求屏幕录制" />
-        <Button
-            android:id="@+id/btn_take_screenshot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
-            android:text="截取屏幕" />
-        <Button
-            android:id="@+id/btn_disable_pull_notification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
-            android:text="禁止下拉通知栏" />
+            <Button
+                android:id="@+id/btn_gesture_click"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="手势点击" />
 
-        <Button
-            android:id="@+id/btn_listener_notification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
-            android:text="通知监听（包括Toast）"
-            android:textAllCaps="false" />
-        <Button
-            android:id="@+id/btn_collect_energy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
-            android:text="蚂蚁森林能量自动收集"
-            android:textAllCaps="false" />
-    </com.google.android.flexbox.FlexboxLayout>
+            <Button
+                android:id="@+id/btn_long_click"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="长按" />
 
+            <Button
+                android:id="@+id/btn_gesture_long_click"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="手势长按" />
+
+            <Button
+                android:id="@+id/btn_gesture_single_draw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="单指手势（画圆）" />
+
+            <Button
+                android:id="@+id/btn_gesture_double_draw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="双指手势（画圆）" />
+
+            <Button
+                android:id="@+id/btn_gesture_three_draw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="单指手势（不规则）" />
+
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="返回" />
+
+            <Button
+                android:id="@+id/btn_home"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="桌面" />
+
+            <Button
+                android:id="@+id/btn_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="显示通知" />
+
+            <Button
+                android:id="@+id/btn_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="最近任务" />
+
+            <Button
+                android:id="@+id/btn_select_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="选择文本" />
+
+            <Button
+                android:id="@+id/btn_change_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="修改文本" />
+
+            <Button
+                android:id="@+id/btn_list_scroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="向下滚动列表" />
+
+            <Button
+                android:id="@+id/btn_list_scroll_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="向上滚动列表" />
+
+            <Button
+                android:id="@+id/btn_power_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="显示电源选项对话框" />
+
+            <Button
+                android:id="@+id/btn_toggle_split_screen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:backgroundTint="@color/colorAccent"
+                android:text="切换分屏模式" />
+
+            <Button
+                android:id="@+id/btn_lock_screen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="锁定屏幕" />
+
+            <Button
+                android:id="@+id/btn_take_screenshot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="截取屏幕截图" />
+
+            <Button
+                android:id="@+id/btn_1"
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="模拟耳机按钮操作" />
+
+            <Button
+                android:id="@+id/btn_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+
+                android:backgroundTint="@color/colorAccent"
+                android:text="打开所有应用列表" />
+
+            <!--        <Button-->
+
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:backgroundTint="@color/colorAccent"-->
+            <!--            android:text="请求屏幕录制" />-->
+            <!--        <Button-->
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:backgroundTint="@color/colorAccent"-->
+            <!--            android:text="截取屏幕" />-->
+            <!--        <Button-->
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:backgroundTint="@color/colorAccent"-->
+            <!--            android:text="禁止下拉通知栏" />-->
+
+            <!--        <Button-->
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:backgroundTint="@color/colorAccent"-->
+            <!--            android:text="通知监听（包括Toast）"-->
+            <!--            android:textAllCaps="false" />-->
+            <!--        <Button-->
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:backgroundTint="@color/colorAccent"-->
+            <!--            android:text="蚂蚁森林能量自动收集"-->
+            <!--            android:textAllCaps="false" />-->
+        </com.google.android.flexbox.FlexboxLayout>
+
+    </androidx.core.widget.NestedScrollView>
 </FrameLayout>

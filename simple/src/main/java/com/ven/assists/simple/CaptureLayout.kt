@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ResourceUtils
 import com.ven.assists.Assists
 import com.ven.assists.AssistsWindowManager
+import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -57,7 +58,7 @@ class CaptureLayout @JvmOverloads constructor(
             return false
         }
         if (ev.action == MotionEvent.ACTION_UP) {
-            Assists.launch {
+            CoroutineWrapper.launch {
                 withContext(Dispatchers.Main) {
                     AssistsWindowManager.pop()
                 }
