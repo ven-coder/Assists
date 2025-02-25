@@ -1,39 +1,38 @@
 package com.ven.assists.simple
 
+import android.Manifest
 import android.content.Intent
-import android.graphics.Color
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.provider.Settings
 import android.view.KeyEvent
 import android.view.View
-import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.isVisible
-import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.BarUtils
-import com.blankj.utilcode.util.LogUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.PermissionUtils
+import com.blankj.utilcode.util.PermissionUtils.SimpleCallback
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.interfaces.OnConfirmListener
 import com.ven.assists.Assists
 import com.ven.assists.AssistsService
 import com.ven.assists.AssistsServiceListener
-import com.ven.assists.AssistsWindowManager
 import com.ven.assists.simple.databinding.ActivityMainBinding
-import com.ven.assists.simple.databinding.MainControlBinding
-import com.ven.assists.simple.overlays.OverlayMain
+import com.ven.assists.simple.overlays.OverlayBasic
+import com.ven.assists.simple.overlays.OverlayPro
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists_mp.MPManager
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import android.widget.LinearLayout
-import android.widget.Button
 
 
 class MainActivity : AppCompatActivity(), AssistsServiceListener {
     private var isActivityResumed = false
     val viewBind: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater).apply {
-            btnOption.setOnClickListener {
+            btnEnable.setOnClickListener {
                 if (Assists.isAccessibilityServiceEnabled()) {
                     OverManager.show()
                 } else {
@@ -41,17 +40,24 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
                     startActivity(Intent(this@MainActivity, SettingGuideActivity::class.java))
                 }
             }
-            btnOverlay.setOnClickListener {
-                OverlayMain.onClose = {
-                    OverlayMain.hide()
-                    btnOverlay.setText("显示操作浮窗")
+            btnBasic.setOnClickListener {
+                OverlayBasic.onClose = {
+                    OverlayBasic.hide()
                 }
-                if (OverlayMain.showed) {
-                    OverlayMain.hide()
-                    btnOverlay.setText("显示操作浮窗")
+                if (OverlayBasic.showed) {
+                    OverlayBasic.hide()
                 } else {
-                    OverlayMain.show()
-                    btnOverlay.setText("关闭操作浮窗")
+                    OverlayBasic.show()
+                }
+            }
+            btnPro.setOnClickListener {
+                OverlayPro.onClose = {
+                    OverlayPro.hide()
+                }
+                if (OverlayPro.showed) {
+                    OverlayPro.hide()
+                } else {
+                    OverlayPro.show()
                 }
             }
         }
@@ -59,46 +65,6 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
 
     private var disableNotificationView: View? = null
 
-    val mainControlBinding: MainControlBinding by lazy {
-        MainControlBinding.inflate(layoutInflater).apply {
-            root.layoutParams = ViewGroup.LayoutParams(-1, -1)
-            btnScreenCapture.setOnClickListener {
-                MPManager.request()
-            }
-            btnTakeScreenshot.setOnClickListener {
-                runCatching {
-                    val file = MPManager.takeScreenshot2File()
-                    startActivity(Intent(this@MainActivity, ScreenshotReviewActivity::class.java).apply {
-                        putExtra("path", file?.path)
-                    })
-                }.onFailure {
-                    ToastUtils.showShort("截图失败，尝试请求授予屏幕录制后重试")
-                }
-            }
-
-
-            btnDisablePullNotification.setOnClickListener {
-                disableNotificationView?.let {
-                    AssistsWindowManager.removeView(it)
-                    disableNotificationView = null
-                    btnDisablePullNotification.setText("禁止下拉通知栏")
-                    return@setOnClickListener
-                }
-                disableNotificationView = View(Assists.service).apply {
-                    setBackgroundColor(Color.parseColor("#80000000"))
-                    layoutParams = ViewGroup.LayoutParams(-1, BarUtils.getStatusBarHeight())
-                }
-                AssistsWindowManager.add(view = disableNotificationView, layoutParams = AssistsWindowManager.createLayoutParams().apply {
-                    width = -1
-                    height = BarUtils.getStatusBarHeight()
-                })
-                btnDisablePullNotification.setText("允许下拉通知栏")
-            }
-            btnListenerNotification.setOnClickListener {
-
-            }
-        }
-    }
 
     private lateinit var drawingView: MultiTouchDrawingView
 
@@ -116,12 +82,11 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
     private fun checkServiceEnable() {
         if (!isActivityResumed) return
         if (Assists.isAccessibilityServiceEnabled()) {
-            viewBind.btnOption.isVisible = false
-            viewBind.btnOverlay.isVisible = true
+            viewBind.btnEnable.isVisible = false
+            viewBind.llOption.isVisible = true
         } else {
-            viewBind.btnOption.isVisible = true
-            viewBind.btnOverlay.isVisible = false
-            viewBind.btnOverlay.text = "显示操作浮窗"
+            viewBind.btnEnable.isVisible = true
+            viewBind.llOption.isVisible = false
         }
     }
 
@@ -156,6 +121,44 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
         BarUtils.setStatusBarLightMode(this, true)
         setContentView(viewBind.root)
         Assists.serviceListeners.add(this)
+        checkPermission()
+    }
+
+    private fun checkPermission() {
+        val areNotificationsEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled();
+        if (!areNotificationsEnabled) {
+            // 通知权限未开启，提示用户去设置
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                PermissionUtils.permission(Manifest.permission.POST_NOTIFICATIONS).callback(object : SimpleCallback {
+                    override fun onGranted() {
+
+                    }
+
+                    override fun onDenied() {
+                        showNotificationPermissionOpenDialog()
+                    }
+                }).request()
+            } else {
+                showNotificationPermissionOpenDialog()
+            }
+        }
+    }
+
+    private fun showNotificationPermissionOpenDialog() {
+        XPopup.Builder(this).asConfirm("提示", "未开启通知权限，开启通知权限以获得完整测试相关通知提示") {
+            val intent = Intent()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Android 8.0及以上版本，跳转到应用的通知设置页面
+                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+            } else {
+                // Android 8.0以下版本，跳转到应用详情页面
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.setData(Uri.parse("package:" + getPackageName()))
+            }
+            startActivity(intent)
+        }.show()
+
     }
 
     override fun onDestroy() {

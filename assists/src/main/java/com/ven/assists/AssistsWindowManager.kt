@@ -147,9 +147,17 @@ object AssistsWindowManager {
         }
     }
 
-    fun contains(view: View): Boolean {
+    fun contains(view: View?): Boolean {
+        view ?: return false
         return viewList.find {
             return@find view == it.view
+        } != null
+    }
+
+    fun contains(wrapper: AssistsWindowWrapper?): Boolean {
+        wrapper ?: return false
+        return viewList.find {
+            return@find wrapper.getView() == it.view
         } != null
     }
 

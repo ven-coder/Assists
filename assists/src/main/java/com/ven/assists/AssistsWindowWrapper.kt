@@ -28,6 +28,8 @@ class AssistsWindowWrapper(
     var maxWidth = -1
     var initialX = 0
     var initialY = 0
+    var initialXOffset = 0
+    var initialYOffset = 0
     var initialCenter = false
     var wmlp: WindowManager.LayoutParams = wmLayoutParams ?: let { AssistsWindowManager.createLayoutParams() }
 
@@ -81,11 +83,11 @@ class AssistsWindowWrapper(
 
     val viewBinding: AssistsWindowLayoutWrapperBinding by lazy {
         AssistsWindowLayoutWrapperBinding.inflate(LayoutInflater.from(view.context)).apply {
-            root.isInvisible=true
+            root.isInvisible = true
             root.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     if (root.measuredWidth > 0) {
-                        root.isInvisible=false
+                        root.isInvisible = false
                         if (initialCenter) {
                             val measuredWidth = root.measuredWidth
                             val measuredHeight = root.measuredHeight

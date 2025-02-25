@@ -23,8 +23,14 @@ import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ScreenUtils
+import com.ven.assists.Assists
+import com.ven.assists.Assists.click
+import com.ven.assists.Assists.nodeGestureClick
+import com.ven.assists.utils.CoroutineWrapper
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -37,6 +43,8 @@ object MPManager {
     private var requestLaunchers = hashMapOf<Activity, ActivityResultLauncher<Intent>>()
 
     var onEnable: ((service: MPService, intent: Intent, flags: Int, startId: Int) -> Unit)? = null
+    private var completableDeferredEnable: CompletableDeferred<Boolean>? = null
+    private var autoAllowJob: Job? = null
 
     private var imageReader: ImageReader? = null
 
@@ -72,6 +80,8 @@ object MPManager {
     private fun onStartCommand(service: MPService, intent: Intent, flags: Int, startId: Int) {
         onCreateImageReader(service, intent, flags, startId)
         onEnable?.invoke(service, intent, flags, startId)
+        completableDeferredEnable?.complete(true)
+        completableDeferredEnable = null
     }
 
     private fun onResult(result: ActivityResult) {
@@ -118,10 +128,50 @@ object MPManager {
         application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
     }
 
-    fun request() {
-        val projectionManager = ActivityUtils.getTopActivity().getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-        val intent = projectionManager.createScreenCaptureIntent()
+    suspend fun request(autoAllow: Boolean = true, timeOut: Long = 5000): Boolean {
+        var projectionManager: MediaProjectionManager? = null
+        Assists.service?.let {
+            projectionManager = it.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        } ?: let {
+            projectionManager = ActivityUtils.getTopActivity()?.getSystemService(Context.MEDIA_PROJECTION_SERVICE)?.let {
+                it as MediaProjectionManager
+            }
+        }
+        projectionManager ?: return false
+        val intent = projectionManager!!.createScreenCaptureIntent()
         requestLaunchers[ActivityUtils.getTopActivity()]?.launch(intent)
+        completableDeferredEnable = CompletableDeferred()
+        if (autoAllow) {
+            CoroutineWrapper.launch {
+                var time = 0L
+                while (time <= timeOut) {
+                    Assists.findByTags("android.widget.Button", "android:id/button1", "立即开始").firstOrNull()?.click()
+                    Assists.findByTags("android.widget.Spinner", "com.android.systemui:id/screen_share_mode_spinner").firstOrNull()?.let {
+                        if (it.click()) {
+                            delay(250)
+                            Assists.findByTags("android.widget.TextView", "android:id/text1", "整个屏幕").firstOrNull()?.nodeGestureClick()
+                        }
+                    }
+                    Assists.findByTags("android.widget.Button", "android:id/button1", "开始").firstOrNull()?.click()
+                    val delayMillis = 250L
+                    time += delayMillis
+                    delay(delayMillis)
+                }
+                completableDeferredEnable?.complete(false)
+            }
+        } else {
+            autoAllowJob?.cancel()
+            autoAllowJob = CoroutineWrapper.launch {
+                var time = 0L
+                while (time <= timeOut) {
+                    val delayMillis = 250L
+                    time += delayMillis
+                    delay(delayMillis)
+                }
+                completableDeferredEnable?.complete(false)
+            }
+        }
+        return completableDeferredEnable?.await() ?: false
     }
 
     fun takeScreenshot2Bitmap(): Bitmap? {

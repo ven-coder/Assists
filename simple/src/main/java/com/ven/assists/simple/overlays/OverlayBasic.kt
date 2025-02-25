@@ -8,11 +8,8 @@ import android.graphics.Path
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.BarUtils
-import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -29,27 +26,22 @@ import com.ven.assists.AssistsWindowManager
 import com.ven.assists.AssistsWindowWrapper
 import com.ven.assists.simple.MultiTouchDrawingActivity
 import com.ven.assists.simple.TestActivity
-import com.ven.assists.simple.databinding.MainControlBinding
-import com.ven.assists.simple.databinding.MainOverlayBinding
+import com.ven.assists.simple.databinding.BasicOverlayBinding
 import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.lang.Math.toRadians
-import kotlin.math.cos
-import kotlin.math.sin
 
-object OverlayMain : AssistsServiceListener {
+object OverlayBasic : AssistsServiceListener {
 
     @SuppressLint("StaticFieldLeak")
-    var viewBinding: MainOverlayBinding? = null
+    var viewBinding: BasicOverlayBinding? = null
         private set
         get() {
             if (field == null) {
-                field = MainOverlayBinding.inflate(LayoutInflater.from(Assists.service)).apply {
+                field = BasicOverlayBinding.inflate(LayoutInflater.from(Assists.service)).apply {
                     //点击
                     btnClick.setOnClickListener {
                         CoroutineWrapper.launch {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java))
+                            Assists.service?.startActivity(Intent(Assists.service, TestActivity::class.java))
                             delay(1000)
                             Assists.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.click()
                         }

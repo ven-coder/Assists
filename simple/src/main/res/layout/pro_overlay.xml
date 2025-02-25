@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/fl_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:flexWrap="wrap">
+
+            <Button
+                android:id="@+id/btn_listener_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="通知监听（包括Toast）"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_disable_pull_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="禁止下拉通知栏" />
+
+            <Button
+                android:id="@+id/btn_screen_capture"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="请求屏幕录制权限（手动允许）" />
+
+            <Button
+                android:id="@+id/btn_screen_capture_auto"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="请求屏幕录制权限（自动允许）" />
+
+            <Button
+                android:id="@+id/btn_take_screenshot"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="截取当前屏幕" />
+
+            <Button
+                android:id="@+id/btn_take_screenshot_all_image"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="截取当前屏幕所有图片" />
+
+
+        </com.google.android.flexbox.FlexboxLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</FrameLayout>
