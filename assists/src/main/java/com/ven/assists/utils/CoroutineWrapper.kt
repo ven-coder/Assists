@@ -12,13 +12,12 @@ object CoroutineWrapper {
     fun launch(isMain: Boolean = false, block: suspend CoroutineScope.() -> Unit): Job {
         return coroutine.launch(block = block, context = if (isMain) Dispatchers.Main else Dispatchers.IO)
     }
+}
 
-    suspend fun <T> runMain(block: suspend CoroutineScope.() -> T): T {
-        return withContext(Dispatchers.Main, block = block)
-    }
+suspend fun <T> runMain(block: suspend CoroutineScope.() -> T): T {
+    return withContext(Dispatchers.Main, block = block)
+}
 
-    suspend fun <T> runIO(block: suspend CoroutineScope.() -> T): T {
-        return withContext(Dispatchers.IO, block = block)
-    }
-
+suspend fun <T> runIO(block: suspend CoroutineScope.() -> T): T {
+    return withContext(Dispatchers.IO, block = block)
 }

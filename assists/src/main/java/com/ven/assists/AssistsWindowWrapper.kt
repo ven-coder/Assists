@@ -17,7 +17,8 @@ class AssistsWindowWrapper(
     view: View,
     wmLayoutParams: WindowManager.LayoutParams? = null,
     onClose: ((parent: View) -> Unit)? = null,
-) {
+
+    ) {
     private var layoutHeight: Int = 0
     private var layoutWidth: Int = 0
     private var eventDownRawX = 0
@@ -31,6 +32,8 @@ class AssistsWindowWrapper(
     var initialXOffset = 0
     var initialYOffset = 0
     var initialCenter = false
+    var showOption: Boolean = true
+    var showBackground = true
     var wmlp: WindowManager.LayoutParams = wmLayoutParams ?: let { AssistsWindowManager.createLayoutParams() }
 
     private val onTouchScaleListener = object : View.OnTouchListener {
@@ -104,6 +107,11 @@ class AssistsWindowWrapper(
             ivMove.setOnTouchListener(onTouchMoveListener)
             ivScale.setOnTouchListener(onTouchScaleListener)
             ivClose.setOnClickListener { onClose?.invoke(root) ?: AssistsWindowManager.removeView(root) }
+            flHeader.isVisible = showOption
+            ivScale.isVisible = showOption
+            if (!showBackground) {
+                root.background = null
+            }
             flContainer.addView(view)
         }
     }

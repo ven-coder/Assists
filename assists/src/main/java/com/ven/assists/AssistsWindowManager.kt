@@ -2,18 +2,25 @@ package com.ven.assists
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Context
+import android.graphics.Color
 import android.graphics.PixelFormat
 import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.SizeUtils
+import com.ven.assists.utils.CoroutineWrapper
+import com.ven.assists.utils.runIO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.util.Collections
 
@@ -201,6 +208,31 @@ object AssistsWindowManager {
     fun ViewWrapper.untouchableByWrapper() {
         layoutParams.untouchableByLayoutParams()
         updateViewLayout(view, layoutParams)
+    }
+
+    fun String.overlayToast(delay: Long = 2000) {
+        Assists.service?.let {
+            CoroutineWrapper.launch(isMain = true) {
+                val textView = TextView(it).apply {
+                    text = this@overlayToast
+                    setTextColor(Color.WHITE)
+                    setPadding(SizeUtils.dp2px(10f))
+//                    setBackgroundColor(Color.BLACK)
+                }
+                val assistsWindowWrapper = AssistsWindowWrapper(textView, wmLayoutParams = createLayoutParams().apply {
+                    width = -2
+                    height = -2
+                }).apply {
+                    showOption = false
+                    initialCenter = true
+//                    showBackground = false
+                }
+                add(assistsWindowWrapper, isTouchable = false)
+                runIO { delay(delay) }
+                removeView(assistsWindowWrapper.getView())
+            }
+        }
+
     }
 
     class ViewWrapper(val view: View, val layoutParams: WindowManager.LayoutParams)

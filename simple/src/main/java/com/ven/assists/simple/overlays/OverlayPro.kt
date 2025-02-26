@@ -28,6 +28,7 @@ import com.ven.assists.Assists.selectionText
 import com.ven.assists.Assists.setNodeText
 import com.ven.assists.AssistsServiceListener
 import com.ven.assists.AssistsWindowManager
+import com.ven.assists.AssistsWindowManager.overlayToast
 import com.ven.assists.AssistsWindowWrapper
 import com.ven.assists.simple.MultiTouchDrawingActivity
 import com.ven.assists.simple.OverManager
@@ -82,9 +83,9 @@ object OverlayPro : AssistsServiceListener {
                         CoroutineWrapper.launch {
                             val result = MPManager.request(autoAllow = false, timeOut = 5000)
                             if (result) {
-                                "已获取屏幕录制权限".toast()
+                                "已获取屏幕录制权限".overlayToast()
                             }else{
-                                "获取屏幕录制权限超时".toast()
+                                "获取屏幕录制权限超时".overlayToast()
                             }
                         }
                     }
@@ -92,9 +93,9 @@ object OverlayPro : AssistsServiceListener {
                         CoroutineWrapper.launch {
                             val result = MPManager.request(autoAllow = true, timeOut = 5000)
                             if (result) {
-                                "已获取屏幕录制权限".toast()
+                                "已获取屏幕录制权限".overlayToast()
                             }else{
-                                "获取屏幕录制权限超时".toast()
+                                "获取屏幕录制权限超时".overlayToast()
                             }
                         }
                     }
@@ -107,7 +108,7 @@ object OverlayPro : AssistsServiceListener {
                             })
                         }.onFailure {
                             LogUtils.d(it)
-                            "截图失败，尝试请求授予屏幕录制后重试".toast()
+                            "截图失败，尝试请求授予屏幕录制后重试".overlayToast()
                         }
                     }
 

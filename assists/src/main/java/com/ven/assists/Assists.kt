@@ -22,6 +22,7 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.ven.assists.utils.CoroutineWrapper
+import com.ven.assists.utils.runMain
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -535,7 +536,7 @@ object Assists {
         switchWindowIntervalDelay: Long = 100,
         duration: Long = 25
     ): Boolean {
-        CoroutineWrapper.runMain { AssistsWindowManager.untouchableByAll() }
+        runMain { AssistsWindowManager.untouchableByAll() }
         delay(switchWindowIntervalDelay)
         val rect = getBoundsInScreen()
         val result = gesture(
@@ -545,7 +546,7 @@ object Assists {
             duration,
         )
         delay(switchWindowIntervalDelay)
-        CoroutineWrapper.runMain { AssistsWindowManager.touchableByAll() }
+        runMain { AssistsWindowManager.touchableByAll() }
         return result
     }
 
