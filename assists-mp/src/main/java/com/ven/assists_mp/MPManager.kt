@@ -14,6 +14,7 @@ import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -25,6 +26,7 @@ import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.ven.assists.Assists
 import com.ven.assists.Assists.click
+import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.Assists.nodeGestureClick
 import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.CompletableDeferred
@@ -188,7 +190,39 @@ object MPManager {
         } ?: let { throw RuntimeException("Please request permission for screen recording first") }
     }
 
-    fun takeScreenshot2File(file: File = File("${PathUtils.getInternalAppFilesPath()}_screenshot_${System.currentTimeMillis()}.png")): File? {
+    fun AccessibilityNodeInfo.getBitmap(screenshot: Bitmap): Bitmap? {
+        runCatching {
+            getBoundsInScreen().let {
+                val bitmap = Bitmap.createBitmap(screenshot, it.left, it.top, it.width(), it.height())
+                return@runCatching bitmap
+            }
+        }.onSuccess {
+            return it
+        }
+        return null
+    }
+
+    fun AccessibilityNodeInfo.takeScreenshot2File(
+        screenshot: Bitmap,
+        file: File = File(
+            PathUtils.getInternalAppFilesPath(),
+            "screenshot_${System.currentTimeMillis()}.png"
+        )
+    ): File? {
+        val bitmap = getBitmap(screenshot) ?: return null
+        val result = ImageUtils.save(bitmap, file, Bitmap.CompressFormat.PNG)
+        if (result) {
+            return file
+        }
+        return null
+    }
+
+    fun takeScreenshot2File(
+        file: File = File(
+            PathUtils.getInternalAppFilesPath(),
+            "screenshot_${System.currentTimeMillis()}.png"
+        )
+    ): File? {
         val bitmap = takeScreenshot2Bitmap()
         val result = ImageUtils.save(bitmap, file, Bitmap.CompressFormat.PNG)
         if (result) {

@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Path
 import android.os.Build
@@ -20,6 +21,7 @@ import com.blankj.utilcode.util.TimeUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.ven.assists.Assists
 import com.ven.assists.Assists.click
+import com.ven.assists.Assists.isImageView
 import com.ven.assists.Assists.longClick
 import com.ven.assists.Assists.nodeGestureClick
 import com.ven.assists.Assists.scrollBackward
@@ -39,6 +41,7 @@ import com.ven.assists.simple.common.toast
 import com.ven.assists.simple.databinding.ProOverlayBinding
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists_mp.MPManager
+import com.ven.assists_mp.MPManager.takeScreenshot2File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -84,7 +87,7 @@ object OverlayPro : AssistsServiceListener {
                             val result = MPManager.request(autoAllow = false, timeOut = 5000)
                             if (result) {
                                 "已获取屏幕录制权限".overlayToast()
-                            }else{
+                            } else {
                                 "获取屏幕录制权限超时".overlayToast()
                             }
                         }
@@ -94,7 +97,7 @@ object OverlayPro : AssistsServiceListener {
                             val result = MPManager.request(autoAllow = true, timeOut = 5000)
                             if (result) {
                                 "已获取屏幕录制权限".overlayToast()
-                            }else{
+                            } else {
                                 "获取屏幕录制权限超时".overlayToast()
                             }
                         }
@@ -106,6 +109,23 @@ object OverlayPro : AssistsServiceListener {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                 putExtra("path", file?.path)
                             })
+                        }.onFailure {
+                            LogUtils.d(it)
+                            "截图失败，尝试请求授予屏幕录制后重试".overlayToast()
+                        }
+                    }
+                    btnTakeScreenshotAllImage.setOnClickListener {
+                        runCatching {
+                            val screenshot = MPManager.takeScreenshot2Bitmap()
+                            screenshot ?: return@runCatching
+                            val list: ArrayList<String> = arrayListOf()
+                            Assists.getAllNodes().forEach {
+                                if (it.isImageView()) {
+                                    val file = it.takeScreenshot2File(screenshot)
+                                    file?.let { list.add(file.path) }
+                                }
+                            }
+                            LogUtils.d(list)
                         }.onFailure {
                             LogUtils.d(it)
                             "截图失败，尝试请求授予屏幕录制后重试".overlayToast()
