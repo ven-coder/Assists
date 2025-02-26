@@ -8,6 +8,10 @@ object LogWrapper {
 
     val logAppendValue = MutableSharedFlow<Pair<String, String>>()
 
+    suspend fun String.logAppend(): String {
+        return logAppend(this)
+    }
+
     suspend fun logAppend(msg: CharSequence): String {
 
         if (logCache.isNotEmpty()) {

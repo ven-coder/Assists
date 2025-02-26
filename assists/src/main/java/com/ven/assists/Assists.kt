@@ -524,7 +524,7 @@ object Assists {
     }
 
     /**
-     * 手势点击、长按当前元素
+     * 手势点击/长按当前元素
      * @param offsetX x轴偏移量
      * @param offsetY y轴偏移量
      * @param switchWindowIntervalDelay 浮窗隐藏显示间隔时长
@@ -533,7 +533,7 @@ object Assists {
     suspend fun AccessibilityNodeInfo.nodeGestureClick(
         offsetX: Float = ScreenUtils.getScreenWidth() * 0.01953f,
         offsetY: Float = ScreenUtils.getScreenWidth() * 0.01953f,
-        switchWindowIntervalDelay: Long = 100,
+        switchWindowIntervalDelay: Long = 250,
         duration: Long = 25
     ): Boolean {
         runMain { AssistsWindowManager.untouchableByAll() }

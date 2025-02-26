@@ -37,6 +37,7 @@ import com.ven.assists.simple.OverManager
 import com.ven.assists.simple.ScreenshotReviewActivity
 import com.ven.assists.simple.TestActivity
 import com.ven.assists.simple.common.LogWrapper
+import com.ven.assists.simple.common.LogWrapper.logAppend
 import com.ven.assists.simple.common.toast
 import com.ven.assists.simple.databinding.ProOverlayBinding
 import com.ven.assists.utils.CoroutineWrapper
@@ -143,7 +144,8 @@ object OverlayPro : AssistsServiceListener {
             if (event.eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
                 event.text.forEach {
                     CoroutineWrapper.launch {
-                        LogWrapper.logAppend("监听到通知：${it}")
+                        "监听到通知：${it}".logAppend()
+                        "监听到通知：${it}".overlayToast()
                     }
                 }
             }
@@ -173,7 +175,7 @@ object OverlayPro : AssistsServiceListener {
                         minWidth = (ScreenUtils.getScreenWidth() * 0.6).toInt()
                         minHeight = (ScreenUtils.getScreenHeight() * 0.4).toInt()
                         initialCenter = true
-                        viewBinding.tvTitle.text = "进阶"
+                        viewBinding.tvTitle.text = "示例进阶"
                     }
                 }
             }

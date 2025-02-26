@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/fl_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:flexWrap="wrap">
+            <Button
+                android:id="@+id/btn_answer_wechat_call"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="自动接听微信电话"
+                 />
+
+            <Button
+                android:id="@+id/btn_open_social"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="自动打开微信朋友圈" />
+
+            <Button
+                android:id="@+id/btn_publish_social"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="自动发表一条微信私密朋友圈"
+                 />
+
+            <Button
+                android:id="@+id/btn_scroll_contacts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="自动滚动微信通讯录"
+                 />
+
+            <Button
+                android:id="@+id/btn_click_bottom_tab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/colorAccent"
+                android:text="手势点击微信主页底部Tab"
+                 />
+
+            <Button
+                android:id="@+id/btn_scroll_social"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="手势滑动朋友圈列表"
+                 />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="自动抢红包"
+
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_ant_forest_energy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="蚂蚁森林能量自动收集"
+                 />
+
+
+        </com.google.android.flexbox.FlexboxLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</FrameLayout>

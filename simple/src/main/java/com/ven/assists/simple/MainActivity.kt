@@ -21,6 +21,7 @@ import com.ven.assists.Assists
 import com.ven.assists.AssistsService
 import com.ven.assists.AssistsServiceListener
 import com.ven.assists.simple.databinding.ActivityMainBinding
+import com.ven.assists.simple.overlays.OverlayAdvanced
 import com.ven.assists.simple.overlays.OverlayBasic
 import com.ven.assists.simple.overlays.OverlayPro
 import com.ven.assists.utils.CoroutineWrapper
@@ -58,6 +59,16 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
                     OverlayPro.hide()
                 } else {
                     OverlayPro.show()
+                }
+            }
+            btnAdvanced.setOnClickListener {
+                OverlayAdvanced.onClose = {
+                    OverlayAdvanced.hide()
+                }
+                if (OverlayAdvanced.showed) {
+                    OverlayAdvanced.hide()
+                } else {
+                    OverlayAdvanced.show()
                 }
             }
         }

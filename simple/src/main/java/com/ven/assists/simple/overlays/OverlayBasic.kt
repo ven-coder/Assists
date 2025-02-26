@@ -238,6 +238,8 @@ object OverlayBasic : AssistsServiceListener {
                         minWidth = (ScreenUtils.getScreenWidth() * 0.6).toInt()
                         minHeight = (ScreenUtils.getScreenHeight() * 0.4).toInt()
                         initialCenter = true
+                        viewBinding.tvTitle.text = "基础示例"
+
                     }
                 }
             }
