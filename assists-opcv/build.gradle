@@ -36,4 +36,5 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.13.1'
     api 'org.opencv:opencv:4.9.0'
     implementation project(':assists')
+    implementation project(':assists-mp')
 }

@@ -33,6 +33,7 @@ import com.ven.assists.Assists.getNodes
 import com.ven.assists.Assists.logNode
 import com.ven.assists.AssistsServiceListener
 import com.ven.assists.AssistsWindowManager
+import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.simple.databinding.ViewMainOverBinding
 import com.ven.assists.simple.databinding.ViewMatchImageBinding
 import com.ven.assists.simple.step.AntForestEnergy
@@ -69,7 +70,7 @@ object OverManager : StepListener {
             super.onAccessibilityEvent(event)
             if (event.eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
                 event.text.forEach {
-                    OverManager.log("监听到通知：${it}")
+                    LogWrapper.logAppend("监听到通知：${it}")
                 }
             }
         }
@@ -107,7 +108,7 @@ object OverManager : StepListener {
                 CoroutineWrapper.launch {
                     delay(1000)
                     withContext(Dispatchers.Main) {
-                        OverManager.log("通知监听中...")
+                        LogWrapper.logAppend("通知监听中...")
                     }
                 }
             }
@@ -137,7 +138,7 @@ object OverManager : StepListener {
                 CoroutineWrapper.launch {
                     delay(1000)
                     withContext(Dispatchers.Main) {
-                        OverManager.log("监听并自动接听微信电话...")
+                        LogWrapper.logAppend("监听并自动接听微信电话...")
                     }
                 }
 
@@ -159,11 +160,11 @@ object OverManager : StepListener {
                                         }
                                     }
                                     if (isInCall && it.containsText("接听") && it.className == "android.widget.ImageButton") {
-                                        OverManager.log("收到微信电话，接听")
+                                        LogWrapper.logAppend("收到微信电话，接听")
                                         it.click()
                                     }
                                     if (isInCall && it.containsText("接听") && it.className == "android.widget.Button") {
-                                        OverManager.log("收到微信电话，接听")
+                                        LogWrapper.logAppend("收到微信电话，接听")
                                         it.getBoundsInScreen().let {
                                             CoroutineWrapper.launch {
                                                 withContext(Dispatchers.Main) {

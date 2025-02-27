@@ -9,6 +9,7 @@ import com.ven.assists.Assists
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.AssistsWindowManager
 import com.ven.assists.utils.CoroutineWrapper
+import com.ven.assists_mp.MPManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
@@ -130,24 +131,12 @@ object OpencvWrapper {
      * 获取屏幕图像
      */
     fun getScreenMat(): Mat? {
-//        val screenBitmap = Assists.mediaProjectionService?.toBitmap() ?: return null
+        val screenBitmap = MPManager.takeScreenshot2Bitmap() ?: return null
         val screenMat = Mat()
-//        Utils.bitmapToMat(screenBitmap, screenMat)
+        Utils.bitmapToMat(screenBitmap, screenMat)
         Imgproc.cvtColor(screenMat, screenMat, Imgproc.COLOR_RGBA2BGR)
         return screenMat
     }
-
-//    fun getScreenBitmap(): Bitmap? {
-//        return Assists.mediaProjectionService?.toBitmap()
-//    }
-//
-//    suspend fun getScreenBitmapIgnoreFloatWindow(): Bitmap? {
-//        AssistsWindowManager.hideAll()
-//        delay(50)
-//        val bitmap = Assists.mediaProjectionService?.toBitmap()
-//        AssistsWindowManager.showLastView()
-//        return bitmap
-//    }
 
     /**
      * 从Assets获取图像

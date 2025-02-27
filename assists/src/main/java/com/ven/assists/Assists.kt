@@ -402,30 +402,34 @@ object Assists {
     /**
      * 分发手势
      * @param untouchableWindowDelay 切换窗口不可触摸后延长执行的时间
-     * @param callback 回调
      */
     suspend fun dispatchGesture(
         gesture: GestureDescription,
-        callback: AccessibilityService.GestureResultCallback? = null,
         handler: Handler? = null,
         untouchableWindowDelay: Long = 100,
-    ) {
+    ): Boolean {
+        val completableDeferred = CompletableDeferred<Boolean>()
+
         val gestureResultCallback = object : AccessibilityService.GestureResultCallback() {
             override fun onCompleted(gestureDescription: GestureDescription?) {
-                AssistsWindowManager.touchableByAll()
-                callback?.onCompleted(gestureDescription)
+                CoroutineWrapper.launch { AssistsWindowManager.touchableByAll() }
+                completableDeferred.complete(true)
             }
 
             override fun onCancelled(gestureDescription: GestureDescription?) {
-                AssistsWindowManager.touchableByAll()
-                callback?.onCancelled(gestureDescription)
+                CoroutineWrapper.launch { AssistsWindowManager.touchableByAll() }
+                completableDeferred.complete(false)
             }
         }
-        service?.let {
+        val runResult = service?.let {
             AssistsWindowManager.untouchableByAll()
             delay(untouchableWindowDelay)
-            it.dispatchGesture(gesture, gestureResultCallback, handler)
+            runMain { it.dispatchGesture(gesture, gestureResultCallback, handler) }
+        } ?: let {
+            return false
         }
+        if (!runResult) return false
+        return completableDeferred.await()
     }
 
     /**
@@ -464,20 +468,23 @@ object Assists {
         val builder = GestureDescription.Builder()
         val strokeDescription = GestureDescription.StrokeDescription(path, startTime, duration)
         val gestureDescription = builder.addStroke(strokeDescription).build()
-        val deferred = CompletableDeferred<Int>()
-        service?.dispatchGesture(gestureDescription, object : AccessibilityService.GestureResultCallback() {
-            override fun onCompleted(gestureDescription: GestureDescription) {
-                deferred.complete(1)
-            }
+        val deferred = CompletableDeferred<Boolean>()
+        val runResult = runMain {
+            return@runMain service?.dispatchGesture(gestureDescription, object : AccessibilityService.GestureResultCallback() {
+                override fun onCompleted(gestureDescription: GestureDescription) {
+                    deferred.complete(true)
+                }
 
-            override fun onCancelled(gestureDescription: GestureDescription) {
-                deferred.complete(0)
+                override fun onCancelled(gestureDescription: GestureDescription) {
+                    deferred.complete(false)
+                }
+            }, null) ?: let {
+                return@runMain false
             }
-        }, null) ?: let {
-            deferred.complete(0)
         }
+        if (!runResult) return false
         val result = deferred.await()
-        return result == 1
+        return result
     }
 
     /**

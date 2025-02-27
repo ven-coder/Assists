@@ -17,6 +17,7 @@ import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SizeUtils
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists.utils.runIO
+import com.ven.assists.utils.runMain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -176,15 +177,15 @@ object AssistsWindowManager {
         } ?: false
     }
 
-    fun updateViewLayout(view: View, params: ViewGroup.LayoutParams) {
-        windowManager.updateViewLayout(view, params)
+    suspend fun updateViewLayout(view: View, params: ViewGroup.LayoutParams) {
+        runMain { windowManager.updateViewLayout(view, params) }
     }
 
-    fun touchableByAll() {
+    suspend fun touchableByAll() {
         viewList.forEach { it.touchableByWrapper() }
     }
 
-    fun untouchableByAll() {
+    suspend fun untouchableByAll() {
         viewList.forEach { it.untouchableByWrapper() }
     }
 
@@ -200,12 +201,12 @@ object AssistsWindowManager {
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
     }
 
-    fun ViewWrapper.touchableByWrapper() {
+    suspend fun ViewWrapper.touchableByWrapper() {
         layoutParams.touchableByLayoutParams()
         updateViewLayout(view, layoutParams)
     }
 
-    fun ViewWrapper.untouchableByWrapper() {
+    suspend fun ViewWrapper.untouchableByWrapper() {
         layoutParams.untouchableByLayoutParams()
         updateViewLayout(view, layoutParams)
     }

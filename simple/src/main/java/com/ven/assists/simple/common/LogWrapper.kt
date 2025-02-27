@@ -1,6 +1,7 @@
 package com.ven.assists.simple.common
 
 import com.blankj.utilcode.util.TimeUtils
+import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 object LogWrapper {
@@ -8,12 +9,11 @@ object LogWrapper {
 
     val logAppendValue = MutableSharedFlow<Pair<String, String>>()
 
-    suspend fun String.logAppend(): String {
+    fun String.logAppend(): String {
         return logAppend(this)
     }
 
-    suspend fun logAppend(msg: CharSequence): String {
-
+    fun logAppend(msg: CharSequence): String {
         if (logCache.isNotEmpty()) {
             logCache.append("\n")
         }
@@ -23,14 +23,15 @@ object LogWrapper {
         logCache.append(TimeUtils.getNowString())
         logCache.append("\n")
         logCache.append(msg)
-        logAppendValue.emit(Pair("\n${TimeUtils.getNowString()}\n$msg", logCache.toString()))
-
+        CoroutineWrapper.launch {
+            logAppendValue.emit(Pair("\n${TimeUtils.getNowString()}\n$msg", logCache.toString()))
+        }
         return msg.toString()
     }
 
-    suspend fun clearLog() {
+    fun clearLog() {
         logCache = StringBuilder("")
-        logAppendValue.emit(Pair("", ""))
+        CoroutineWrapper.launch { logAppendValue.emit(Pair("", "")) }
     }
 
 }

@@ -12,6 +12,7 @@ import com.ven.assists.AssistsWindowManager
 import com.ven.assists.AssistsWindowWrapper
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.simple.databinding.LogOverlayBinding
+import com.ven.assists.stepper.StepManager
 import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -49,6 +50,7 @@ object OverlayLog : AssistsServiceListener {
                     btnClean.setOnClickListener {
                         CoroutineWrapper.launch { LogWrapper.clearLog() }
                     }
+                    btnStop.setOnClickListener { StepManager.isStop = true }
                 }
             }
             return field
@@ -73,7 +75,7 @@ object OverlayLog : AssistsServiceListener {
                     field = AssistsWindowWrapper(it.root, wmLayoutParams = AssistsWindowManager.createLayoutParams().apply {
                         width = (ScreenUtils.getScreenWidth() * 0.8).toInt()
                         height = (ScreenUtils.getScreenHeight() * 0.5).toInt()
-                    }, onClose = this.onClose).apply {
+                    }, onClose = { hide() }).apply {
                         minWidth = (ScreenUtils.getScreenWidth() * 0.6).toInt()
                         minHeight = (ScreenUtils.getScreenHeight() * 0.4).toInt()
                         initialCenter = true
@@ -88,10 +90,8 @@ object OverlayLog : AssistsServiceListener {
         if (!Assists.serviceListeners.contains(this)) {
             Assists.serviceListeners.add(this)
         }
-        if (AssistsWindowManager.contains(assistWindowWrapper?.getView())) {
-        } else {
+        if (!AssistsWindowManager.contains(assistWindowWrapper?.getView())) {
             AssistsWindowManager.add(assistWindowWrapper)
-
             initLogCollect()
             runAutoScrollList(delay = 0)
         }
@@ -134,14 +134,14 @@ object OverlayLog : AssistsServiceListener {
             withContext(Dispatchers.Main) {
                 viewBinding?.apply {
                     tvLog.text = LogWrapper.logCache
-//                    tvVersion.text = "V${AppUtils.getAppVersionName()}-${tvLog.length()}"
+                    tvLength.text = "${tvLog.length()}"
                 }
             }
             LogWrapper.logAppendValue.collect {
                 withContext(Dispatchers.Main) {
                     viewBinding?.apply {
                         tvLog.text = LogWrapper.logCache
-//                        tvVersion.text = "V${AppUtils.getAppVersionName()}-${tvLog.length()}"
+                        tvLength.text = "${tvLog.length()}"
                     }
                 }
             }

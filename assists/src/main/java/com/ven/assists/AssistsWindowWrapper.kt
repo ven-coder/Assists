@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.ven.assists.base.databinding.AssistsWindowLayoutWrapperBinding
+import com.ven.assists.utils.CoroutineWrapper
 
 @SuppressLint("ClickableViewAccessibility")
 class AssistsWindowWrapper(
@@ -61,7 +62,7 @@ class AssistsWindowWrapper(
                         wmlp.height = height
                     }
                 }
-                AssistsWindowManager.updateViewLayout(viewBinding.root, wmlp)
+                CoroutineWrapper.launch { AssistsWindowManager.updateViewLayout(viewBinding.root, wmlp) }
                 return true
             }
 
@@ -76,7 +77,7 @@ class AssistsWindowWrapper(
             if (event.action == MotionEvent.ACTION_MOVE) {
                 wmlp.x = event.rawX.toInt()
                 wmlp.y = event.rawY.toInt() - BarUtils.getStatusBarHeight()
-                AssistsWindowManager.updateViewLayout(viewBinding.root, wmlp)
+                CoroutineWrapper.launch { AssistsWindowManager.updateViewLayout(viewBinding.root, wmlp) }
                 return true
             }
 
@@ -99,7 +100,7 @@ class AssistsWindowWrapper(
                             wmlp.x = initialX
                             wmlp.y = initialY
                         }
-                        AssistsWindowManager.updateViewLayout(root, wmlp)
+                        CoroutineWrapper.launch { AssistsWindowManager.updateViewLayout(root, wmlp) }
                         root.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     }
                 }

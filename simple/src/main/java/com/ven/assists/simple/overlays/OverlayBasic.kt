@@ -280,7 +280,7 @@ object OverlayBasic : AssistsServiceListener {
         gestureBuilder.addStroke(stroke1)
 
         // 分发手势
-        Assists.dispatchGesture(gestureBuilder.build(), null, null)
+        Assists.dispatchGesture(gestureBuilder.build())
     }
 
     suspend fun performCircularGestureDouble() {
@@ -309,7 +309,7 @@ object OverlayBasic : AssistsServiceListener {
         gestureBuilder.addStroke(stroke2)
 
         // 分发手势
-        Assists.dispatchGesture(gestureBuilder.build(), null, null)
+        Assists.dispatchGesture(gestureBuilder.build())
     }
 
     suspend fun performSnakeGesture() {
@@ -345,6 +345,6 @@ object OverlayBasic : AssistsServiceListener {
         gestureBuilder.addStroke(stroke)
 
         // 分发手势
-        Assists.dispatchGesture(gestureBuilder.build(), null, null)
+        Assists.dispatchGesture(gestureBuilder.build())
     }
 }

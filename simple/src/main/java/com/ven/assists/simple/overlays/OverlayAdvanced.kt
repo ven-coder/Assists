@@ -20,6 +20,14 @@ import com.ven.assists.simple.OverManager
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.simple.common.LogWrapper.logAppend
 import com.ven.assists.simple.databinding.AdvancedOverlayBinding
+import com.ven.assists.simple.step.AntForestEnergy
+import com.ven.assists.simple.step.GestureBottomTab
+import com.ven.assists.simple.step.GestureScrollSocial
+import com.ven.assists.simple.step.OpenWechatSocial
+import com.ven.assists.simple.step.PublishSocial
+import com.ven.assists.simple.step.ScrollContacts
+import com.ven.assists.simple.step.StepTag
+import com.ven.assists.stepper.StepManager
 import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -43,12 +51,35 @@ object OverlayAdvanced : AssistsServiceListener {
                             "微信电话自动接听监听中...".logAppend()
                         }
                     }
-                    btnOpenSocial.setOnClickListener { }
-                    btnScrollSocial.setOnClickListener { }
-                    btnPublishSocial.setOnClickListener { }
-                    btnClickBottomTab.setOnClickListener { }
-                    btnAntForestEnergy.setOnClickListener { }
+                    btnOpenSocial.setOnClickListener {
+                        OverlayLog.show()
+                        StepManager.execute(OpenWechatSocial::class.java, StepTag.STEP_1, begin = true)
+                    }
+                    btnScrollSocial.setOnClickListener {
+                        OverlayLog.show()
+
+                        StepManager.execute(GestureScrollSocial::class.java, StepTag.STEP_1, begin = true)
+
+                    }
+                    btnPublishSocial.setOnClickListener {
+                        OverlayLog.show()
+                        StepManager.execute(PublishSocial::class.java, StepTag.STEP_1, begin = true)
+                    }
+                    btnClickBottomTab.setOnClickListener {
+                        OverlayLog.show()
+
+                        StepManager.execute(GestureBottomTab::class.java, StepTag.STEP_1, begin = true)
+
+                    }
+                    btnAntForestEnergy.setOnClickListener {
+                        OverlayLog.show()
+
+                        StepManager.execute(AntForestEnergy::class.java, StepTag.STEP_1, begin = true)
+
+                    }
                     btnScrollContacts.setOnClickListener {
+                        OverlayLog.show()
+                        StepManager.execute(ScrollContacts::class.java, StepTag.STEP_1, begin = true)
                     }
                 }
             }
@@ -62,25 +93,25 @@ object OverlayAdvanced : AssistsServiceListener {
                 var isInCall = false
                 event.source?.getNodes()?.forEach {
                     if (it.containsText("邀请你语音通话") || it.containsText("邀请你视频通话")) {
-                        it.logNode()
                         it.getBoundsInScreen().let {
                             if (it.bottom < ScreenUtils.getScreenHeight() * 0.2) {
                                 isInCall = true
+                                StepManager.isStop = true
                             }
                             if (it.top > ScreenUtils.getScreenHeight() * 0.50 && it.bottom < ScreenUtils.getScreenHeight() * 0.8) {
                                 isInCall = true
+                                StepManager.isStop = true
                             }
                         }
                     }
                     if (isInCall && it.containsText("接听") && it.className == "android.widget.ImageButton") {
                         "收到微信电话，接听".overlayToast()
-                        CoroutineWrapper.launch { "收到微信电话，接听".logAppend() }
-
+                        "收到微信电话，接听".logAppend()
                         it.click()
                     }
                     if (isInCall && it.containsText("接听") && it.className == "android.widget.Button") {
                         "收到微信电话，接听".overlayToast()
-                        CoroutineWrapper.launch { "收到微信电话，接听".logAppend() }
+                        "收到微信电话，接听".logAppend()
                         CoroutineWrapper.launch { it.nodeGestureClick() }
                     }
                 }

@@ -11,11 +11,14 @@ import com.ven.assists.AssistsServiceListener
 import com.ven.assists.AssistsWindowManager
 import com.ven.assists.simple.CaptureLayout
 import com.ven.assists.simple.OverManager
+import com.ven.assists.simple.common.LogWrapper
+import com.ven.assists.simple.common.LogWrapper.logAppend
 import com.ven.assists.stepper.Step
 import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
 import com.ven.assists.stepper.StepManager
 import com.ven.assists.utils.CoroutineWrapper
+import com.ven.assists_mp.MPManager
 import com.ven.assists_opcv.OpencvWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -35,12 +38,16 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
             Assists.serviceListeners.add(this)
         }
         collector.next(StepTag.STEP_1) {
-//            if (Assists.isEnableScreenCapture()) {
-//                overLog("屏幕录制已开启")
-//                return@next Step.get(StepTag.STEP_2)
-//            }
-//            overLog("开启屏幕录制")
-//            Assists.requestScreenCapture(true)
+            if (MPManager.isEnable) {
+                overLog("屏幕录制已开启")
+                return@next Step.get(StepTag.STEP_2)
+            }
+            overLog("开启屏幕录制")
+            val result = MPManager.request(autoAllow = true)
+            if (result) {
+                return@next Step.get(StepTag.STEP_2)
+            }
+            "未成功自动开启屏幕录制".logAppend()
             return@next Step.none
         }.next(StepTag.STEP_2) {
             overLog("启动支付宝")
@@ -116,7 +123,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                 return@next Step.none
             }
             runMain {
-                AssistsWindowManager.showTop()
+                AssistsWindowManager.showAll()
             }
             val capBeginY = (screenMat.height() * 0.2).toInt()
             val capEndY = screenMat.height() * 0.18
@@ -220,10 +227,8 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
         }
     }
 
-    private suspend fun overLog(value: String) {
-        withContext(Dispatchers.Main) {
-            OverManager.log(value)
-        }
+    private fun overLog(value: String) {
+        LogWrapper.logAppend(value)
     }
 
     override fun screenCaptureEnable() {

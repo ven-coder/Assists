@@ -7,6 +7,7 @@ import com.ven.assists.Assists.click
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.simple.App
 import com.ven.assists.simple.OverManager
+import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.stepper.Step
 import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
@@ -15,7 +16,7 @@ import com.ven.assists.stepper.StepManager
 class OpenWechat : StepImpl() {
     override fun onImpl(collector: StepCollector) {
         collector.next(StepTag.STEP_1) {
-            OverManager.log("启动微信")
+            LogWrapper.logAppend("启动微信")
             Intent().apply {
                 addCategory(Intent.CATEGORY_LAUNCHER)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -29,7 +30,7 @@ class OpenWechat : StepImpl() {
                 if (screen.left > Assists.getX(1080, 340) &&
                     screen.top > Assists.getX(1920, 1850)
                 ) {
-                    OverManager.log("已打开微信主页")
+                    LogWrapper.logAppend("已打开微信主页")
                     it.parent.parent.click()
                     return@next Step.get(StepTag.STEP_3)
                 }

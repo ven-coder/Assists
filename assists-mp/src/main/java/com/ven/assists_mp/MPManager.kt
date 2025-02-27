@@ -50,6 +50,13 @@ object MPManager {
 
     private var imageReader: ImageReader? = null
 
+    var isEnable = false
+        private set
+        get() {
+            field = imageReader?.let { return@let true } ?: false
+            return field
+        }
+
     private val activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             if (activity is ComponentActivity && requestLaunchers[activity] == null) {

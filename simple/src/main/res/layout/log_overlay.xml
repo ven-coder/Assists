@@ -5,8 +5,8 @@
     android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="#4D000000"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:background="#4D000000">
 
     <LinearLayout
         android:id="@+id/ll_log"
@@ -35,12 +35,35 @@
             </FrameLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <Button
-            android:id="@+id/btn_clean"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="清除"
-            android:textSize="12dp" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="停止"
+                android:textSize="12dp" />
+
+            <Button
+                android:id="@+id/btn_clean"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="清除"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/tv_length"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="#ffffff"
+                android:textSize="12dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
