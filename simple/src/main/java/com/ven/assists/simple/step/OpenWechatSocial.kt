@@ -8,7 +8,6 @@ import com.ven.assists.Assists.click
 import com.ven.assists.Assists.findFirstParentClickable
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.Assists.logNode
-import com.ven.assists.simple.OverManager
 import com.ven.assists.simple.common.Constants
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.stepper.Step

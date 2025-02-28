@@ -34,12 +34,8 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
     val viewBind: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater).apply {
             btnEnable.setOnClickListener {
-                if (Assists.isAccessibilityServiceEnabled()) {
-                    OverManager.show()
-                } else {
-                    Assists.openAccessibilitySetting()
-                    startActivity(Intent(this@MainActivity, SettingGuideActivity::class.java))
-                }
+                Assists.openAccessibilitySetting()
+                startActivity(Intent(this@MainActivity, SettingGuideActivity::class.java))
             }
             btnBasic.setOnClickListener {
                 OverlayBasic.onClose = {

@@ -34,32 +34,6 @@ android {
     }
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            aar(MavenPublication) {
-                from components.release
-
-                groupId = 'com.github.ven-coder'
-                artifactId = 'assists-base'
-                version = '3.0.0'
-
-                pom.withXml {
-                    def dependenciesNode = asNode().appendNode('dependencies')
-
-                    configurations.implementation.allDependencies.each { dep ->
-                        if (dep.group != null && dep.name != null) {
-                            def dependencyNode = dependenciesNode.appendNode('dependency')
-                            dependencyNode.appendNode('groupId', dep.group)
-                            dependencyNode.appendNode('artifactId', dep.name)
-                            dependencyNode.appendNode('version', dep.version)
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 
 
 dependencies {
@@ -69,3 +43,18 @@ dependencies {
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.22')
     api 'com.blankj:utilcodex:1.31.1'
 }
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.ven-coder'
+                artifactId = 'assists-base'  // 每个库的 artifactId 需要唯一
+                version = '3.2.0'
+            }
+        }
+    }
+}
+
+

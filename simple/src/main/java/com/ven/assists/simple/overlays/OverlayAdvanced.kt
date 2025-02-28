@@ -16,7 +16,6 @@ import com.ven.assists.AssistsServiceListener
 import com.ven.assists.AssistsWindowManager
 import com.ven.assists.AssistsWindowManager.overlayToast
 import com.ven.assists.AssistsWindowWrapper
-import com.ven.assists.simple.OverManager
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.simple.common.LogWrapper.logAppend
 import com.ven.assists.simple.databinding.AdvancedOverlayBinding

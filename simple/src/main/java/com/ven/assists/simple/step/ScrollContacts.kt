@@ -9,7 +9,6 @@ import com.ven.assists.Assists.findFirstParentClickable
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.Assists.scrollForward
 import com.ven.assists.simple.App
-import com.ven.assists.simple.OverManager
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.simple.common.LogWrapper.logAppend
 import com.ven.assists.stepper.Step

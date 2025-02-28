@@ -62,6 +62,9 @@
         <activity
             android:name=".MultiTouchDrawingActivity"
             android:launchMode="singleInstance" />
+        <activity
+            android:name=".ImageGalleryActivity"
+            android:exported="false" />
 
         <service
             android:name="com.ven.assists.AssistsService"
