@@ -1,3 +1,8 @@
 # https://github.com/jitpack/jitpack.io/issues/4474
 jdk:
   - openjdk11
+
+build:
+  - ./gradlew :assists:build
+  - ./gradlew :assists-mp:build
+  - ./gradlew :assists-opcv:build
