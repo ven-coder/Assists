@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'org.jetbrains.dokka'
 android {
     namespace 'com.ven.assists.base'
     compileSdk 34
@@ -42,6 +43,16 @@ dependencies {
     api 'com.blankj:utilcodex:1.31.1'
 }
 
+dokkaHtml {
+//    outputDirectory.set(file("docs"))
+//    dokkaSourceSets {
+//        configureEach {
+//            reportUndocumented.set(true) // 允许生成没有 KDoc 的代码
+//        }
+//    }
+}
+
+
 afterEvaluate {
     publishing {
         publications {
@@ -49,7 +60,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.ven-coder'
                 artifactId = 'assists-base'
-                version = '3.2.0'
+                version = '3.2.1'
             }
         }
     }

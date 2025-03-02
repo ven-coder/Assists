@@ -5,22 +5,20 @@ import android.content.Intent
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.blankj.utilcode.util.TimeUtils
-import com.ven.assists.Assists
-import com.ven.assists.Assists.click
-import com.ven.assists.Assists.findByTags
-import com.ven.assists.Assists.findFirstParentClickable
-import com.ven.assists.Assists.getBoundsInScreen
-import com.ven.assists.Assists.logNode
-import com.ven.assists.Assists.paste
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.click
+import com.ven.assists.AssistsCore.findByTags
+import com.ven.assists.AssistsCore.findFirstParentClickable
+import com.ven.assists.AssistsCore.getBoundsInScreen
+import com.ven.assists.AssistsCore.logNode
+import com.ven.assists.AssistsCore.paste
+import com.ven.assists.service.AssistsService
 import com.ven.assists.simple.App
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.stepper.Step
 import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
-import com.ven.assists.stepper.StepManager
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 
 class PublishSocial : StepImpl() {
     override fun onImpl(collector: StepCollector) {
@@ -30,7 +28,7 @@ class PublishSocial : StepImpl() {
                 addCategory(Intent.CATEGORY_LAUNCHER)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 component = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")
-                Assists.service?.startActivity(this)
+                AssistsService.instance?.startActivity(this)
             }
             it.data?.let {
                 LogWrapper.logAppend("PublishSocial STEP_1 收到数据：$it")
@@ -41,7 +39,7 @@ class PublishSocial : StepImpl() {
             it.data?.let {
                 LogWrapper.logAppend("收到数据：$it")
             }
-            Assists.findByText("发现").forEach {
+            AssistsCore.findByText("发现").forEach {
                 val screen = it.getBoundsInScreen()
                 if (screen.left > 630 && screen.top > 1850) {
                     LogWrapper.logAppend("已打开微信主页，点击【发现】")
@@ -51,8 +49,8 @@ class PublishSocial : StepImpl() {
                 }
             }
 
-            if (Assists.getPackageName() == App.TARGET_PACKAGE_NAME) {
-                Assists.back()
+            if (AssistsCore.getPackageName() == App.TARGET_PACKAGE_NAME) {
+                AssistsCore.back()
                 return@next Step.get(StepTag.STEP_2, data = "字符串数据：22222")
             }
 
@@ -66,7 +64,7 @@ class PublishSocial : StepImpl() {
             it.data?.let {
                 LogWrapper.logAppend("收到数据：$it")
             }
-            Assists.findByText("朋友圈").forEach {
+            AssistsCore.findByText("朋友圈").forEach {
                 it.logNode()
                 val screen = it.getBoundsInScreen()
                 if (screen.left > 140 && screen.top > 240) {
@@ -80,11 +78,11 @@ class PublishSocial : StepImpl() {
             }
             return@next Step.none
         }.next(StepTag.STEP_4) {
-            Assists.findByText("朋友圈封面，再点一次可以改封面").forEach {
+            AssistsCore.findByText("朋友圈封面，再点一次可以改封面").forEach {
                 LogWrapper.logAppend("已进入朋友圈")
                 return@next Step.get(StepTag.STEP_5)
             }
-            Assists.findByText("朋友圈封面，点按两次修改封面").forEach {
+            AssistsCore.findByText("朋友圈封面，点按两次修改封面").forEach {
                 LogWrapper.logAppend("已进入朋友圈")
                 return@next Step.get(StepTag.STEP_5)
 
@@ -95,22 +93,22 @@ class PublishSocial : StepImpl() {
             return@next Step.repeat
         }.next(StepTag.STEP_5) {
             runIO { delay(2000) }
-            Assists.findByText("拍照，记录生活").firstOrNull()?.let {
-                Assists.findByText("我知道了").firstOrNull()?.click()
+            AssistsCore.findByText("拍照，记录生活").firstOrNull()?.let {
+                AssistsCore.findByText("我知道了").firstOrNull()?.click()
                 runIO {
                     delay(1000)
                 }
             }
 
             LogWrapper.logAppend("点击拍照分享按钮")
-            Assists.findByText("拍照分享").forEach {
+            AssistsCore.findByText("拍照分享").forEach {
                 it.click()
                 return@next Step.get(StepTag.STEP_6)
             }
             return@next Step.none
         }.next(StepTag.STEP_6) {
             LogWrapper.logAppend("从相册选择")
-            Assists.findByText("从相册选择").forEach {
+            AssistsCore.findByText("从相册选择").forEach {
                 it.findFirstParentClickable()?.let {
                     it.click()
                     return@next Step.get(StepTag.STEP_7)
@@ -118,24 +116,24 @@ class PublishSocial : StepImpl() {
             }
             return@next Step.none
         }.next(StepTag.STEP_7) {
-            Assists.findByText("我知道了").forEach {
+            AssistsCore.findByText("我知道了").forEach {
                 it.click()
                 return@next Step.get(StepTag.STEP_7)
             }
-            Assists.findByText("权限申请").forEach {
-                Assists.findByText("确定").forEach {
+            AssistsCore.findByText("权限申请").forEach {
+                AssistsCore.findByText("确定").forEach {
                     it.click()
                     return@next Step.get(StepTag.STEP_7)
                 }
             }
-            Assists.findByText("允许").forEach {
+            AssistsCore.findByText("允许").forEach {
                 it.click()
                 return@next Step.get(StepTag.STEP_8)
             }
             LogWrapper.logAppend("选择第一张相片")
             return@next Step.get(StepTag.STEP_8)
         }.next(StepTag.STEP_8) {
-            Assists.findByTags("android.support.v7.widget.RecyclerView").forEach {
+            AssistsCore.findByTags("android.support.v7.widget.RecyclerView").forEach {
                 for (index in 0 until it.childCount) {
                     if (TextUtils.equals("android.widget.RelativeLayout", it.getChild(index).className)) {
                         it.getChild(index).let { child ->
@@ -147,7 +145,7 @@ class PublishSocial : StepImpl() {
                     }
                 }
             }
-            Assists.findByTags("androidx.recyclerview.widget.RecyclerView").forEach {
+            AssistsCore.findByTags("androidx.recyclerview.widget.RecyclerView").forEach {
                 for (index in 0 until it.childCount) {
                     if (TextUtils.equals("android.widget.RelativeLayout", it.getChild(index).className)) {
                         it.getChild(index).let { child ->
@@ -163,7 +161,7 @@ class PublishSocial : StepImpl() {
             return@next Step.none
         }.next(StepTag.STEP_9) {
             LogWrapper.logAppend("点击完成")
-            Assists.findByText("完成").forEach {
+            AssistsCore.findByText("完成").forEach {
                 it.click()
                 return@next Step.get(StepTag.STEP_10)
 
@@ -172,7 +170,7 @@ class PublishSocial : StepImpl() {
 
         }.next(StepTag.STEP_10) {
             LogWrapper.logAppend("输入发表内容")
-            Assists.findByTags("android.widget.EditText").forEach {
+            AssistsCore.findByTags("android.widget.EditText").forEach {
                 it.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
                 it.paste("${TimeUtils.getNowString()}: Assists发的一条私密朋友圈")
                 return@next Step.get(StepTag.STEP_11)
@@ -182,7 +180,7 @@ class PublishSocial : StepImpl() {
 
         }.next(StepTag.STEP_11) {
             LogWrapper.logAppend("点击谁可以看")
-            Assists.findByText("谁可以看").forEach {
+            AssistsCore.findByText("谁可以看").forEach {
                 it.findFirstParentClickable()?.let { it.click() }
                 return@next Step.get(StepTag.STEP_12)
             }
@@ -190,7 +188,7 @@ class PublishSocial : StepImpl() {
 
         }.next(StepTag.STEP_12) {
             LogWrapper.logAppend("点击仅自己可见")
-            Assists.findByText("仅自己可见").forEach {
+            AssistsCore.findByText("仅自己可见").forEach {
                 it.findFirstParentClickable()?.let { it.click() }
                 return@next Step.get(StepTag.STEP_13)
             }
@@ -198,7 +196,7 @@ class PublishSocial : StepImpl() {
 
         }.next(StepTag.STEP_13) {
             LogWrapper.logAppend("点击完成")
-            Assists.findByText("完成").forEach {
+            AssistsCore.findByText("完成").forEach {
                 it.click()
                 return@next Step.get(StepTag.STEP_14)
             }
@@ -206,7 +204,7 @@ class PublishSocial : StepImpl() {
 
         }.next(StepTag.STEP_14) {
             LogWrapper.logAppend("点击发表")
-            Assists.findByText("发表").forEach {
+            AssistsCore.findByText("发表").forEach {
                 it.click()
             }
             return@next Step.none

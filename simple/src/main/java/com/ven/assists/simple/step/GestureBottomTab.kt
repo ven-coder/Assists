@@ -2,9 +2,10 @@ package com.ven.assists.simple.step
 
 import android.content.ComponentName
 import android.content.Intent
-import com.ven.assists.Assists
-import com.ven.assists.Assists.getBoundsInScreen
-import com.ven.assists.Assists.nodeGestureClick
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.getBoundsInScreen
+import com.ven.assists.AssistsCore.nodeGestureClick
+import com.ven.assists.service.AssistsService
 import com.ven.assists.simple.App
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.stepper.Step
@@ -20,22 +21,22 @@ class GestureBottomTab : StepImpl() {
                 addCategory(Intent.CATEGORY_LAUNCHER)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 component = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")
-                Assists.service?.startActivity(this)
+                AssistsService.instance?.startActivity(this)
             }
             return@next Step.get(StepTag.STEP_2)
         }.next(StepTag.STEP_2) {
-            Assists.findByText("微信").forEach {
+            AssistsCore.findByText("微信").forEach {
                 val screen = it.getBoundsInScreen()
-                if (screen.left > Assists.getX(1080, 90) &&
-                    screen.top > Assists.getY(1920, 1850)
+                if (screen.left > AssistsCore.getX(1080, 90) &&
+                    screen.top > AssistsCore.getY(1920, 1850)
                 ) {
                     LogWrapper.logAppend("点击【微信】")
                     it.nodeGestureClick()
                     return@next Step.get(StepTag.STEP_3)
                 }
             }
-            if (Assists.getPackageName() == App.TARGET_PACKAGE_NAME) {
-                Assists.back()
+            if (AssistsCore.getPackageName() == App.TARGET_PACKAGE_NAME) {
+                AssistsCore.back()
                 return@next Step.repeat
 
             }
@@ -47,10 +48,10 @@ class GestureBottomTab : StepImpl() {
             return@next Step.repeat
         }.next(StepTag.STEP_3) {
             LogWrapper.logAppend("点击【通讯录】")
-            Assists.findByText("通讯录").forEach {
+            AssistsCore.findByText("通讯录").forEach {
                 val screen = it.getBoundsInScreen()
-                if (screen.left > Assists.getX(1080, 340) &&
-                    screen.top > Assists.getX(1920, 1850)
+                if (screen.left > AssistsCore.getX(1080, 340) &&
+                    screen.top > AssistsCore.getX(1920, 1850)
                 ) {
 
                     it.nodeGestureClick()
@@ -61,10 +62,10 @@ class GestureBottomTab : StepImpl() {
         }.next(StepTag.STEP_4) {
             LogWrapper.logAppend("点击【发现】")
 
-            Assists.findByText("发现").forEach {
+            AssistsCore.findByText("发现").forEach {
                 val screen = it.getBoundsInScreen()
-                if (screen.left > Assists.getX(1080, 630) &&
-                    screen.top > Assists.getX(1920, 1850)
+                if (screen.left > AssistsCore.getX(1080, 630) &&
+                    screen.top > AssistsCore.getX(1920, 1850)
                 ) {
                     it.nodeGestureClick()
                     return@next Step.get(StepTag.STEP_5)
@@ -74,10 +75,10 @@ class GestureBottomTab : StepImpl() {
         }.next(StepTag.STEP_5, isRunCoroutineIO = true) {
             LogWrapper.logAppend("点击【我】")
 
-            Assists.findByText("我").forEach {
+            AssistsCore.findByText("我").forEach {
                 val screen = it.getBoundsInScreen()
-                if (screen.left > Assists.getX(1080, 920) &&
-                    screen.top > Assists.getX(1920, 1850)
+                if (screen.left > AssistsCore.getX(1080, 920) &&
+                    screen.top > AssistsCore.getX(1920, 1850)
                 ) {
                     it.nodeGestureClick()
                     return@next Step.get(StepTag.STEP_2)

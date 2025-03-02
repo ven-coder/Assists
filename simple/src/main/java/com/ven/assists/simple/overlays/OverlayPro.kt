@@ -1,52 +1,33 @@
 package com.ven.assists.simple.overlays
 
-import android.accessibilityservice.AccessibilityService
-import android.accessibilityservice.GestureDescription
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.Path
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
-import android.widget.Toast
-import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
-import com.blankj.utilcode.util.TimeUtils
-import com.blankj.utilcode.util.ToastUtils
-import com.ven.assists.Assists
-import com.ven.assists.Assists.click
-import com.ven.assists.Assists.isImageView
-import com.ven.assists.Assists.longClick
-import com.ven.assists.Assists.nodeGestureClick
-import com.ven.assists.Assists.scrollBackward
-import com.ven.assists.Assists.scrollForward
-import com.ven.assists.Assists.selectionText
-import com.ven.assists.Assists.setNodeText
-import com.ven.assists.AssistsServiceListener
-import com.ven.assists.AssistsWindowManager
-import com.ven.assists.AssistsWindowManager.overlayToast
-import com.ven.assists.AssistsWindowWrapper
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.isImageView
+import com.ven.assists.service.AssistsService
+import com.ven.assists.service.AssistsServiceListener
+import com.ven.assists.window.AssistsWindowManager
+import com.ven.assists.window.AssistsWindowManager.overlayToast
+import com.ven.assists.window.AssistsWindowWrapper
 import com.ven.assists.simple.ImageGalleryActivity
-import com.ven.assists.simple.MultiTouchDrawingActivity
 import com.ven.assists.simple.ScreenshotReviewActivity
-import com.ven.assists.simple.TestActivity
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.simple.common.LogWrapper.logAppend
-import com.ven.assists.simple.common.toast
 import com.ven.assists.simple.databinding.ProOverlayBinding
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists_mp.MPManager
 import com.ven.assists_mp.MPManager.takeScreenshot2File
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 
 @SuppressLint("StaticFieldLeak")
 object OverlayPro : AssistsServiceListener {
@@ -57,10 +38,10 @@ object OverlayPro : AssistsServiceListener {
         private set
         get() {
             if (field == null) {
-                field = ProOverlayBinding.inflate(LayoutInflater.from(Assists.service)).apply {
+                field = ProOverlayBinding.inflate(LayoutInflater.from(AssistsService.instance)).apply {
                     btnListenerNotification.setOnClickListener {
-                        if (!Assists.serviceListeners.contains(notificationListener)) {
-                            Assists.serviceListeners.add(notificationListener)
+                        if (!AssistsService.listeners.contains(notificationListener)) {
+                            AssistsService.listeners.add(notificationListener)
                         }
                         CoroutineWrapper.launch(isMain = true) {
                             OverlayLog.show()
@@ -74,7 +55,7 @@ object OverlayPro : AssistsServiceListener {
                             btnDisablePullNotification.setText("禁止下拉通知栏")
                             return@setOnClickListener
                         }
-                        disableNotificationView = View(Assists.service).apply {
+                        disableNotificationView = View(AssistsService.instance).apply {
                             setBackgroundColor(Color.parseColor("#80000000"))
                             layoutParams = ViewGroup.LayoutParams(-1, BarUtils.getStatusBarHeight())
                         }
@@ -107,7 +88,7 @@ object OverlayPro : AssistsServiceListener {
                     btnTakeScreenshot.setOnClickListener {
                         runCatching {
                             val file = MPManager.takeScreenshot2File()
-                            Assists.service?.startActivity(Intent(Assists.service, ScreenshotReviewActivity::class.java).apply {
+                            AssistsService.instance?.startActivity(Intent(AssistsService.instance, ScreenshotReviewActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                 putExtra("path", file?.path)
                             })
@@ -133,7 +114,7 @@ object OverlayPro : AssistsServiceListener {
                 val screenshot = MPManager.takeScreenshot2Bitmap()
                 screenshot ?: return@runCatching
                 val list: ArrayList<String> = arrayListOf()
-                Assists.getAllNodes().forEach {
+                AssistsCore.getAllNodes().forEach {
                     if (it.isImageView()) {
                         val file = it.takeScreenshot2File(screenshot)
                         file?.let { list.add(file.path) }
@@ -142,7 +123,7 @@ object OverlayPro : AssistsServiceListener {
                 AssistsWindowManager.showAll()
 
                 // 创建并显示通知
-                val context = Assists.service ?: return@runCatching
+                val context = AssistsService.instance ?: return@runCatching
                 val notificationManager = android.app.NotificationManager::class.java.getMethod("from", Context::class.java)
                     .invoke(null, context) as android.app.NotificationManager
 
@@ -246,8 +227,8 @@ object OverlayPro : AssistsServiceListener {
         }
 
     fun show() {
-        if (!Assists.serviceListeners.contains(this)) {
-            Assists.serviceListeners.add(this)
+        if (!AssistsService.listeners.contains(this)) {
+            AssistsService.listeners.add(this)
         }
         AssistsWindowManager.add(assistWindowWrapper)
     }

@@ -5,18 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import com.blankj.utilcode.util.ScreenUtils
-import com.ven.assists.Assists
-import com.ven.assists.Assists.click
-import com.ven.assists.Assists.containsText
-import com.ven.assists.Assists.getBoundsInScreen
-import com.ven.assists.Assists.getNodes
-import com.ven.assists.Assists.logNode
-import com.ven.assists.Assists.nodeGestureClick
-import com.ven.assists.AssistsServiceListener
-import com.ven.assists.AssistsWindowManager
-import com.ven.assists.AssistsWindowManager.overlayToast
-import com.ven.assists.AssistsWindowWrapper
-import com.ven.assists.simple.common.LogWrapper
+import com.ven.assists.AssistsCore.click
+import com.ven.assists.AssistsCore.containsText
+import com.ven.assists.AssistsCore.getBoundsInScreen
+import com.ven.assists.AssistsCore.getNodes
+import com.ven.assists.AssistsCore.nodeGestureClick
+import com.ven.assists.service.AssistsService
+import com.ven.assists.service.AssistsServiceListener
+import com.ven.assists.window.AssistsWindowManager
+import com.ven.assists.window.AssistsWindowManager.overlayToast
+import com.ven.assists.window.AssistsWindowWrapper
 import com.ven.assists.simple.common.LogWrapper.logAppend
 import com.ven.assists.simple.databinding.AdvancedOverlayBinding
 import com.ven.assists.simple.step.AntForestEnergy
@@ -28,9 +26,6 @@ import com.ven.assists.simple.step.ScrollContacts
 import com.ven.assists.simple.step.StepTag
 import com.ven.assists.stepper.StepManager
 import com.ven.assists.utils.CoroutineWrapper
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 
 @SuppressLint("StaticFieldLeak")
 object OverlayAdvanced : AssistsServiceListener {
@@ -40,10 +35,10 @@ object OverlayAdvanced : AssistsServiceListener {
         private set
         get() {
             if (field == null) {
-                field = AdvancedOverlayBinding.inflate(LayoutInflater.from(Assists.service)).apply {
+                field = AdvancedOverlayBinding.inflate(LayoutInflater.from(AssistsService.instance)).apply {
                     btnAnswerWechatCall.setOnClickListener {
-                        if (!Assists.serviceListeners.contains(answerWechatCallListener)) {
-                            Assists.serviceListeners.add(answerWechatCallListener)
+                        if (!AssistsService.listeners.contains(answerWechatCallListener)) {
+                            AssistsService.listeners.add(answerWechatCallListener)
                         }
                         CoroutineWrapper.launch(isMain = true) {
                             OverlayLog.show()
@@ -149,8 +144,8 @@ object OverlayAdvanced : AssistsServiceListener {
         }
 
     fun show() {
-        if (!Assists.serviceListeners.contains(this)) {
-            Assists.serviceListeners.add(this)
+        if (!AssistsService.listeners.contains(this)) {
+            AssistsService.listeners.add(this)
         }
         AssistsWindowManager.add(assistWindowWrapper)
     }

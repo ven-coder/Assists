@@ -16,16 +16,15 @@ import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.PermissionUtils.SimpleCallback
 import com.lxj.xpopup.XPopup
-import com.lxj.xpopup.interfaces.OnConfirmListener
-import com.ven.assists.Assists
-import com.ven.assists.AssistsService
-import com.ven.assists.AssistsServiceListener
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.logNode
+import com.ven.assists.service.AssistsService
+import com.ven.assists.service.AssistsServiceListener
 import com.ven.assists.simple.databinding.ActivityMainBinding
 import com.ven.assists.simple.overlays.OverlayAdvanced
 import com.ven.assists.simple.overlays.OverlayBasic
 import com.ven.assists.simple.overlays.OverlayPro
 import com.ven.assists.utils.CoroutineWrapper
-import com.ven.assists_mp.MPManager
 import kotlinx.coroutines.delay
 
 
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
     val viewBind: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater).apply {
             btnEnable.setOnClickListener {
-                Assists.openAccessibilitySetting()
+                AssistsCore.openAccessibilitySetting()
                 startActivity(Intent(this@MainActivity, SettingGuideActivity::class.java))
             }
             btnBasic.setOnClickListener {
@@ -88,7 +87,7 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
 
     private fun checkServiceEnable() {
         if (!isActivityResumed) return
-        if (Assists.isAccessibilityServiceEnabled()) {
+        if (AssistsCore.isAccessibilityServiceEnabled()) {
             viewBind.btnEnable.isVisible = false
             viewBind.llOption.isVisible = true
         } else {
@@ -108,12 +107,14 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
     override fun onServiceConnected(service: AssistsService) {
         onBackApp()
         checkServiceEnable()
+        AssistsCore.getAllNodes().forEach { it.logNode() }
+
     }
 
     private fun onBackApp() {
         CoroutineWrapper.launch {
-            while (Assists.getPackageName() != packageName) {
-                Assists.back()
+            while (AssistsCore.getPackageName() != packageName) {
+                AssistsCore.back()
                 delay(500)
             }
         }
@@ -127,8 +128,9 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
         super.onCreate(savedInstanceState)
         BarUtils.setStatusBarLightMode(this, true)
         setContentView(viewBind.root)
-        Assists.serviceListeners.add(this)
+        AssistsService.listeners.add(this)
         checkPermission()
+
     }
 
     private fun checkPermission() {
@@ -170,7 +172,7 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        Assists.serviceListeners.remove(this)
+        AssistsService.listeners.remove(this)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

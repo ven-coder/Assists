@@ -1,4 +1,4 @@
-package com.ven.assists
+package com.ven.assists.service
 
 import android.view.accessibility.AccessibilityEvent
 

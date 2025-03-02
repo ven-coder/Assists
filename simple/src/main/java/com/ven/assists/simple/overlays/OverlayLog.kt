@@ -6,10 +6,10 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import com.blankj.utilcode.util.ScreenUtils
-import com.ven.assists.Assists
-import com.ven.assists.AssistsServiceListener
-import com.ven.assists.AssistsWindowManager
-import com.ven.assists.AssistsWindowWrapper
+import com.ven.assists.service.AssistsService
+import com.ven.assists.service.AssistsServiceListener
+import com.ven.assists.window.AssistsWindowManager
+import com.ven.assists.window.AssistsWindowWrapper
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.simple.databinding.LogOverlayBinding
 import com.ven.assists.stepper.StepManager
@@ -45,7 +45,7 @@ object OverlayLog : AssistsServiceListener {
         @SuppressLint("ClickableViewAccessibility")
         get() {
             if (field == null) {
-                field = LogOverlayBinding.inflate(LayoutInflater.from(Assists.service)).apply {
+                field = LogOverlayBinding.inflate(LayoutInflater.from(AssistsService.instance)).apply {
                     scrollView.setOnTouchListener(onScrollTouchListener)
                     btnClean.setOnClickListener {
                         CoroutineWrapper.launch { LogWrapper.clearLog() }
@@ -87,8 +87,8 @@ object OverlayLog : AssistsServiceListener {
         }
 
     fun show() {
-        if (!Assists.serviceListeners.contains(this)) {
-            Assists.serviceListeners.add(this)
+        if (!AssistsService.listeners.contains(this)) {
+            AssistsService.listeners.add(this)
         }
         if (!AssistsWindowManager.contains(assistWindowWrapper?.getView())) {
             AssistsWindowManager.add(assistWindowWrapper)

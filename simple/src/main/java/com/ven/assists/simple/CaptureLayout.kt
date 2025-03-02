@@ -1,7 +1,6 @@
 package com.ven.assists.simple
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -9,17 +8,9 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import com.blankj.utilcode.util.BarUtils
-import com.blankj.utilcode.util.FileIOUtils
-import com.blankj.utilcode.util.ImageUtils
-import com.blankj.utilcode.util.PathUtils
-import com.blankj.utilcode.util.ResourceUtils
-import com.ven.assists.Assists
-import com.ven.assists.AssistsWindowManager
+import com.ven.assists.window.AssistsWindowManager
 import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.opencv.core.Point
 

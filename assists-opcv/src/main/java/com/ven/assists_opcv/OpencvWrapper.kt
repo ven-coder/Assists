@@ -5,13 +5,12 @@ import android.graphics.BitmapFactory
 import android.view.accessibility.AccessibilityNodeInfo
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
-import com.ven.assists.Assists
-import com.ven.assists.Assists.getBoundsInScreen
-import com.ven.assists.AssistsWindowManager
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.getBoundsInScreen
+import com.ven.assists.window.AssistsWindowManager
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists_mp.MPManager
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.Core
@@ -25,19 +24,36 @@ import java.io.IOException
 import java.io.InputStream
 import kotlin.math.abs
 
-
+/**
+ * OpenCV包装器
+ * 提供图像处理和模板匹配等计算机视觉功能的封装
+ * 主要用于自动化过程中的图像识别和处理
+ */
 object OpencvWrapper {
 
+    /**
+     * 初始化OpenCV库
+     * 在后台协程中加载OpenCV本地库，并输出加载结果日志
+     */
     fun init() {
         CoroutineWrapper.launch {
             if (OpenCVLoader.initLocal()) {
-                LogUtils.dTag(Assists.LOG_TAG, "OpenCV loaded successfully")
+                LogUtils.dTag(AssistsCore.LOG_TAG, "OpenCV loaded successfully")
             } else {
-                LogUtils.dTag(Assists.LOG_TAG, "OpenCV initialization failed!")
+                LogUtils.dTag(AssistsCore.LOG_TAG, "OpenCV initialization failed!")
             }
         }
     }
 
+    /**
+     * 执行模板匹配操作
+     * 使用标准化相关系数匹配方法（TM_CCORR_NORMED）
+     * 
+     * @param image 要搜索的源图像
+     * @param template 要匹配的模板图像
+     * @param mask 可选的掩码图像，用于指定模板中要考虑的区域
+     * @return 返回匹配结果矩阵，如果输入无效则返回null
+     */
     fun matchTemplate(image: Mat?, template: Mat?, mask: Mat? = null): Mat? {
         image ?: return null
         template ?: return null
@@ -49,11 +65,20 @@ object OpencvWrapper {
             Imgproc.matchTemplate(image, template, result, method)
         } else {
             Imgproc.matchTemplate(image, template, result, method, mask)
-
         }
         return result
     }
 
+    /**
+     * 从匹配结果中获取符合阈值的点位置
+     * 支持忽略相近点的功能
+     * 
+     * @param result 匹配结果矩阵
+     * @param threshold 匹配阈值，只返回大于等于此值的点
+     * @param ignoreX X轴方向上忽略的距离，-1表示不忽略
+     * @param ignoreY Y轴方向上忽略的距离，-1表示不忽略
+     * @return 符合条件的点位置列表
+     */
     fun getResultWithThreshold(
         result: Mat,
         threshold: Double,
@@ -92,6 +117,15 @@ object OpencvWrapper {
         return resultList
     }
 
+    /**
+     * 执行模板匹配并返回最佳匹配位置
+     * 使用标准化相关系数匹配方法，返回包含最小值、最大值及其位置的结果
+     * 
+     * @param image 要搜索的源图像
+     * @param template 要匹配的模板图像
+     * @param mask 可选的掩码图像
+     * @return MinMaxLocResult对象，包含最小值、最大值及其位置，如果输入无效则返回null
+     */
     fun matchTemplateFromScreenToMinMaxLoc(image: Mat?, template: Mat?, mask: Mat? = null): Core.MinMaxLocResult? {
         image ?: return null
         template ?: return null
@@ -102,9 +136,16 @@ object OpencvWrapper {
         return minMaxLocResult
     }
 
-
     /**
-     * 创建掩膜
+     * 创建图像掩膜
+     * 基于HSV颜色空间的阈值分割，支持添加必要区域和冗余区域
+     * 
+     * @param source 源图像
+     * @param lowerScalar HSV颜色空间的下限
+     * @param upperScalar HSV颜色空间的上限
+     * @param requisiteExtraRectList 必要区域列表（黑色区域）
+     * @param redundantExtraRectList 冗余区域列表（白色区域）
+     * @return 生成的掩膜图像
      */
     fun createMask(
         source: Mat,
@@ -122,13 +163,15 @@ object OpencvWrapper {
         }
         redundantExtraRectList.forEach {
             Imgproc.rectangle(mask, it, Scalar(255.0), -1)
-
         }
         return mask
     }
 
     /**
-     * 获取屏幕图像
+     * 获取当前屏幕的Mat对象
+     * 将屏幕截图转换为OpenCV的Mat格式，并进行颜色空间转换
+     * 
+     * @return 屏幕内容的Mat对象，如果截图失败则返回null
      */
     fun getScreenMat(): Mat? {
         val screenBitmap = MPManager.takeScreenshot2Bitmap() ?: return null
@@ -139,7 +182,11 @@ object OpencvWrapper {
     }
 
     /**
-     * 从Assets获取图像
+     * 从Assets资源中加载模板图像
+     * 将图像转换为OpenCV的Mat格式，并进行颜色空间转换
+     * 
+     * @param assetPath Assets中的图像文件路径
+     * @return 模板图像的Mat对象，如果加载失败则返回null
      */
     fun getTemplateFromAssets(assetPath: String): Mat? {
         val bitmap = getBitmapFromAsset(assetPath)
@@ -150,6 +197,12 @@ object OpencvWrapper {
         return mat
     }
 
+    /**
+     * 从Assets资源中加载Bitmap图像
+     * 
+     * @param filePath Assets中的图像文件路径
+     * @return Bitmap对象，如果加载失败则返回null
+     */
     private fun getBitmapFromAsset(filePath: String): Bitmap? {
         val assetManager = ActivityUtils.getTopActivity().assets
         var inputStream: InputStream? = null
@@ -168,40 +221,5 @@ object OpencvWrapper {
                 }
             }
         }
-    }
-
-    /**
-     * 悬挂函数，用于获取当前AccessibilityNodeInfo对象的屏幕截图
-     * 此函数通过获取节点在屏幕上的边界，然后截取相应区域的屏幕内容来生成Bitmap对象
-     * 如果节点的屏幕高度小于等于0，则返回null，表示无法获取有效的截图
-     *
-     * @return 截取的Bitmap对象，如果无法获取截图则返回null
-     */
-    suspend fun AccessibilityNodeInfo.getBitmap(): Bitmap? {
-        // 获取当前节点在屏幕上的边界
-        val screen = this.getBoundsInScreen()
-        // 如果屏幕高度小于等于0，说明无法获取有效的截图，直接返回null
-        if (screen.height() <= 0) return null
-        // 隐藏所有辅助视图，以避免影响截图结果
-        AssistsWindowManager.hideAll()
-        // 延迟100毫秒，等待视图隐藏完成
-        delay(100)
-        // 尝试获取整个屏幕的截图
-//        getScreenBitmap()?.let {
-//            // 显示最后一个辅助视图
-//            AssistsWindowManager.showLastView()
-//            // 从整个屏幕截图中裁剪出当前节点对应的区域
-//            val bitmap = Bitmap.createBitmap(
-//                it,
-//                screen.left,
-//                screen.top,
-//                screen.width(),
-//                screen.height(),
-//            )
-//            // 返回裁剪后的Bitmap对象
-//            return bitmap
-//        }
-        // 如果无法获取屏幕截图，则返回null
-        return null
     }
 }
