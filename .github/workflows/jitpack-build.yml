@@ -1,0 +1,14 @@
+name: Build with JitPack
+
+on:
+  push:
+    tags:
+      - '*'  # 监听所有 tag 推送事件（如 v1.0.0）
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger JitPack Build
+        run: |
+          curl -X POST https://jitpack.io/com/github/ven-coder/Assists/
