@@ -238,7 +238,7 @@ object OverlayPro : AssistsServiceListener {
                         minWidth = (ScreenUtils.getScreenWidth() * 0.6).toInt()
                         minHeight = (ScreenUtils.getScreenHeight() * 0.4).toInt()
                         initialCenter = true
-                        viewBinding.tvTitle.text = "示例进阶"
+                        viewBinding.tvTitle.text = "进阶示例"
                     }
                 }
             }

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ScrollingView
 import androidx.core.widget.NestedScrollView
 import com.blankj.utilcode.util.ToastUtils
+import com.ven.assists.AssistsWindowManager.overlayToast
 import com.ven.assists.simple.databinding.ActivityTestBinding
 
 class TestActivity : AppCompatActivity() {
@@ -18,10 +19,10 @@ class TestActivity : AppCompatActivity() {
     val viewBinding: ActivityTestBinding by lazy {
         ActivityTestBinding.inflate(layoutInflater).apply {
             btnTest.setOnClickListener {
-                ToastUtils.showShort("测试按钮被点击")
+                "测试按钮被点击".overlayToast()
             }
             btnTest.setOnLongClickListener {
-                ToastUtils.showShort("测试按钮被长按")
+                "测试按钮被长按".overlayToast()
                 return@setOnLongClickListener true
             }
         }
