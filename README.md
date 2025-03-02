@@ -31,6 +31,7 @@ Android无障碍服务（AccessibilityService）开发框架，快速开发复�
 ### [版本历史](https://github.com/ven-coder/Assists/wiki/%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC)
 
 ## 功能计划
+- 脚本录制
 - js支持
 - flutter插件
 
