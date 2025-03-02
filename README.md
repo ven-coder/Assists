@@ -1,4 +1,4 @@
-# Assists v3.1.0
+# Assists
 Android无障碍服务（AccessibilityService）开发框架，快速开发复杂自动化任务、远程协助、监听等
 ***
 ## Android无障碍服务能做什么
@@ -22,28 +22,17 @@ Android无障碍服务（AccessibilityService）开发框架，快速开发复�
 3. 结合kotlin协程封装步骤器，可使复杂自动化业务逻辑低耦合又不容易交叉出错且易于维护
 4. 利用框架实现各种示例供参考
 
-## v3.1.0更新日志-2024-8-25
-1. 示例新增无障碍服务开启引导、防止下拉通知栏、通知/Toast监听、微信电话自动接听
-2. 新增文本选择```AccessibilityNodeInfo.selectionText```
-3. 新增修改输入框文本内容```AccessibilityNodeInfo.setNodeText```
-4. 新增修改输入框文本内容```AccessibilityNodeInfo.setNodeText```
-5. 新增获取当前app在屏幕中的范围```AccessibilityNodeInfo.getAppBoundsInScreen```
-6. 新增获取当前app在屏幕中的宽度```AccessibilityNodeInfo.getAppWidthInScreen```
-7. 新增获取当前app在屏幕中的高度```AccessibilityNodeInfo.getAppHeightInScreen```
-8. 新增根据文本查找所有与文本相同的元素```AccessibilityNodeInfo.findByTextAllMatch```
-9. 新增使列表向前滚动```AccessibilityNodeInfo.scrollForward```
-10. 新增使列表向后滚动```AccessibilityNodeInfo.scrollBackward```
+## v3.2.0更新日志-2025-03-02
+1. 简化无障碍服务api调用
+2. 封装屏幕录制：简化权限请求（增加自动授权）、截取屏幕、截取图片类型元素
+3. 封装浮窗管理：支持窗口拖动、缩放、堆叠、浮窗toast、手势拦截切换等
+4. 示例增加基础无障碍服务api调用示例等
 
 ### [版本历史](https://github.com/ven-coder/Assists/wiki/%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC)
 
 ## 功能计划
-- js支持（进行中...2024.8.25）
-- 图文识别
-- 录屏
-- vue.js支持
-- uniapp插件
+- js支持
 - flutter插件
-- 图像识别 （✅完成）
 
 ## Demo部分演示
 | 图像识别支付宝自动收能量 |自动发朋友圈|自动滑动朋友圈| 无障碍服务开启引导 |
@@ -54,24 +43,30 @@ Android无障碍服务（AccessibilityService）开发框架，快速开发复�
 
 
 ## 使用
-### 1. 添加库
-#### 1.1 Clone或下载源码
-版本v3.1.0：[https://github.com/ven-coder/Assists/releases/tag/3.1.0](https://github.com/ven-coder/Assists/releases/tag/3.1.0)
+### 1. 导入依赖
+#### 1.1 项目根目录build.gradle添加
+```
+allprojects {
+    repositories {
+	//添加jitpack仓库
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
 
 
-#### 1.2 导入依赖库
-解压后以module方式导入assists，opencv图像识别为可选库，如果需要使用到图像识别可导入其中的assists-opcv
-<img src="https://github.com/ven-coder/Assists/assets/27257149/592dc0e1-8764-42e5-bede-2be2dfa9ccb8" width=400/>
-<br/>
-<img src="https://github.com/ven-coder/Assists/assets/27257149/9705e28c-8ff7-4678-bb57-7e475e5c131b" width=400/>
-
-#### 1.3 引用assists
-导入成功后在主模块build.gradle添加引用
+#### 1.2 主模块build.gradle添加
+最新版本：[![](https://jitpack.io/v/ven-coder/Assists.svg)](https://jitpack.io/#ven-coder/Assists)
 ```
 dependencies {
-    ...其他依赖
-    implementation project(':assists')
-    implementation project(':assists-opcv')//图像识别库，可选，按需添加
+    //按需添加
+    //基础库（必须）
+    implementation "com.github.ven-coder.Assists:assists-base:v3.2.0"
+    //屏幕录制相关（可选）
+    implementation "com.github.ven-coder.Assists:assists-mp:v3.2.0"
+    //opencv相关（可选）
+    implementation "com.github.ven-coder.Assists:assists-opcv:v3.2.0"
+    
 }
 ```
 
@@ -112,7 +107,7 @@ dependencies {
 
 </manifest>
 ```
-至此，开启无障碍服务后即可使用包装的API，开发文档请查看：[https://github.com/ven-coder/Assists/wiki](https://github.com/ven-coder/Assists/wiki)
+至此，开启无障碍服务后即可使用包装的API
 
 ## 步骤器-快速实现复杂业务
 步骤器可以帮助快速实现复杂的业务场景，比如自动发朋友圈、获取微信所有好友昵称、自动删除好友...等等都是一些逻辑较多的业务场景，步骤器可帮助快速实现。
@@ -171,7 +166,7 @@ StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
 
 | 交流群| 个人微信 |
 |:---------:|:-----------:|
-| <img src="https://github.com/user-attachments/assets/6fd76746-8d91-4791-b530-bc97fc4a7663" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
+| <img src="https://github.com/user-attachments/assets/96ad7381-83f5-4661-a54b-889be337c472" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
 1群已满200人，要进1群可加我拉进1群
 
 ## 我的付费社群
@@ -182,7 +177,6 @@ StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
 4. 基于Assists开发的抖音养号，小红书养号，支付宝能量收集，支付宝农场，无线远程控制等源码（补充中...）
 5. 群友互助资源对接
 
-> 付费社群于2024.6.19刚刚创建，部分资料服务正在补充中，但是对于开发指导、疑难问答服务我会竭尽所能服务好大家
 ##### 微信扫扫即可加入
 <img src="https://github.com/ven-coder/Assists/assets/27257149/7ae8e825-f489-46e3-96f0-ed03d12db9e8" width=200/>
 
