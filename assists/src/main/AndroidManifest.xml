@@ -3,7 +3,7 @@
 
     <application>
         <provider
-            android:name="com.ven.assists.AssistsFileProvider"
+            android:name="com.ven.assists.utils.AssistsFileProvider"
             android:authorities="${applicationId}.assists.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

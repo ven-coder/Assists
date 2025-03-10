@@ -2,18 +2,17 @@ package com.ven.assists.simple.step
 
 import android.content.ComponentName
 import android.content.Intent
-import android.provider.ContactsContract.Contacts
 import com.ven.assists.Assists
 import com.ven.assists.Assists.click
 import com.ven.assists.Assists.findFirstParentClickable
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.Assists.logNode
+import com.ven.assists.service.AssistsService
 import com.ven.assists.simple.common.Constants
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.stepper.Step
 import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
-import com.ven.assists.stepper.StepManager
 import kotlinx.coroutines.delay
 
 class OpenWechatSocial : StepImpl() {
@@ -24,7 +23,7 @@ class OpenWechatSocial : StepImpl() {
                 addCategory(Intent.CATEGORY_LAUNCHER)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 component = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")
-                Assists.service?.startActivity(this)
+                AssistsService.instance?.startActivity(this)
             }
             return@next Step.get(StepTag.STEP_2)
         }.next(StepTag.STEP_2, isRunCoroutineIO = true) {

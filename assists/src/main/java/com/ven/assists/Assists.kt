@@ -16,29 +16,20 @@ import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
-import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
+import com.ven.assists.service.AssistsService
 import com.ven.assists.utils.CoroutineWrapper
+import com.ven.assists.utils.NodeClassValue
 import com.ven.assists.utils.runMain
+import com.ven.assists.window.AssistsWindowManager
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 object Assists {
     var LOG_TAG = "assists_log"
-
-    /**
-     * 无障碍服务，未开启前为null，使用注意判空
-     */
-    var service: AssistsService? = null
-
-    val serviceListeners: ArrayList<AssistsServiceListener> = arrayListOf()
 
     private var appRectInScreen: Rect? = null
 
@@ -102,7 +93,6 @@ object Assists {
     /**
      * 打开无障碍服务设置
      */
-    @JvmStatic
     fun openAccessibilitySetting() {
         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -113,14 +103,14 @@ object Assists {
      *检查无障碍服务是否开启
      */
     fun isAccessibilityServiceEnabled(): Boolean {
-        return service != null
+        return AssistsService.instance != null
     }
 
     /**
      * 获取当前窗口所属包名
      */
     fun getPackageName(): String {
-        return service?.rootInActiveWindow?.packageName?.toString() ?: ""
+        return AssistsService.instance?.rootInActiveWindow?.packageName?.toString() ?: ""
     }
 
     /**
@@ -128,7 +118,7 @@ object Assists {
      * @param text 筛选返回符合指定文本的元素
      */
     fun findById(id: String, text: String? = null): List<AccessibilityNodeInfo> {
-        var nodeInfos = service?.rootInActiveWindow?.findById(id) ?: arrayListOf()
+        var nodeInfos = AssistsService.instance?.rootInActiveWindow?.findById(id) ?: arrayListOf()
 
         nodeInfos = text?.let {
             nodeInfos.filter {
@@ -146,7 +136,7 @@ object Assists {
     }
 
     /**
-     * 在当前元素范围下，通过id查找所有符合条件元素
+     * 通过id查找当前元素范围下所有符合条件元素
      */
     fun AccessibilityNodeInfo?.findById(id: String): List<AccessibilityNodeInfo> {
         if (this == null) return arrayListOf()
@@ -160,7 +150,7 @@ object Assists {
      * 通过文本查找所有符合条件元素
      */
     fun findByText(text: String): List<AccessibilityNodeInfo> {
-        return service?.rootInActiveWindow?.findByText(text) ?: arrayListOf()
+        return AssistsService.instance?.rootInActiveWindow?.findByText(text) ?: arrayListOf()
     }
 
     /**
@@ -168,7 +158,7 @@ object Assists {
      */
     fun findByTextAllMatch(text: String): List<AccessibilityNodeInfo> {
         val listResult = arrayListOf<AccessibilityNodeInfo>()
-        val list = service?.rootInActiveWindow?.findByText(text)
+        val list = AssistsService.instance?.rootInActiveWindow?.findByText(text)
         list?.let {
             it.forEach {
                 if (TextUtils.equals(it.text, text)) {
@@ -228,7 +218,12 @@ object Assists {
      * @param des 筛选返回符合指定描述文本的元素
      * @return 所有符合条件的元素
      */
-    fun findByTags(className: String, viewId: String? = null, text: String? = null, des: String? = null): List<AccessibilityNodeInfo> {
+    fun findByTags(
+        className: String,
+        viewId: String? = null,
+        text: String? = null,
+        des: String? = null
+    ): List<AccessibilityNodeInfo> {
         var nodeList = arrayListOf<AccessibilityNodeInfo>()
         getAllNodes().forEach {
             if (TextUtils.equals(className, it.className)) {
@@ -341,7 +336,7 @@ object Assists {
      */
     fun getAllNodes(): ArrayList<AccessibilityNodeInfo> {
         val nodeList = arrayListOf<AccessibilityNodeInfo>()
-        service?.rootInActiveWindow?.getNodes(nodeList)
+        AssistsService.instance?.rootInActiveWindow?.getNodes(nodeList)
         return nodeList
     }
 
@@ -401,12 +396,11 @@ object Assists {
 
     /**
      * 分发手势
-     * @param untouchableWindowDelay 切换窗口不可触摸后延长执行的时间
+     * @param nonTouchableWindowDelay 切换窗口不可触摸后延长执行的时间
      */
     suspend fun dispatchGesture(
         gesture: GestureDescription,
-        handler: Handler? = null,
-        untouchableWindowDelay: Long = 100,
+        nonTouchableWindowDelay: Long = 100,
     ): Boolean {
         val completableDeferred = CompletableDeferred<Boolean>()
 
@@ -421,10 +415,10 @@ object Assists {
                 completableDeferred.complete(false)
             }
         }
-        val runResult = service?.let {
-            AssistsWindowManager.untouchableByAll()
-            delay(untouchableWindowDelay)
-            runMain { it.dispatchGesture(gesture, gestureResultCallback, handler) }
+        val runResult = AssistsService.instance?.let {
+            AssistsWindowManager.nonTouchableByAll()
+            delay(nonTouchableWindowDelay)
+            runMain { it.dispatchGesture(gesture, gestureResultCallback, null) }
         } ?: let {
             return false
         }
@@ -466,11 +460,15 @@ object Assists {
         duration: Long,
     ): Boolean {
         val builder = GestureDescription.Builder()
-        val strokeDescription = GestureDescription.StrokeDescription(path, startTime, duration)
+        val strokeDescription = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            GestureDescription.StrokeDescription(path, startTime, duration, true)
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
         val gestureDescription = builder.addStroke(strokeDescription).build()
         val deferred = CompletableDeferred<Boolean>()
         val runResult = runMain {
-            return@runMain service?.dispatchGesture(gestureDescription, object : AccessibilityService.GestureResultCallback() {
+            return@runMain AssistsService.instance?.dispatchGesture(gestureDescription, object : AccessibilityService.GestureResultCallback() {
                 override fun onCompleted(gestureDescription: GestureDescription) {
                     deferred.complete(true)
                 }
@@ -543,7 +541,7 @@ object Assists {
         switchWindowIntervalDelay: Long = 250,
         duration: Long = 25
     ): Boolean {
-        runMain { AssistsWindowManager.untouchableByAll() }
+        runMain { AssistsWindowManager.nonTouchableByAll() }
         delay(switchWindowIntervalDelay)
         val rect = getBoundsInScreen()
         val result = gesture(
@@ -562,7 +560,7 @@ object Assists {
      * @return 执行结果，true成功，false失败
      */
     fun back(): Boolean {
-        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK) ?: false
+        return AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK) ?: false
     }
 
 
@@ -571,7 +569,7 @@ object Assists {
      * @return 执行结果，true成功，false失败
      */
     fun home(): Boolean {
-        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME) ?: false
+        return AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME) ?: false
     }
 
     /**
@@ -579,15 +577,15 @@ object Assists {
      * @return 执行结果，true成功，false失败
      */
     fun notifications(): Boolean {
-        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS) ?: false
+        return AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS) ?: false
     }
 
     /**
      * 最近任务
      * @return 执行结果，true成功，false失败
      */
-    fun tasks(): Boolean {
-        return service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS) ?: false
+    fun recentApps(): Boolean {
+        return AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS) ?: false
     }
 
     /**
@@ -596,7 +594,7 @@ object Assists {
      */
     fun AccessibilityNodeInfo.paste(text: String?): Boolean {
         performAction(AccessibilityNodeInfo.ACTION_FOCUS)
-        service?.let {
+        AssistsService.instance?.let {
             val clip = ClipData.newPlainText("${System.currentTimeMillis()}", text)
             val clipboardManager = (it.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
             clipboardManager.setPrimaryClip(clip)
@@ -657,7 +655,7 @@ object Assists {
      * 获取当前app在屏幕中的位置，如果找不到android:id/content节点则为空
      */
     fun getAppBoundsInScreen(): Rect? {
-        return service?.let {
+        return AssistsService.instance?.let {
             return@let findById("android:id/content").firstOrNull()?.getBoundsInScreen()
         }
     }

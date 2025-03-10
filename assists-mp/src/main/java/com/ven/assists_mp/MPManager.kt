@@ -10,7 +10,6 @@ import android.graphics.PixelFormat
 import android.hardware.display.DisplayManager
 import android.media.Image
 import android.media.ImageReader
-import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
@@ -28,15 +27,12 @@ import com.ven.assists.Assists
 import com.ven.assists.Assists.click
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.Assists.nodeGestureClick
+import com.ven.assists.service.AssistsService
 import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.io.File
-import java.nio.ByteBuffer
 
 object MPManager {
     const val REQUEST_CODE = "request_code_media_projection"
@@ -139,7 +135,7 @@ object MPManager {
 
     suspend fun request(autoAllow: Boolean = true, timeOut: Long = 5000): Boolean {
         var projectionManager: MediaProjectionManager? = null
-        Assists.service?.let {
+        AssistsService.instance?.let {
             projectionManager = it.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         } ?: let {
             projectionManager = ActivityUtils.getTopActivity()?.getSystemService(Context.MEDIA_PROJECTION_SERVICE)?.let {

@@ -7,8 +7,9 @@ import com.ven.assists.Assists.containsText
 import com.ven.assists.Assists.findById
 import com.ven.assists.Assists.findByText
 import com.ven.assists.Assists.findFirstParentClickable
-import com.ven.assists.AssistsServiceListener
-import com.ven.assists.AssistsWindowManager
+import com.ven.assists.service.AssistsService
+import com.ven.assists.service.AssistsServiceListener
+import com.ven.assists.window.AssistsWindowManager
 import com.ven.assists.simple.CaptureLayout
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.simple.common.LogWrapper.logAppend
@@ -21,7 +22,6 @@ import com.ven.assists_mp.MPManager
 import com.ven.assists_opcv.OpencvWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.opencv.core.Mat
 import org.opencv.core.Rect
@@ -33,8 +33,8 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
     val targetPkg = "com.eg.android.AlipayGphone"
 
     override fun onImpl(collector: StepCollector) {
-        if (!Assists.serviceListeners.contains(this)) {
-            Assists.serviceListeners.add(this)
+        if (!AssistsService.listeners.contains(this)) {
+            AssistsService.listeners.add(this)
         }
         collector.next(StepTag.STEP_1) {
             if (MPManager.isEnable) {
@@ -150,7 +150,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
             val points = OpencvWrapper.getResultWithThreshold(temp3Result, 0.98, ignoreX = temp3.width() * 0.5)
 
             runMain {
-                Assists.service?.let { it ->
+                AssistsService.instance?.let { it ->
                     AssistsWindowManager.add(CaptureLayout(it).apply {
                         points.forEach {
                             it.y += capBeginY
@@ -194,7 +194,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                     if (it.maxVal > 0.99) {
                         val point = it.maxLoc
                         runMain {
-                            Assists.service?.let {
+                            AssistsService.instance?.let {
                                 AssistsWindowManager.add(CaptureLayout(it).apply {
                                     addPoint(point, templateMat.width(), templateMat.height())
                                     invalidate()

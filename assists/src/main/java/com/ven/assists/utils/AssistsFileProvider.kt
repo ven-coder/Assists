@@ -1,15 +1,8 @@
-package com.ven.assists
+package com.ven.assists.utils
 
-import android.app.Activity
-import android.app.Activity.RESULT_OK
 import android.app.Application
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
-import com.blankj.utilcode.util.LogUtils
+import com.ven.assists.Assists
 
 class AssistsFileProvider : FileProvider() {
     override fun onCreate(): Boolean {

@@ -5,6 +5,7 @@ import android.content.Intent
 import com.ven.assists.Assists
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.Assists.nodeGestureClick
+import com.ven.assists.service.AssistsService
 import com.ven.assists.simple.App
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.stepper.Step
@@ -20,7 +21,7 @@ class GestureBottomTab : StepImpl() {
                 addCategory(Intent.CATEGORY_LAUNCHER)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 component = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")
-                Assists.service?.startActivity(this)
+                AssistsService.instance?.startActivity(this)
             }
             return@next Step.get(StepTag.STEP_2)
         }.next(StepTag.STEP_2) {

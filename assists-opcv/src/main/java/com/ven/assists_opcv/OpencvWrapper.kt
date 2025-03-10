@@ -7,11 +7,10 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
 import com.ven.assists.Assists
 import com.ven.assists.Assists.getBoundsInScreen
-import com.ven.assists.AssistsWindowManager
+import com.ven.assists.window.AssistsWindowManager
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists_mp.MPManager
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.Core

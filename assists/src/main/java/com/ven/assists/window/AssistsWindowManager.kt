@@ -1,4 +1,4 @@
-package com.ven.assists
+package com.ven.assists.window
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Context
@@ -66,7 +66,7 @@ object AssistsWindowManager {
                 if (isTouchable) {
                     it.touchableByWrapper()
                 } else {
-                    it.untouchableByWrapper()
+                    it.nonTouchableByWrapper()
                 }
             }
         }
@@ -79,7 +79,7 @@ object AssistsWindowManager {
                 if (isTouchable) {
                     it.touchableByWrapper()
                 } else {
-                    it.untouchableByWrapper()
+                    it.nonTouchableByWrapper()
                 }
             }
         }
@@ -92,7 +92,7 @@ object AssistsWindowManager {
                 if (isTouchable) {
                     it.touchableByWrapper()
                 } else {
-                    it.untouchableByWrapper()
+                    it.nonTouchableByWrapper()
                 }
             }
         }
@@ -105,7 +105,7 @@ object AssistsWindowManager {
                 if (isTouchable) {
                     it.touchableByWrapper()
                 } else {
-                    it.untouchableByWrapper()
+                    it.nonTouchableByWrapper()
                 }
             }
         }
@@ -126,7 +126,7 @@ object AssistsWindowManager {
         if (isTouchable) {
             layoutParams.touchableByLayoutParams()
         } else {
-            layoutParams.untouchableByLayoutParams()
+            layoutParams.nonTouchableByLayoutParams()
         }
         viewList.add(ViewWrapper(view, layoutParams))
     }
@@ -184,8 +184,8 @@ object AssistsWindowManager {
         viewList.forEach { it.touchableByWrapper() }
     }
 
-    suspend fun untouchableByAll() {
-        viewList.forEach { it.untouchableByWrapper() }
+    suspend fun nonTouchableByAll() {
+        viewList.forEach { it.nonTouchableByWrapper() }
     }
 
     fun WindowManager.LayoutParams.touchableByLayoutParams() {
@@ -194,7 +194,7 @@ object AssistsWindowManager {
                 or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
     }
 
-    fun WindowManager.LayoutParams.untouchableByLayoutParams() {
+    fun WindowManager.LayoutParams.nonTouchableByLayoutParams() {
         flags = (WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
@@ -205,8 +205,8 @@ object AssistsWindowManager {
         updateViewLayout(view, layoutParams)
     }
 
-    suspend fun ViewWrapper.untouchableByWrapper() {
-        layoutParams.untouchableByLayoutParams()
+    suspend fun ViewWrapper.nonTouchableByWrapper() {
+        layoutParams.nonTouchableByLayoutParams()
         updateViewLayout(view, layoutParams)
     }
 

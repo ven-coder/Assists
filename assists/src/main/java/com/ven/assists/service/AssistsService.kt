@@ -1,30 +1,20 @@
-package com.ven.assists
+package com.ven.assists.service
 
-import android.accessibilityservice.AccessibilityGestureEvent
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
-import android.util.Log
-import android.view.KeyEvent
-import android.view.MotionEvent
 import android.view.accessibility.AccessibilityEvent
-import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
-import com.ven.assists.utils.CoroutineWrapper
-import kotlinx.coroutines.flow.MutableSharedFlow
+import com.ven.assists.Assists
+import com.ven.assists.window.AssistsWindowManager
+import java.util.Collections
 
 class AssistsService : AccessibilityService() {
     companion object {
-
-        val event = MutableSharedFlow<Int>()
-
-        /**
-         * 无障碍服务，未开启前为null，使用注意判空
-         */
         var instance: AssistsService? = null
             private set
+
+        val listeners: MutableList<AssistsServiceListener> = Collections.synchronizedList(arrayListOf<AssistsServiceListener>())
     }
-
-
 
     override fun onCreate() {
         super.onCreate()
@@ -35,23 +25,22 @@ class AssistsService : AccessibilityService() {
         super.onServiceConnected()
         instance = this
         AssistsWindowManager.init(this)
-        Assists.serviceListeners.forEach { it.onServiceConnected(this) }
-        CoroutineWrapper.launch { event.emit(1) }
+        runCatching { listeners.forEach { it.onServiceConnected(this) } }
         LogUtils.d(Assists.LOG_TAG, "assists service on service connected")
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         instance = this
-        Assists.serviceListeners.forEach { it.onAccessibilityEvent(event) }
+        runCatching { listeners.forEach { it.onAccessibilityEvent(event) } }
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
         instance = null
-        Assists.serviceListeners.forEach { it.onUnbind() }
+        runCatching { listeners.forEach { it.onUnbind() } }
         return super.onUnbind(intent)
     }
 
     override fun onInterrupt() {
-        Assists.serviceListeners.forEach { it.onInterrupt() }
+        runCatching { listeners.forEach { it.onInterrupt() } }
     }
 }

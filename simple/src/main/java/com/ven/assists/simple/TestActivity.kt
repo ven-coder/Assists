@@ -1,12 +1,9 @@
 package com.ven.assists.simple
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ScrollingView
 import androidx.core.widget.NestedScrollView
-import com.blankj.utilcode.util.ToastUtils
-import com.ven.assists.AssistsWindowManager.overlayToast
+import com.ven.assists.window.AssistsWindowManager.overlayToast
 import com.ven.assists.simple.databinding.ActivityTestBinding
 
 class TestActivity : AppCompatActivity() {

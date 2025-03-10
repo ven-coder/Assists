@@ -12,7 +12,6 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.TimeUtils
-import com.blankj.utilcode.util.ToastUtils
 import com.ven.assists.Assists
 import com.ven.assists.Assists.click
 import com.ven.assists.Assists.longClick
@@ -21,10 +20,11 @@ import com.ven.assists.Assists.scrollBackward
 import com.ven.assists.Assists.scrollForward
 import com.ven.assists.Assists.selectionText
 import com.ven.assists.Assists.setNodeText
-import com.ven.assists.AssistsServiceListener
-import com.ven.assists.AssistsWindowManager
-import com.ven.assists.AssistsWindowManager.overlayToast
-import com.ven.assists.AssistsWindowWrapper
+import com.ven.assists.service.AssistsService
+import com.ven.assists.service.AssistsServiceListener
+import com.ven.assists.window.AssistsWindowManager
+import com.ven.assists.window.AssistsWindowManager.overlayToast
+import com.ven.assists.window.AssistsWindowWrapper
 import com.ven.assists.simple.MultiTouchDrawingActivity
 import com.ven.assists.simple.TestActivity
 import com.ven.assists.simple.databinding.BasicOverlayBinding
@@ -38,11 +38,11 @@ object OverlayBasic : AssistsServiceListener {
         private set
         get() {
             if (field == null) {
-                field = BasicOverlayBinding.inflate(LayoutInflater.from(Assists.service)).apply {
+                field = BasicOverlayBinding.inflate(LayoutInflater.from(AssistsService.instance)).apply {
                     //点击
                     btnClick.setOnClickListener {
                         CoroutineWrapper.launch {
-                            Assists.service?.startActivity(Intent(Assists.service, TestActivity::class.java).apply {
+                            AssistsService.instance?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
@@ -52,7 +52,7 @@ object OverlayBasic : AssistsServiceListener {
                     //手势点击
                     btnGestureClick.setOnClickListener {
                         CoroutineWrapper.launch {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java).apply {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
@@ -62,7 +62,7 @@ object OverlayBasic : AssistsServiceListener {
                     //长按
                     btnLongClick.setOnClickListener {
                         CoroutineWrapper.launch {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java).apply {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
@@ -72,7 +72,7 @@ object OverlayBasic : AssistsServiceListener {
                     //手势长按
                     btnGestureLongClick.setOnClickListener {
                         CoroutineWrapper.launch {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java).apply {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
@@ -82,7 +82,7 @@ object OverlayBasic : AssistsServiceListener {
                     //单指手势（画圆）
                     btnGestureSingleDraw.setOnClickListener {
                         CoroutineWrapper.launch(isMain = true) {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, MultiTouchDrawingActivity::class.java).apply {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, MultiTouchDrawingActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
@@ -93,7 +93,7 @@ object OverlayBasic : AssistsServiceListener {
                     //双指手势（画圆）
                     btnGestureDoubleDraw.setOnClickListener {
                         CoroutineWrapper.launch(isMain = true) {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, MultiTouchDrawingActivity::class.java).apply {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, MultiTouchDrawingActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
@@ -104,7 +104,7 @@ object OverlayBasic : AssistsServiceListener {
                     //单指手势（不规则）
                     btnGestureThreeDraw.setOnClickListener {
                         CoroutineWrapper.launch(isMain = true) {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, MultiTouchDrawingActivity::class.java).apply {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, MultiTouchDrawingActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
@@ -115,7 +115,7 @@ object OverlayBasic : AssistsServiceListener {
                     //选择文本
                     btnSelectText.setOnClickListener {
                         CoroutineWrapper.launch(isMain = true) {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java).apply {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
@@ -132,7 +132,7 @@ object OverlayBasic : AssistsServiceListener {
                     //修改文本
                     btnChangeText.setOnClickListener {
                         CoroutineWrapper.launch(isMain = true) {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java).apply {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
@@ -147,7 +147,7 @@ object OverlayBasic : AssistsServiceListener {
                     //向前滚动
                     btnListScroll.setOnClickListener {
                         CoroutineWrapper.launch(isMain = true) {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java).apply {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
@@ -168,7 +168,7 @@ object OverlayBasic : AssistsServiceListener {
                     //向后滚动
                     btnListScrollBack.setOnClickListener {
                         CoroutineWrapper.launch(isMain = true) {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(Assists.service, TestActivity::class.java).apply {
+                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
@@ -194,42 +194,42 @@ object OverlayBasic : AssistsServiceListener {
                     //桌面
                     btnHome.setOnClickListener { Assists.home() }
                     //通知
-                    btnTask.setOnClickListener { Assists.tasks() }
+                    btnTask.setOnClickListener { Assists.recentApps() }
                     //最新任务
                     btnNotification.setOnClickListener { Assists.notifications() }
 
                     btnPowerDialog.setOnClickListener {
-                        Assists.service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_POWER_DIALOG)
+                        AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_POWER_DIALOG)
 
                     }
                     btnToggleSplitScreen.setOnClickListener {
-                        Assists.service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TOGGLE_SPLIT_SCREEN)
+                        AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TOGGLE_SPLIT_SCREEN)
 
                     }
                     btnLockScreen.setOnClickListener {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            Assists.service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
+                            AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
                         } else {
                             "仅支持Android9及以上版本".overlayToast()
                         }
                     }
                     btnTakeScreenshot.setOnClickListener {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            Assists.service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT)
+                            AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT)
                         } else {
                             "仅支持Android9及以上版本".overlayToast()
                         }
                     }
                     btn1.setOnClickListener {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            Assists.service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_KEYCODE_HEADSETHOOK)
+                            AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_KEYCODE_HEADSETHOOK)
                         } else {
                             "仅支持Android12及以上版本".overlayToast()
                         }
                     }
                     btn2.setOnClickListener {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            Assists.service?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS)
+                            AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS)
                         } else {
                             "仅支持Android12及以上版本".overlayToast()
                         }
@@ -270,8 +270,8 @@ object OverlayBasic : AssistsServiceListener {
         }
 
     fun show() {
-        if (!Assists.serviceListeners.contains(this)) {
-            Assists.serviceListeners.add(this)
+        if (!AssistsService.listeners.contains(this)) {
+            AssistsService.listeners.add(this)
         }
         AssistsWindowManager.add(assistWindowWrapper)
     }

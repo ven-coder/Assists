@@ -12,15 +12,13 @@ import com.ven.assists.Assists.findFirstParentClickable
 import com.ven.assists.Assists.getBoundsInScreen
 import com.ven.assists.Assists.logNode
 import com.ven.assists.Assists.paste
+import com.ven.assists.service.AssistsService
 import com.ven.assists.simple.App
 import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.stepper.Step
 import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
-import com.ven.assists.stepper.StepManager
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 
 class PublishSocial : StepImpl() {
     override fun onImpl(collector: StepCollector) {
@@ -30,7 +28,7 @@ class PublishSocial : StepImpl() {
                 addCategory(Intent.CATEGORY_LAUNCHER)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 component = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")
-                Assists.service?.startActivity(this)
+                AssistsService.instance?.startActivity(this)
             }
             it.data?.let {
                 LogWrapper.logAppend("PublishSocial STEP_1 收到数据：$it")
