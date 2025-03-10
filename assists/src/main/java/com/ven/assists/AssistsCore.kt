@@ -27,70 +27,99 @@ import com.ven.assists.window.AssistsWindowManager
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 
+/**
+ * 无障碍服务核心类
+ * 提供对AccessibilityService的封装和扩展功能
+ */
 object AssistsCore {
+    /** 日志标签 */
     var LOG_TAG = "assists_log"
 
+    /** 当前应用在屏幕中的位置信息缓存 */
     private var appRectInScreen: Rect? = null
 
     /**
-     * 以下用于快捷判断元素是否是指定类型
+     * 以下是一系列用于快速判断元素类型的扩展函数
+     * 通过比对元素的className来判断元素类型
      */
+    
+    /** 判断元素是否是FrameLayout */
     fun AccessibilityNodeInfo.isFrameLayout(): Boolean {
         return className == NodeClassValue.FrameLayout
     }
 
+    /** 判断元素是否是ViewGroup */
     fun AccessibilityNodeInfo.isViewGroup(): Boolean {
         return className == NodeClassValue.ViewGroup
     }
 
+    /** 判断元素是否是View */
     fun AccessibilityNodeInfo.isView(): Boolean {
         return className == NodeClassValue.View
     }
 
+    /** 判断元素是否是ImageView */
     fun AccessibilityNodeInfo.isImageView(): Boolean {
         return className == NodeClassValue.ImageView
     }
 
+    /** 判断元素是否是TextView */
     fun AccessibilityNodeInfo.isTextView(): Boolean {
         return className == NodeClassValue.TextView
     }
 
+    /** 判断元素是否是LinearLayout */
     fun AccessibilityNodeInfo.isLinearLayout(): Boolean {
         return className == NodeClassValue.LinearLayout
     }
 
+    /** 判断元素是否是RelativeLayout */
     fun AccessibilityNodeInfo.isRelativeLayout(): Boolean {
         return className == NodeClassValue.RelativeLayout
     }
 
+    /** 判断元素是否是Button */
     fun AccessibilityNodeInfo.isButton(): Boolean {
         return className == NodeClassValue.Button
     }
 
+    /** 判断元素是否是ImageButton */
     fun AccessibilityNodeInfo.isImageButton(): Boolean {
         return className == NodeClassValue.ImageButton
     }
 
+    /** 判断元素是否是EditText */
     fun AccessibilityNodeInfo.isEditText(): Boolean {
         return className == NodeClassValue.EditText
     }
 
-
+    /**
+     * 获取元素的文本内容
+     * @return 元素的text属性值，如果为空则返回空字符串
+     */
     fun AccessibilityNodeInfo.txt(): String {
         return text?.toString() ?: ""
     }
 
+    /**
+     * 获取元素的描述内容
+     * @return 元素的contentDescription属性值，如果为空则返回空字符串
+     */
     fun AccessibilityNodeInfo.des(): String {
         return contentDescription?.toString() ?: ""
     }
 
-
+    /**
+     * 初始化AssistsCore
+     * @param application Application实例
+     */
     fun init(application: Application) {
         LogUtils.getConfig().globalTag = LOG_TAG
     }
 
     /**
-     * 打开无障碍服务设置
+     * 打开系统的无障碍服务设置页面
+     * 用于引导用户开启无障碍服务
      */
     fun openAccessibilitySetting() {
         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
@@ -99,43 +128,46 @@ object AssistsCore {
     }
 
     /**
-     *检查无障碍服务是否开启
+     * 检查无障碍服务是否已开启
+     * @return true表示服务已开启，false表示服务未开启
      */
     fun isAccessibilityServiceEnabled(): Boolean {
         return AssistsService.instance != null
     }
 
     /**
-     * 获取当前窗口所属包名
+     * 获取当前窗口所属的应用包名
+     * @return 当前窗口的包名，如果获取失败则返回空字符串
      */
     fun getPackageName(): String {
         return AssistsService.instance?.rootInActiveWindow?.packageName?.toString() ?: ""
     }
 
     /**
-     * 通过id查找所有符合条件元素
-     * @param text 筛选返回符合指定文本的元素
+     * 通过id查找所有符合条件的元素
+     * @param id 元素的资源id
+     * @param text 可选的文本过滤条件
+     * @return 符合条件的元素列表
      */
     fun findById(id: String, text: String? = null): List<AccessibilityNodeInfo> {
         var nodeInfos = AssistsService.instance?.rootInActiveWindow?.findById(id) ?: arrayListOf()
 
         nodeInfos = text?.let {
             nodeInfos.filter {
-
                 if (it.txt() == text) {
                     return@filter true
                 }
-
                 return@filter false
             }
-
         } ?: let { nodeInfos }
 
         return nodeInfos
     }
 
     /**
-     * 通过id查找当前元素范围下所有符合条件元素
+     * 在指定元素范围内通过id查找所有符合条件的元素
+     * @param id 元素的资源id
+     * @return 符合条件的元素列表
      */
     fun AccessibilityNodeInfo?.findById(id: String): List<AccessibilityNodeInfo> {
         if (this == null) return arrayListOf()
@@ -146,14 +178,18 @@ object AssistsCore {
     }
 
     /**
-     * 通过文本查找所有符合条件元素
+     * 通过文本内容查找所有符合条件的元素
+     * @param text 要查找的文本内容
+     * @return 符合条件的元素列表
      */
     fun findByText(text: String): List<AccessibilityNodeInfo> {
         return AssistsService.instance?.rootInActiveWindow?.findByText(text) ?: arrayListOf()
     }
 
     /**
-     * 根据文本查找所有文本相同的元素
+     * 查找所有文本完全匹配的元素
+     * @param text 要匹配的文本内容
+     * @return 文本完全匹配的元素列表
      */
     fun findByTextAllMatch(text: String): List<AccessibilityNodeInfo> {
         val listResult = arrayListOf<AccessibilityNodeInfo>()
@@ -169,7 +205,9 @@ object AssistsCore {
     }
 
     /**
-     * 在当前元素范围下，通过文本查找所有符合条件元素
+     * 在指定元素范围内通过文本查找所有符合条件的元素
+     * @param text 要查找的文本内容
+     * @return 符合条件的元素列表
      */
     fun AccessibilityNodeInfo?.findByText(text: String): List<AccessibilityNodeInfo> {
         if (this == null) return arrayListOf()
@@ -180,7 +218,9 @@ object AssistsCore {
     }
 
     /**
-     * 判断元素是否包含指定的文本
+     * 判断元素是否包含指定文本
+     * @param text 要检查的文本内容
+     * @return true表示包含指定文本，false表示不包含
      */
     fun AccessibilityNodeInfo?.containsText(text: String): Boolean {
         if (this == null) return false
@@ -194,7 +234,8 @@ object AssistsCore {
     }
 
     /**
-     * 获取元素文本列表，包括text，content-desc
+     * 获取元素的所有文本内容（包括text和contentDescription）
+     * @return 包含所有文本内容的列表
      */
     fun AccessibilityNodeInfo?.getAllText(): ArrayList<String> {
         if (this == null) return arrayListOf()
@@ -208,14 +249,13 @@ object AssistsCore {
         return texts
     }
 
-
     /**
-     * 根据类型查找元素
-     * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
-     * @param viewId 筛选返回符合指定viewId的元素
-     * @param text 筛选返回符合指定文本的元素
-     * @param des 筛选返回符合指定描述文本的元素
-     * @return 所有符合条件的元素
+     * 根据多个条件查找元素
+     * @param className 元素的类名
+     * @param viewId 可选的资源id过滤条件
+     * @param text 可选的文本过滤条件
+     * @param des 可选的描述文本过滤条件
+     * @return 符合所有条件的元素列表
      */
     fun findByTags(
         className: String,
@@ -257,12 +297,12 @@ object AssistsCore {
     }
 
     /**
-     * 在当前元素范围下，根据类型查找元素
-     * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
-     * @param viewId 筛选返回符合指定viewId的元素
-     * @param text 筛选返回符合指定文本的元素
-     * @param des 筛选返回符合指定描述文本的元素
-     * @return 所有符合条件的元素
+     * 在指定元素范围内根据多个条件查找元素
+     * @param className 元素的类名
+     * @param viewId 可选的资源id过滤条件
+     * @param text 可选的文本过滤条件
+     * @param des 可选的描述文本过滤条件
+     * @return 符合所有条件的元素列表
      */
     fun AccessibilityNodeInfo.findByTags(
         className: String,
@@ -305,8 +345,9 @@ object AssistsCore {
     }
 
     /**
-     * 根据类型查找首个符合条件的父元素
-     * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
+     * 查找第一个符合指定类型的父元素
+     * @param className 要查找的父元素类名
+     * @return 找到的父元素，如果未找到则返回null
      */
     fun AccessibilityNodeInfo.findFirstParentByTags(className: String): AccessibilityNodeInfo? {
         val nodeList = arrayListOf<AccessibilityNodeInfo>()
@@ -314,11 +355,10 @@ object AssistsCore {
         return nodeList.firstOrNull()
     }
 
-
     /**
-     * 递归根据类型查找首个符合条件的父元素
-     * @param className 完整类名，如[androidx.recyclerview.widget.RecyclerView]
-     * @param container 存放结果容器
+     * 递归查找符合指定类型的父元素
+     * @param className 要查找的父元素类名
+     * @param container 用于存储查找结果的列表
      */
     fun AccessibilityNodeInfo.findFirstParentByTags(className: String, container: ArrayList<AccessibilityNodeInfo>) {
         getParent()?.let {
@@ -331,7 +371,8 @@ object AssistsCore {
     }
 
     /**
-     * 获取所有元素
+     * 获取当前窗口中的所有元素
+     * @return 包含所有元素的列表
      */
     fun getAllNodes(): ArrayList<AccessibilityNodeInfo> {
         val nodeList = arrayListOf<AccessibilityNodeInfo>()
@@ -340,7 +381,8 @@ object AssistsCore {
     }
 
     /**
-     * 获取当前元素下所有子元素
+     * 获取指定元素下的所有子元素
+     * @return 包含所有子元素的列表
      */
     fun AccessibilityNodeInfo.getNodes(): ArrayList<AccessibilityNodeInfo> {
         val nodeList = arrayListOf<AccessibilityNodeInfo>()
@@ -349,18 +391,20 @@ object AssistsCore {
     }
 
     /**
-     * 递归获取所有元素
+     * 递归获取元素的所有子元素
+     * @param nodeList 用于存储子元素的列表
      */
     private fun AccessibilityNodeInfo.getNodes(nodeList: ArrayList<AccessibilityNodeInfo>) {
         nodeList.add(this)
-        if (nodeList.size > 10000) return
+        if (nodeList.size > 10000) return // 防止无限递归
         for (index in 0 until this.childCount) {
             getChild(index)?.getNodes(nodeList)
         }
     }
 
     /**
-     * 查找第一个可点击的父元素
+     * 查找元素的第一个可点击的父元素
+     * @return 找到的可点击父元素，如果未找到则返回null
      */
     fun AccessibilityNodeInfo.findFirstParentClickable(): AccessibilityNodeInfo? {
         arrayOfNulls<AccessibilityNodeInfo>(1).apply {
@@ -370,7 +414,8 @@ object AssistsCore {
     }
 
     /**
-     * 查找首个可点击的父元素
+     * 递归查找可点击的父元素
+     * @param nodeInfo 用于存储查找结果的数组
      */
     private fun AccessibilityNodeInfo.findFirstParentClickable(nodeInfo: Array<AccessibilityNodeInfo?>) {
         if (parent?.isClickable == true) {
@@ -382,7 +427,8 @@ object AssistsCore {
     }
 
     /**
-     * 获取当前元素下的子元素（不包括子元素中的子元素）
+     * 获取元素的直接子元素（不包括子元素的子元素）
+     * @return 包含直接子元素的列表
      */
     fun AccessibilityNodeInfo.getChildren(): ArrayList<AccessibilityNodeInfo> {
         val nodes = arrayListOf<AccessibilityNodeInfo>()
@@ -394,8 +440,10 @@ object AssistsCore {
     }
 
     /**
-     * 分发手势
-     * @param nonTouchableWindowDelay 切换窗口不可触摸后延长执行的时间
+     * 执行手势操作
+     * @param gesture 手势描述对象
+     * @param nonTouchableWindowDelay 窗口变为不可触摸后的延迟时间
+     * @return 手势是否执行成功
      */
     suspend fun dispatchGesture(
         gesture: GestureDescription,
@@ -426,13 +474,12 @@ object AssistsCore {
     }
 
     /**
-     * 手势模拟，点或直线
-     *
-     * @param startLocation 开始位置，长度为2的数组，下标 0为 x坐标，下标 1为 y坐标
-     * @param endLocation 结束位置
-     * @param startTime 开始间隔时间
-     * @param duration 持续时间
-     * @return true 执行成功，false 执行失败
+     * 执行点击或滑动手势
+     * @param startLocation 起始位置坐标
+     * @param endLocation 结束位置坐标
+     * @param startTime 开始延迟时间
+     * @param duration 手势持续时间
+     * @return 手势是否执行成功
      */
     suspend fun gesture(
         startLocation: FloatArray,
@@ -447,11 +494,11 @@ object AssistsCore {
     }
 
     /**
-     * 手势模拟
+     * 执行自定义路径的手势
      * @param path 手势路径
-     * @param startTime 开始间隔毫秒
-     * @param duration 持续毫秒
-     * @return true 执行成功，false 执行失败
+     * @param startTime 开始延迟时间
+     * @param duration 手势持续时间
+     * @return 手势是否执行成功
      */
     suspend fun gesture(
         path: Path,
@@ -485,7 +532,8 @@ object AssistsCore {
     }
 
     /**
-     * 获取元素在屏幕中的范围
+     * 获取元素在屏幕中的位置信息
+     * @return 包含元素位置信息的Rect对象
      */
     fun AccessibilityNodeInfo.getBoundsInScreen(): Rect {
         val boundsInScreen = Rect()
@@ -495,7 +543,7 @@ object AssistsCore {
 
     /**
      * 点击元素
-     * @return 执行结果，true成功，false失败
+     * @return 点击操作是否成功
      */
     fun AccessibilityNodeInfo.click(): Boolean {
         return performAction(AccessibilityNodeInfo.ACTION_CLICK)
@@ -503,17 +551,18 @@ object AssistsCore {
 
     /**
      * 长按元素
-     * @return 执行结果，true成功，false失败
+     * @return 长按操作是否成功
      */
     fun AccessibilityNodeInfo.longClick(): Boolean {
         return performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)
     }
 
     /**
-     * 点击屏幕指定位置
-     * @param x 坐标
-     * @param y 坐标
-     * @param duration 持续时间，单位毫秒
+     * 在指定坐标位置执行点击手势
+     * @param x 横坐标
+     * @param y 纵坐标
+     * @param duration 点击持续时间
+     * @return 手势是否执行成功
      */
     suspend fun gestureClick(
         x: Float,
@@ -528,11 +577,12 @@ object AssistsCore {
     }
 
     /**
-     * 手势点击/长按当前元素
-     * @param offsetX x轴偏移量
-     * @param offsetY y轴偏移量
-     * @param switchWindowIntervalDelay 浮窗隐藏显示间隔时长
-     * @param duration 手势执行时长，需要长按就设置时间长点，默认点击时长
+     * 在元素位置执行点击手势
+     * @param offsetX X轴偏移量
+     * @param offsetY Y轴偏移量
+     * @param switchWindowIntervalDelay 窗口切换延迟时间
+     * @param duration 点击持续时间
+     * @return 手势是否执行成功
      */
     suspend fun AccessibilityNodeInfo.nodeGestureClick(
         offsetX: Float = ScreenUtils.getScreenWidth() * 0.01953f,
@@ -555,41 +605,41 @@ object AssistsCore {
     }
 
     /**
-     * 返回
-     * @return 执行结果，true成功，false失败
+     * 执行返回操作
+     * @return 返回操作是否成功
      */
     fun back(): Boolean {
         return AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK) ?: false
     }
 
-
     /**
-     * 回到主页
-     * @return 执行结果，true成功，false失败
+     * 返回主屏幕
+     * @return 返回主屏幕操作是否成功
      */
     fun home(): Boolean {
         return AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME) ?: false
     }
 
     /**
-     * 显示通知栏
-     * @return 执行结果，true成功，false失败
+     * 打开通知栏
+     * @return 打开通知栏操作是否成功
      */
     fun notifications(): Boolean {
         return AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS) ?: false
     }
 
     /**
-     * 最近任务
-     * @return 执行结果，true成功，false失败
+     * 显示最近任务
+     * @return 显示最近任务操作是否成功
      */
     fun recentApps(): Boolean {
         return AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS) ?: false
     }
 
     /**
-     * 粘贴文本到当前元素
-     * @return 执行结果，true成功，false失败
+     * 向元素粘贴文本
+     * @param text 要粘贴的文本
+     * @return 粘贴操作是否成功
      */
     fun AccessibilityNodeInfo.paste(text: String?): Boolean {
         performAction(AccessibilityNodeInfo.ACTION_FOCUS)
@@ -604,10 +654,10 @@ object AssistsCore {
     }
 
     /**
-     * 选择输入框文本
-     * @param selectionStart 文本起始下标
-     * @param selectionEnd 文本结束下标
-     * @return 执行结果，true成功，false失败
+     * 选择元素中的文本
+     * @param selectionStart 选择起始位置
+     * @param selectionEnd 选择结束位置
+     * @return 文本选择操作是否成功
      */
     fun AccessibilityNodeInfo.selectionText(selectionStart: Int, selectionEnd: Int): Boolean {
         val selectionArgs = Bundle()
@@ -617,8 +667,9 @@ object AssistsCore {
     }
 
     /**
-     * 修改输入框文本内容
-     * @return 执行结果，true成功，false失败
+     * 设置元素的文本内容
+     * @param text 要设置的文本
+     * @return 设置文本操作是否成功
      */
     fun AccessibilityNodeInfo.setNodeText(text: String?): Boolean {
         text ?: return false
@@ -631,7 +682,10 @@ object AssistsCore {
     }
 
     /**
-     * 根据基准分辨率宽度获取对应当前分辨率的x坐标
+     * 根据基准宽度计算实际X坐标
+     * @param baseWidth 基准宽度
+     * @param x 原始X坐标
+     * @return 计算后的实际X坐标
      */
     fun getX(baseWidth: Int, x: Int): Int {
         val screenWidth = ScreenUtils.getScreenWidth()
@@ -639,7 +693,10 @@ object AssistsCore {
     }
 
     /**
-     * 根据基准分辨率高度获取对应当前分辨率的y坐标
+     * 根据基准高度计算实际Y坐标
+     * @param baseHeight 基准高度
+     * @param y 原始Y坐标
+     * @return 计算后的实际Y坐标
      */
     fun getY(baseHeight: Int, y: Int): Int {
         var screenHeight = ScreenUtils.getScreenHeight()
@@ -649,9 +706,9 @@ object AssistsCore {
         return (y.toFloat() / baseHeight * screenHeight).toInt()
     }
 
-
     /**
-     * 获取当前app在屏幕中的位置，如果找不到android:id/content节点则为空
+     * 获取当前应用在屏幕中的位置
+     * @return 应用窗口的位置信息，如果未找到则返回null
      */
     fun getAppBoundsInScreen(): Rect? {
         return AssistsService.instance?.let {
@@ -659,9 +716,9 @@ object AssistsCore {
         }
     }
 
-
     /**
-     * 初始化当前app在屏幕中的位置
+     * 初始化并缓存当前应用在屏幕中的位置
+     * @return 应用窗口的位置信息
      */
     fun initAppBoundsInScreen(): Rect? {
         return getAppBoundsInScreen().apply {
@@ -670,7 +727,8 @@ object AssistsCore {
     }
 
     /**
-     * 获取当前app在屏幕中的宽度，获取前需要先执行initAppBoundsInScreen，避免getAppBoundsInScreen每次获取新的会耗时
+     * 获取当前应用在屏幕中的宽度
+     * @return 应用窗口的宽度
      */
     fun getAppWidthInScreen(): Int {
         return appRectInScreen?.let {
@@ -678,9 +736,9 @@ object AssistsCore {
         } ?: ScreenUtils.getScreenWidth()
     }
 
-
     /**
-     * 获取当前app在屏幕中的高度，获取前需要先执行initAppBoundsInScreen，避免getAppBoundsInScreen每次获取新的会耗时
+     * 获取当前应用在屏幕中的高度
+     * @return 应用窗口的高度
      */
     fun getAppHeightInScreen(): Int {
         return appRectInScreen?.let {
@@ -689,23 +747,24 @@ object AssistsCore {
     }
 
     /**
-     * 向前滚动（需元素是可滚动的）
-     * @return 执行结果，true成功，false失败。false可作为滚动到底部或顶部依据
+     * 向前滚动可滚动元素
+     * @return 滚动操作是否成功
      */
     fun AccessibilityNodeInfo.scrollForward(): Boolean {
         return performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
     }
 
     /**
-     * 向后滚动（需元素是可滚动的）
-     * @return 执行结果，true成功，false失败。false可作为滚动到底部或顶部依据
+     * 向后滚动可滚动元素
+     * @return 滚动操作是否成功
      */
     fun AccessibilityNodeInfo.scrollBackward(): Boolean {
         return performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
     }
 
     /**
-     * 控制台输出元素信息
+     * 在日志中输出元素的详细信息
+     * @param tag 日志标签
      */
     fun AccessibilityNodeInfo.logNode(tag: String = LOG_TAG) {
         StringBuilder().apply {
@@ -723,5 +782,4 @@ object AssistsCore {
             Log.d(tag, toString())
         }
     }
-
 }
