@@ -15,12 +15,11 @@ import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SizeUtils
+import com.ven.assists.service.AssistsService
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists.utils.runIO
 import com.ven.assists.utils.runMain
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.util.Collections
@@ -37,7 +36,7 @@ object AssistsWindowManager {
     }
 
     fun getWindowManager(): WindowManager? {
-        Assists.service?.getSystemService(Context.WINDOW_SERVICE)?.let { return (it as WindowManager) }
+        AssistsService.instance?.getSystemService(Context.WINDOW_SERVICE)?.let { return (it as WindowManager) }
         return null
     }
 
@@ -212,7 +211,7 @@ object AssistsWindowManager {
     }
 
     fun String.overlayToast(delay: Long = 2000) {
-        Assists.service?.let {
+        AssistsService.instance?.let {
             CoroutineWrapper.launch(isMain = true) {
                 val textView = TextView(it).apply {
                     text = this@overlayToast
