@@ -374,40 +374,33 @@ gesture(
 ```
 
 参数：
-- ``：
+- `path`：手势路径，使用Path对象定义手势轨迹
+- `startTime`：指定手势的起始时间。如果设为0，表示立即开始手势
+- `duration`：执行手势的持续时间（毫秒）
 
 返回值：
-- ``：
+- `Boolean`：手势是否执行成功
 ---
 
 #### 获取当前元素在屏幕中的范围大小
 `AccessibilityNodeInfo.getBoundsInScreen(): Rect`
 
-参数：
-- ``：
-
 返回值：
-- ``：
+- `Rect`：返回一个Rect对象，包含元素在屏幕中的位置和大小信息（left, top, right, bottom）
 ---
 
 #### 点击当前元素
 `AccessibilityNodeInfo.click(): Boolean`
 
-参数：
-- ``：
-
 返回值：
-- ``：
+- `Boolean`：点击操作是否执行成功
 ---
 
 #### 长按当前元素
 `AccessibilityNodeInfo.longClick(): Boolean`
 
-参数：
-- ``：
-
 返回值：
-- ``：
+- `Boolean`：长按操作是否执行成功
 ---
 
 #### 根据坐标执行手势
@@ -420,10 +413,12 @@ gestureClick(
 ```
 
 参数：
-- ``：
+- `x`：点击位置的x坐标
+- `y`：点击位置的y坐标
+- `duration`：点击持续时间（毫秒），默认为10毫秒
 
 返回值：
-- ``：
+- `Boolean`：手势是否执行成功
 ---
 
 #### 在当前元素范围下执行点击手势
@@ -437,108 +432,92 @@ AccessibilityNodeInfo.nodeGestureClick(
 ```
 
 参数：
-- ``：
+- `offsetX`：点击位置相对于元素左边界的偏移量，默认为屏幕宽度的1.953%
+- `offsetY`：点击位置相对于元素上边界的偏移量，默认为屏幕宽度的1.953%
+- `switchWindowIntervalDelay`：浮窗切换显示状态的延迟时间（毫秒），默认250毫秒
+- `duration`：点击持续时间（毫秒），默认25毫秒
 
 返回值：
-- ``：
+- `Boolean`：手势是否执行成功
 ---
 
 #### 返回
 `back(): Boolean`
 
-参数：
-- ``：
-
 返回值：
-- ``：
+- `Boolean`：返回操作是否执行成功
 ---
 
 #### 回到主页
 `home(): Boolean`
 
-参数：
-- ``：
-
 返回值：
-- ``：
+- `Boolean`：回到主页操作是否执行成功
 ---
 
 #### 显示通知栏
 `notifications(): Boolean`
 
-参数：
-- ``：
-
 返回值：
-- ``：
+- `Boolean`：显示通知栏操作是否执行成功
 ---
 
 #### 显示最近任务列表
 `recentApps(): Boolean`
 
-参数：
-- ``：
-
 返回值：
-- ``：
+- `Boolean`：显示最近任务列表操作是否执行成功
 ---
 
 #### 粘贴文本到当前元素
 `AccessibilityNodeInfo.paste(text: String?): Boolean`
 
 参数：
-- ``：
+- `text`：要粘贴的文本内容
 
 返回值：
-- ``：
+- `Boolean`：粘贴操作是否执行成功
 ---
 
 #### 选择当前元素的文本
 `AccessibilityNodeInfo.selectionText(selectionStart: Int, selectionEnd: Int): Boolean`
 
 参数：
-- ``：
+- `selectionStart`：选择文本的起始位置
+- `selectionEnd`：选择文本的结束位置
 
 返回值：
-- ``：
+- `Boolean`：文本选择操作是否执行成功
 ---
 
 #### 修改当前元素文本
 `AccessibilityNodeInfo.setNodeText(text: String?): Boolean`
 
 参数：
-- ``：
+- `text`：要设置的新文本内容
 
 返回值：
-- ``：
+- `Boolean`：文本修改操作是否执行成功
 ---
 
 #### 向前滚动（元素需要是可滚动的）
 `AccessibilityNodeInfo.scrollForward(): Boolean`
 
-参数：
-- ``：
-
 返回值：
-- ``：
+- `Boolean`：向前滚动操作是否执行成功，false可作为滚动到底部的判断依据
 ---
 
 #### 向后滚动（元素需要是可滚动的）
 `AccessibilityNodeInfo.scrollBackward(): Boolean`
 
-参数：
-- ``：
-
 返回值：
-- ``：
+- `Boolean`：向后滚动操作是否执行成功，false可作为滚动到顶部的判断依据
 ---
 
 #### 在控制台输出当前元素信息
 `AccessibilityNodeInfo.logNode(tag: String = LOG_TAG)`
 
 参数：
-- ``：
+- `tag`：日志标签，默认为LOG_TAG（"assists_log"）
 
-返回值：
-- ``：
 ---
