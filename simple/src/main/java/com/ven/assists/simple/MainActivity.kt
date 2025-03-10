@@ -16,8 +16,8 @@ import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.PermissionUtils.SimpleCallback
 import com.lxj.xpopup.XPopup
-import com.ven.assists.Assists
-import com.ven.assists.Assists.logNode
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.logNode
 import com.ven.assists.service.AssistsService
 import com.ven.assists.service.AssistsServiceListener
 import com.ven.assists.simple.databinding.ActivityMainBinding
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
     val viewBind: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater).apply {
             btnEnable.setOnClickListener {
-                Assists.openAccessibilitySetting()
+                AssistsCore.openAccessibilitySetting()
                 startActivity(Intent(this@MainActivity, SettingGuideActivity::class.java))
             }
             btnBasic.setOnClickListener {
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
 
     private fun checkServiceEnable() {
         if (!isActivityResumed) return
-        if (Assists.isAccessibilityServiceEnabled()) {
+        if (AssistsCore.isAccessibilityServiceEnabled()) {
             viewBind.btnEnable.isVisible = false
             viewBind.llOption.isVisible = true
         } else {
@@ -107,14 +107,14 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
     override fun onServiceConnected(service: AssistsService) {
         onBackApp()
         checkServiceEnable()
-        Assists.getAllNodes().forEach { it.logNode() }
+        AssistsCore.getAllNodes().forEach { it.logNode() }
 
     }
 
     private fun onBackApp() {
         CoroutineWrapper.launch {
-            while (Assists.getPackageName() != packageName) {
-                Assists.back()
+            while (AssistsCore.getPackageName() != packageName) {
+                AssistsCore.back()
                 delay(500)
             }
         }

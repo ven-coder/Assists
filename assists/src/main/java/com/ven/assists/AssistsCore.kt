@@ -11,7 +11,6 @@ import android.graphics.Path
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
@@ -28,7 +27,7 @@ import com.ven.assists.window.AssistsWindowManager
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 
-object Assists {
+object AssistsCore {
     var LOG_TAG = "assists_log"
 
     private var appRectInScreen: Rect? = null

@@ -1,13 +1,11 @@
 package com.ven.assists.stepper
 
 import android.util.Log
-import com.ven.assists.Assists
+import com.ven.assists.AssistsCore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
-import java.lang.reflect.InvocationTargetException
 
 
 /**
@@ -65,7 +63,7 @@ object StepManager {
             append("\ndelay:$delay")
             append("\ndata:$data")
             append("\n")
-            Log.d(Assists.LOG_TAG, toString())
+            Log.d(AssistsCore.LOG_TAG, toString())
         }
         stepCollector[implClassName] ?: register(implClassName)
         stepCollector[implClassName]?.get(stepTag)?.execute(delay, data = data)

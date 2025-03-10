@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import com.blankj.utilcode.util.ScreenUtils
-import com.ven.assists.Assists.click
-import com.ven.assists.Assists.containsText
-import com.ven.assists.Assists.getBoundsInScreen
-import com.ven.assists.Assists.getNodes
-import com.ven.assists.Assists.nodeGestureClick
+import com.ven.assists.AssistsCore.click
+import com.ven.assists.AssistsCore.containsText
+import com.ven.assists.AssistsCore.getBoundsInScreen
+import com.ven.assists.AssistsCore.getNodes
+import com.ven.assists.AssistsCore.nodeGestureClick
 import com.ven.assists.service.AssistsService
 import com.ven.assists.service.AssistsServiceListener
 import com.ven.assists.window.AssistsWindowManager

@@ -1,5 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+
 buildscript {
     repositories {
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
@@ -19,7 +20,9 @@ buildscript {
 
     }
 }
-
+plugins {
+    id 'org.jetbrains.dokka' version '1.8.10'
+}
 allprojects {
     repositories {
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }

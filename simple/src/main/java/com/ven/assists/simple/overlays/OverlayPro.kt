@@ -12,8 +12,8 @@ import android.view.accessibility.AccessibilityEvent
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
-import com.ven.assists.Assists
-import com.ven.assists.Assists.isImageView
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.isImageView
 import com.ven.assists.service.AssistsService
 import com.ven.assists.service.AssistsServiceListener
 import com.ven.assists.window.AssistsWindowManager
@@ -114,7 +114,7 @@ object OverlayPro : AssistsServiceListener {
                 val screenshot = MPManager.takeScreenshot2Bitmap()
                 screenshot ?: return@runCatching
                 val list: ArrayList<String> = arrayListOf()
-                Assists.getAllNodes().forEach {
+                AssistsCore.getAllNodes().forEach {
                     if (it.isImageView()) {
                         val file = it.takeScreenshot2File(screenshot)
                         file?.let { list.add(file.path) }

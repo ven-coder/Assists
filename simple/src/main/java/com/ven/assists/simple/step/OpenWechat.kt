@@ -2,9 +2,9 @@ package com.ven.assists.simple.step
 
 import android.content.ComponentName
 import android.content.Intent
-import com.ven.assists.Assists
-import com.ven.assists.Assists.click
-import com.ven.assists.Assists.getBoundsInScreen
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.click
+import com.ven.assists.AssistsCore.getBoundsInScreen
 import com.ven.assists.service.AssistsService
 import com.ven.assists.simple.App
 import com.ven.assists.simple.common.LogWrapper
@@ -24,18 +24,18 @@ class OpenWechat : StepImpl() {
             }
             return@next Step.get(StepTag.STEP_2)
         }.next(StepTag.STEP_2) {
-            Assists.findByText("通讯录").forEach {
+            AssistsCore.findByText("通讯录").forEach {
                 val screen = it.getBoundsInScreen()
-                if (screen.left > Assists.getX(1080, 340) &&
-                    screen.top > Assists.getX(1920, 1850)
+                if (screen.left > AssistsCore.getX(1080, 340) &&
+                    screen.top > AssistsCore.getX(1920, 1850)
                 ) {
                     LogWrapper.logAppend("已打开微信主页")
                     it.parent.parent.click()
                     return@next Step.get(StepTag.STEP_3)
                 }
             }
-            if (Assists.getPackageName() == App.TARGET_PACKAGE_NAME) {
-                Assists.back()
+            if (AssistsCore.getPackageName() == App.TARGET_PACKAGE_NAME) {
+                AssistsCore.back()
                 return@next Step.get(StepTag.STEP_2)
             }
             if (it.repeatCount == 5) {

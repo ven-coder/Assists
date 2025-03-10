@@ -1,9 +1,8 @@
 package com.ven.assists.stepper
 
-import android.os.CountDownTimer
 import android.util.Log
 import com.blankj.utilcode.util.LogUtils
-import com.ven.assists.Assists
+import com.ven.assists.AssistsCore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -58,7 +57,7 @@ class StepOperator(
                     append("\n>>>>>>>>>>>>execute>>>>>>>>>>>")
                     append("\nStep.none（停止）")
                     append("\n")
-                    Log.d(Assists.LOG_TAG, toString())
+                    Log.d(AssistsCore.LOG_TAG, toString())
                 }
             }
 

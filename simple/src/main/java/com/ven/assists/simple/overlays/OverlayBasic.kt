@@ -12,14 +12,14 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.TimeUtils
-import com.ven.assists.Assists
-import com.ven.assists.Assists.click
-import com.ven.assists.Assists.longClick
-import com.ven.assists.Assists.nodeGestureClick
-import com.ven.assists.Assists.scrollBackward
-import com.ven.assists.Assists.scrollForward
-import com.ven.assists.Assists.selectionText
-import com.ven.assists.Assists.setNodeText
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.click
+import com.ven.assists.AssistsCore.longClick
+import com.ven.assists.AssistsCore.nodeGestureClick
+import com.ven.assists.AssistsCore.scrollBackward
+import com.ven.assists.AssistsCore.scrollForward
+import com.ven.assists.AssistsCore.selectionText
+import com.ven.assists.AssistsCore.setNodeText
 import com.ven.assists.service.AssistsService
 import com.ven.assists.service.AssistsServiceListener
 import com.ven.assists.window.AssistsWindowManager
@@ -46,7 +46,7 @@ object OverlayBasic : AssistsServiceListener {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
-                            Assists.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.click()
+                            AssistsCore.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.click()
                         }
                     }
                     //手势点击
@@ -56,7 +56,7 @@ object OverlayBasic : AssistsServiceListener {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
-                            Assists.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.nodeGestureClick()
+                            AssistsCore.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.nodeGestureClick()
                         }
                     }
                     //长按
@@ -66,7 +66,7 @@ object OverlayBasic : AssistsServiceListener {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
-                            Assists.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.longClick()
+                            AssistsCore.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.longClick()
                         }
                     }
                     //手势长按
@@ -76,7 +76,7 @@ object OverlayBasic : AssistsServiceListener {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
                             delay(1000)
-                            Assists.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.nodeGestureClick(duration = 1000)
+                            AssistsCore.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.nodeGestureClick(duration = 1000)
                         }
                     }
                     //单指手势（画圆）
@@ -123,7 +123,7 @@ object OverlayBasic : AssistsServiceListener {
                             TestActivity.scrollUp?.invoke()
                             delay(500)
 
-                            Assists.findById("com.ven.assists.demo:id/et_input").firstOrNull()?.let {
+                            AssistsCore.findById("com.ven.assists.demo:id/et_input").firstOrNull()?.let {
                                 it.selectionText(it.text.length - 3, it.text.length)
                             }
                         }
@@ -139,7 +139,7 @@ object OverlayBasic : AssistsServiceListener {
 
                             TestActivity.scrollUp?.invoke()
                             delay(500)
-                            Assists.findById("com.ven.assists.demo:id/et_input").firstOrNull()?.let {
+                            AssistsCore.findById("com.ven.assists.demo:id/et_input").firstOrNull()?.let {
                                 it.setNodeText("测试修改文本: ${TimeUtils.getNowString()}")
                             }
                         }
@@ -156,7 +156,7 @@ object OverlayBasic : AssistsServiceListener {
                             delay(500)
                             var next = true
                             while (next) {
-                                Assists.findById("com.ven.assists.demo:id/scrollView").firstOrNull()?.let {
+                                AssistsCore.findById("com.ven.assists.demo:id/scrollView").firstOrNull()?.let {
                                     next = it.scrollForward()
                                     delay(1000)
                                 }
@@ -177,7 +177,7 @@ object OverlayBasic : AssistsServiceListener {
                             delay(500)
                             var next = true
                             while (next) {
-                                Assists.findById("com.ven.assists.demo:id/scrollView").firstOrNull()?.let {
+                                AssistsCore.findById("com.ven.assists.demo:id/scrollView").firstOrNull()?.let {
                                     next = it.scrollBackward()
                                     delay(1000)
                                 }
@@ -189,14 +189,14 @@ object OverlayBasic : AssistsServiceListener {
 
                     //返回
                     btnBack.setOnClickListener {
-                        Assists.back()
+                        AssistsCore.back()
                     }
                     //桌面
-                    btnHome.setOnClickListener { Assists.home() }
+                    btnHome.setOnClickListener { AssistsCore.home() }
                     //通知
-                    btnTask.setOnClickListener { Assists.recentApps() }
+                    btnTask.setOnClickListener { AssistsCore.recentApps() }
                     //最新任务
-                    btnNotification.setOnClickListener { Assists.notifications() }
+                    btnNotification.setOnClickListener { AssistsCore.notifications() }
 
                     btnPowerDialog.setOnClickListener {
                         AssistsService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_POWER_DIALOG)
@@ -303,7 +303,7 @@ object OverlayBasic : AssistsServiceListener {
         gestureBuilder.addStroke(stroke1)
 
         // 分发手势
-        Assists.dispatchGesture(gestureBuilder.build())
+        AssistsCore.dispatchGesture(gestureBuilder.build())
     }
 
     suspend fun performCircularGestureDouble() {
@@ -332,7 +332,7 @@ object OverlayBasic : AssistsServiceListener {
         gestureBuilder.addStroke(stroke2)
 
         // 分发手势
-        Assists.dispatchGesture(gestureBuilder.build())
+        AssistsCore.dispatchGesture(gestureBuilder.build())
     }
 
     suspend fun performSnakeGesture() {
@@ -368,6 +368,6 @@ object OverlayBasic : AssistsServiceListener {
         gestureBuilder.addStroke(stroke)
 
         // 分发手势
-        Assists.dispatchGesture(gestureBuilder.build())
+        AssistsCore.dispatchGesture(gestureBuilder.build())
     }
 }

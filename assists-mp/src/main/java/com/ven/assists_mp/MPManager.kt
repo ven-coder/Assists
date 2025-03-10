@@ -23,10 +23,10 @@ import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ScreenUtils
-import com.ven.assists.Assists
-import com.ven.assists.Assists.click
-import com.ven.assists.Assists.getBoundsInScreen
-import com.ven.assists.Assists.nodeGestureClick
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.click
+import com.ven.assists.AssistsCore.getBoundsInScreen
+import com.ven.assists.AssistsCore.nodeGestureClick
 import com.ven.assists.service.AssistsService
 import com.ven.assists.utils.CoroutineWrapper
 import kotlinx.coroutines.CompletableDeferred
@@ -150,14 +150,14 @@ object MPManager {
             CoroutineWrapper.launch {
                 var time = 0L
                 while (time <= timeOut) {
-                    Assists.findByTags("android.widget.Button", "android:id/button1", "立即开始").firstOrNull()?.click()
-                    Assists.findByTags("android.widget.Spinner", "com.android.systemui:id/screen_share_mode_spinner").firstOrNull()?.let {
+                    AssistsCore.findByTags("android.widget.Button", "android:id/button1", "立即开始").firstOrNull()?.click()
+                    AssistsCore.findByTags("android.widget.Spinner", "com.android.systemui:id/screen_share_mode_spinner").firstOrNull()?.let {
                         if (it.click()) {
                             delay(250)
-                            Assists.findByTags("android.widget.TextView", "android:id/text1", "整个屏幕").firstOrNull()?.nodeGestureClick()
+                            AssistsCore.findByTags("android.widget.TextView", "android:id/text1", "整个屏幕").firstOrNull()?.nodeGestureClick()
                         }
                     }
-                    Assists.findByTags("android.widget.Button", "android:id/button1", "开始").firstOrNull()?.click()
+                    AssistsCore.findByTags("android.widget.Button", "android:id/button1", "开始").firstOrNull()?.click()
                     val delayMillis = 250L
                     time += delayMillis
                     delay(delayMillis)

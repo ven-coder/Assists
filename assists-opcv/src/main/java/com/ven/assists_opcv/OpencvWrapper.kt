@@ -5,8 +5,8 @@ import android.graphics.BitmapFactory
 import android.view.accessibility.AccessibilityNodeInfo
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
-import com.ven.assists.Assists
-import com.ven.assists.Assists.getBoundsInScreen
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.getBoundsInScreen
 import com.ven.assists.window.AssistsWindowManager
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists_mp.MPManager
@@ -30,9 +30,9 @@ object OpencvWrapper {
     fun init() {
         CoroutineWrapper.launch {
             if (OpenCVLoader.initLocal()) {
-                LogUtils.dTag(Assists.LOG_TAG, "OpenCV loaded successfully")
+                LogUtils.dTag(AssistsCore.LOG_TAG, "OpenCV loaded successfully")
             } else {
-                LogUtils.dTag(Assists.LOG_TAG, "OpenCV initialization failed!")
+                LogUtils.dTag(AssistsCore.LOG_TAG, "OpenCV initialization failed!")
             }
         }
     }

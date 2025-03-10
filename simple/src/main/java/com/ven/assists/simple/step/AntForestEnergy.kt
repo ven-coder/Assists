@@ -1,12 +1,12 @@
 package com.ven.assists.simple.step
 
 import com.blankj.utilcode.util.AppUtils
-import com.ven.assists.Assists
-import com.ven.assists.Assists.click
-import com.ven.assists.Assists.containsText
-import com.ven.assists.Assists.findById
-import com.ven.assists.Assists.findByText
-import com.ven.assists.Assists.findFirstParentClickable
+import com.ven.assists.AssistsCore
+import com.ven.assists.AssistsCore.click
+import com.ven.assists.AssistsCore.containsText
+import com.ven.assists.AssistsCore.findById
+import com.ven.assists.AssistsCore.findByText
+import com.ven.assists.AssistsCore.findFirstParentClickable
 import com.ven.assists.service.AssistsService
 import com.ven.assists.service.AssistsServiceListener
 import com.ven.assists.window.AssistsWindowManager
@@ -53,13 +53,13 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
             AppUtils.launchApp(targetPkg)
             return@next Step.get(StepTag.STEP_3)
         }.next(StepTag.STEP_3, isRunCoroutineIO = true) {
-            val packageName = Assists.getPackageName()
+            val packageName = AssistsCore.getPackageName()
             if (packageName == targetPkg) {
                 //检查是否在首页
-                Assists.findById("com.alipay.android.tablauncher:id/tab_bar_container_fl").firstOrNull()?.let { tab_bar_container_fl ->
+                AssistsCore.findById("com.alipay.android.tablauncher:id/tab_bar_container_fl").firstOrNull()?.let { tab_bar_container_fl ->
                     //确定在首页
 
-                    Assists.findByTags("android.support.v7.widget.RecyclerView")
+                    AssistsCore.findByTags("android.support.v7.widget.RecyclerView")
                         .firstOrNull()
                         ?.findByText("蚂蚁森林")
                         ?.firstOrNull()
@@ -68,11 +68,11 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                             it.click()
                             delay(1000)
                             while (true) {
-                                Assists.findById("com.alipay.mobile.nebulax.integration:id/relativeLayout_content").firstOrNull()?.let {
+                                AssistsCore.findById("com.alipay.mobile.nebulax.integration:id/relativeLayout_content").firstOrNull()?.let {
                                     if (it.findByText("返回").firstOrNull() != null && it.findByText("蚂蚁森林").firstOrNull() != null) {
 
                                         var await = false
-                                        Assists.getAllNodes().forEach {
+                                        AssistsCore.getAllNodes().forEach {
                                             if (it.containsText("稍等片刻...")) {
                                                 await = true;
                                                 overLog("等待加载...")
@@ -101,7 +101,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                     }
                 } ?: let {
                     overLog("返回")
-                    Assists.back()
+                    AssistsCore.back()
                     return@next Step.repeat
                 }
             } else {
@@ -175,7 +175,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                     overLog("点击第 ${points.indexOf(it) + 1} 个能量球（${it.x + temp3.width() / 2},${it.y + temp3.height() / 2}）")
                     runMain { AssistsWindowManager.untouchableByAll() }
                     delay(250)
-                    Assists.gestureClick((it.x + temp3.width() / 2).toFloat(), (it.y + temp3.height() / 2).toFloat())
+                    AssistsCore.gestureClick((it.x + temp3.width() / 2).toFloat(), (it.y + temp3.height() / 2).toFloat())
                     delay(250)
                     runMain { AssistsWindowManager.touchableByAll() }
                     delay(250)
@@ -206,7 +206,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                         overLog("点击找能量")
                         delay(250)
                         runMain {
-                            Assists.gestureClick((point.x + templateMat.width() / 2f).toFloat(), (point.y + templateMat.height() / 2f).toFloat())
+                            AssistsCore.gestureClick((point.x + templateMat.width() / 2f).toFloat(), (point.y + templateMat.height() / 2f).toFloat())
                         }
                         delay(250)
                         runMain {

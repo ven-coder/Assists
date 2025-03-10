@@ -111,8 +111,27 @@ Assists.getAllNodes().forEach { it.logNode() }
 # API
 
 ## 基础
-### Assists
+|类|描述|
+|-|-|
+|[AssistsService](#)|AccessibilityService服务类|
+|[AssistsCore](#assistscore)|基础类，对AccessibilityService API进行一系列的包装便于调用|
+|[AssistsWindowManager](#)|浮窗管理，管理浮窗添加、删除、触控手势切换、隐藏、浮窗toast|
+|[AssistsWindowWrapper](#)|浮窗包装，对浮窗移动、缩放做统一包装|
+## 进阶
+|类|描述|
+|-|-|
+|[MPManager](#)|屏幕录制管理，利用屏幕录制截取屏幕内容快捷获取图片，结合OpencvWrapper可以对图片进行识别操作等|
+|[OpencvWrapper](#)|Opencv包装，当前仅结合[MPManager](#)做简单的模版匹配包装，可自行结合[Assists]()、[MPManager](#)做更深层包装实现基于机器视觉的自动化|
+## 高级
+|类|描述|
+|-|-|
+|[StepManager](#)|步骤管理器，对于实现自动化脚本提供一个快速实现业务、可复用、易维护的步骤框架及管理器|
+|[StepImpl](#)|步骤实现类，用于实现自动化脚本时继承此类|
 
+### AssistsService
+
+
+### AssistsCore
 > *通过Assists对界面进行操作和获取信息，需要先查看界面有哪些元素、元素的结构、元素信息，有了这些才能通过Assists去获取元素并操作。如何查看可参考[这里](https://blog.csdn.net/weixin_37496178/article/details/138328871?spm=1001.2014.3001.5502)*
 
 |方法|描述|
