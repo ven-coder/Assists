@@ -113,7 +113,7 @@ Assists.getAllNodes().forEach { it.logNode() }
 ## 基础
 |类|描述|
 |-|-|
-|[AssistsService](#)|AccessibilityService服务类|
+|[AssistsService](#assistsservice)|AccessibilityService服务类|
 |[AssistsCore](#assistscore)|基础类，对AccessibilityService API进行一系列的包装便于调用|
 |[AssistsWindowManager](#)|浮窗管理，管理浮窗添加、删除、触控手势切换、隐藏、浮窗toast|
 |[AssistsWindowWrapper](#)|浮窗包装，对浮窗移动、缩放做统一包装|
@@ -129,7 +129,24 @@ Assists.getAllNodes().forEach { it.logNode() }
 |[StepImpl](#)|步骤实现类，用于实现自动化脚本时继承此类|
 
 ### AssistsService
+无障碍服务核心类，负责处理无障碍服务的生命周期和事件分发，提供全局服务实例访问和监听器管理功能。
 
+#### 重要属性
+
+|属性|描述|
+|-|-|
+|`instance`|全局服务实例。用于在应用中获取无障碍服务实例，当服务未启动或被销毁时为null|
+|`listeners`|服务监听器列表。使用线程安全的集合存储所有监听器，用于分发服务生命周期和无障碍事件|
+
+#### 生命周期方法
+
+|方法|描述|
+|-|-|
+|`onCreate()`|服务创建时调用，初始化全局服务实例|
+|`onServiceConnected()`|服务连接成功时调用，初始化服务实例和窗口管理器，通知所有监听器服务已连接|
+|`onAccessibilityEvent(event: AccessibilityEvent)`|接收无障碍事件，更新服务实例并分发事件给所有监听器|
+|`onUnbind(intent: Intent?)`|服务解绑时调用，清除服务实例并通知所有监听器|
+|`onInterrupt()`|服务中断时调用，通知所有监听器服务已中断|
 
 ### AssistsCore
 > *通过Assists对界面进行操作和获取信息，需要先查看界面有哪些元素、元素的结构、元素信息，有了这些才能通过Assists去获取元素并操作。如何查看可参考[这里](https://blog.csdn.net/weixin_37496178/article/details/138328871?spm=1001.2014.3001.5502)*
@@ -540,3 +557,116 @@ AccessibilityNodeInfo.nodeGestureClick(
 - `tag`：日志标签，默认为LOG_TAG（"assists_log"）
 
 ---
+
+### AssistsWindowManager
+浮窗管理器，提供全局浮窗的添加、删除、显示、隐藏等管理功能。
+
+#### 重要属性
+
+|属性|描述|
+|-|-|
+|`windowManager`|系统窗口管理器|
+|`mDisplayMetrics`|显示度量信息|
+|`viewList`|浮窗视图列表，使用线程安全的集合|
+
+#### 核心方法
+
+|方法|描述|
+|-|-|
+|`init(accessibilityService: AccessibilityService)`|初始化窗口管理器|
+|`getWindowManager()`|获取系统窗口管理器实例|
+|`createLayoutParams()`|创建默认的浮窗布局参数|
+|`hideAll(isTouchable: Boolean = true)`|隐藏所有浮窗|
+|`hideTop(isTouchable: Boolean = true)`|隐藏最顶层浮窗|
+|`showTop(isTouchable: Boolean = true)`|显示最顶层浮窗|
+|`showAll(isTouchable: Boolean = true)`|显示所有浮窗|
+|`add(windowWrapper: AssistsWindowWrapper?, isStack: Boolean = true, isTouchable: Boolean = true)`|添加浮窗包装器|
+|`add(view: View?, layoutParams: WindowManager.LayoutParams, isStack: Boolean = true, isTouchable: Boolean = true)`|添加浮窗视图|
+|`push(view: View?, params: WindowManager.LayoutParams)`|添加浮窗并隐藏之前的浮窗|
+|`pop(showTop: Boolean = true)`|移除最顶层浮窗并显示下一个浮窗|
+|`removeView(view: View?)`|移除指定浮窗|
+|`contains(view: View?)`|检查指定视图是否已添加为浮窗|
+|`contains(wrapper: AssistsWindowWrapper?)`|检查指定浮窗包装器是否已添加|
+|`isVisible(view: View)`|检查指定浮窗是否可见|
+|`updateViewLayout(view: View, params: ViewGroup.LayoutParams)`|更新浮窗布局|
+|`touchableByAll()`|设置所有浮窗为可触摸状态|
+|`nonTouchableByAll()`|设置所有浮窗为不可触摸状态|
+
+#### 扩展方法
+
+|方法|描述|
+|-|-|
+|`WindowManager.LayoutParams.touchableByLayoutParams()`|设置布局参数为可触摸状态|
+|`WindowManager.LayoutParams.nonTouchableByLayoutParams()`|设置布局参数为不可触摸状态|
+|`ViewWrapper.touchableByWrapper()`|设置浮窗包装器为可触摸状态|
+|`ViewWrapper.nonTouchableByWrapper()`|设置浮窗包装器为不可触摸状态|
+|`String.overlayToast(delay: Long = 2000)`|显示一个临时的Toast样式浮窗|
+
+#### ViewWrapper类
+浮窗视图包装类，用于管理浮窗视图及其布局参数
+
+|属性|描述|
+|-|-|
+|`view`|浮窗视图|
+|`layoutParams`|布局参数|
+
+### AssistsWindowWrapper
+浮窗包装类，为浮窗提供统一的外观和交互行为，包括：
+1. 可拖动移动位置
+2. 可缩放大小
+3. 可关闭
+4. 支持自定义初始位置和大小限制
+
+#### 构造参数
+
+|参数|描述|
+|-|-|
+|`view`|要包装的视图|
+|`wmLayoutParams`|窗口布局参数，可选|
+|`onClose`|关闭回调函数，可选|
+
+#### 属性配置
+
+|属性|描述|默认值|
+|-|-|-|
+|`minHeight`|最小高度限制|-1（无限制）|
+|`minWidth`|最小宽度限制|-1（无限制）|
+|`maxHeight`|最大高度限制|-1（无限制）|
+|`maxWidth`|最大宽度限制|-1（无限制）|
+|`initialX`|初始X坐标|0|
+|`initialY`|初始Y坐标|0|
+|`initialXOffset`|X轴偏移量|0|
+|`initialYOffset`|Y轴偏移量|0|
+|`initialCenter`|是否初始居中显示|false|
+|`showOption`|是否显示操作按钮（移动、缩放、关闭）|true|
+|`showBackground`|是否显示背景|true|
+|`wmlp`|窗口布局参数|默认布局参数|
+
+#### 核心方法
+
+|方法|描述|
+|-|-|
+|`ignoreTouch()`|设置浮窗为不可触摸状态，此状态下浮窗将忽略所有触摸事件|
+|`consumeTouch()`|设置浮窗为可触摸状态，此状态下浮窗可以响应触摸事件|
+|`getView()`|获取浮窗的根视图|
+
+#### 内部实现
+
+##### 触摸事件监听器
+
+1. 缩放触摸事件监听器（onTouchScaleListener）
+   - 处理浮窗的缩放操作
+   - 记录初始触摸位置和布局尺寸
+   - 根据触摸移动计算新的宽高
+   - 应用尺寸限制条件
+
+2. 移动触摸事件监听器（onTouchMoveListener）
+   - 处理浮窗的拖动移动操作
+   - 根据触摸位置更新浮窗坐标
+   - 考虑状态栏高度的偏移
+
+##### 视图绑定（viewBinding）
+- 初始化浮窗的布局和行为
+- 处理初始位置和显示
+- 设置移动、缩放和关闭按钮的事件监听
+- 根据配置显示或隐藏操作按钮和背景
