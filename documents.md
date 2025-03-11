@@ -670,3 +670,128 @@ AccessibilityNodeInfo.nodeGestureClick(
 - 处理初始位置和显示
 - 设置移动、缩放和关闭按钮的事件监听
 - 根据配置显示或隐藏操作按钮和背景
+
+### MPManager
+屏幕录制管理器，负责处理屏幕录制相关的功能，包括权限请求、截图和图像处理。
+
+#### 重要属性
+
+|属性|描述|
+|-|-|
+|`REQUEST_CODE`|媒体投影请求码|
+|`REQUEST_DATA`|媒体投影请求数据|
+|`requestLaunchers`|存储Activity和其对应的结果启动器映射|
+|`onEnable`|服务启用回调|
+|`isEnable`|屏幕录制是否已启用|
+
+#### 核心方法
+
+|方法|描述|
+|-|-|
+|`init(application: Application)`|初始化管理器|
+|`request(autoAllow: Boolean = true, timeOut: Long = 5000)`|请求屏幕录制权限|
+|`takeScreenshot2Bitmap()`|获取当前屏幕截图|
+|`takeScreenshot2File(file: File)`|将当前屏幕截图保存到文件|
+
+#### *拓展*方法
+
+|方法|描述|
+|-|-|
+|`AccessibilityNodeInfo.getBitmap(screenshot: Bitmap)`|获取指定元素的截图|
+|`AccessibilityNodeInfo.takeScreenshot2File(screenshot: Bitmap, file: File)`|将指定元素的截图保存到文件|
+
+#### 使用示例
+
+1. 请求屏幕录制权限
+```kotlin
+// 请求权限，自动处理权限弹窗
+val success = MPManager.request(autoAllow = true)
+```
+
+2. 获取屏幕截图
+```kotlin
+// 获取当前屏幕的Bitmap
+val bitmap = MPManager.takeScreenshot2Bitmap()
+
+// 保存截图到文件
+val file = MPManager.takeScreenshot2File()
+```
+
+3. 获取元素截图
+```kotlin
+// 获取某个元素的Bitmap
+val screenshot = MPManager.takeScreenshot2Bitmap()
+val elementBitmap = element.getBitmap(screenshot)
+
+// 保存元素截图到文件
+val file = element.takeScreenshot2File(screenshot)
+```
+
+#### 注意事项
+
+1. 在使用截图相关功能前，需要先请求并获取屏幕录制权限
+2. 权限请求支持自动处理系统弹窗，也可以手动处理
+3. 文件保存默认使用应用内部文件目录，文件名包含时间戳
+4. 所有涉及文件操作的方法都可能返回null，需要进行空值检查
+
+### OpencvWrapper
+OpenCV包装器，提供图像处理和模板匹配等计算机视觉功能的封装，主要用于自动化过程中的图像识别和处理。
+
+#### 核心方法
+
+|方法|描述|
+|-|-|
+|`init()`|初始化OpenCV库|
+|`matchTemplate(image: Mat?, template: Mat?, mask: Mat?)`|执行模板匹配操作，使用标准化相关系数匹配方法|
+|`getResultWithThreshold(result: Mat, threshold: Double, ignoreX: Double, ignoreY: Double)`|从匹配结果中获取符合阈值的点位置|
+|`matchTemplateFromScreenToMinMaxLoc(image: Mat?, template: Mat?, mask: Mat?)`|执行模板匹配并返回最佳匹配位置|
+|`createMask(source: Mat, lowerScalar: Scalar, upperScalar: Scalar, requisiteExtraRectList: List<Rect>, redundantExtraRectList: List<Rect>)`|创建图像掩膜，基于HSV颜色空间的阈值分割|
+|`getScreenMat()`|获取当前屏幕的Mat对象|
+|`getTemplateFromAssets(assetPath: String)`|从Assets资源中加载模板图像|
+
+#### 使用示例
+
+1. 基本模板匹配
+```kotlin
+// 获取屏幕内容
+val screenMat = OpencvWrapper.getScreenMat()
+// 加载模板图像
+val templateMat = OpencvWrapper.getTemplateFromAssets("template.png")
+// 执行模板匹配
+val result = OpencvWrapper.matchTemplate(screenMat, templateMat)
+```
+
+2. 带阈值的模板匹配
+```kotlin
+// 执行匹配并获取结果
+val result = OpencvWrapper.matchTemplate(screenMat, templateMat)
+// 获取符合阈值的匹配点
+val points = OpencvWrapper.getResultWithThreshold(
+    result,
+    threshold = 0.9,  // 匹配阈值
+    ignoreX = 50.0,   // X轴忽略距离
+    ignoreY = 50.0    // Y轴忽略距离
+)
+```
+
+3. 使用掩膜的模板匹配
+```kotlin
+// 创建掩膜
+val mask = OpencvWrapper.createMask(
+    source = templateMat,
+    lowerScalar = Scalar(0.0, 0.0, 0.0),  // HSV下限
+    upperScalar = Scalar(180.0, 255.0, 255.0),  // HSV上限
+    requisiteExtraRectList = listOf(),  // 必要区域
+    redundantExtraRectList = listOf()   // 冗余区域
+)
+// 执行带掩膜的模板匹配
+val result = OpencvWrapper.matchTemplate(screenMat, templateMat, mask)
+```
+
+#### 注意事项
+
+1. 使用前需要先初始化OpenCV库
+2. 模板匹配支持掩膜操作，可以指定匹配区域
+3. 获取匹配结果时可以设置忽略距离，避免相近位置重复匹配
+4. 所有涉及图像操作的方法都需要注意空值处理
+5. 图像掩膜创建支持HSV颜色空间的阈值分割，可以更精确地控制匹配区域
