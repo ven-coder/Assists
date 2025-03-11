@@ -115,18 +115,18 @@ Assists.getAllNodes().forEach { it.logNode() }
 |-|-|
 |[AssistsService](#assistsservice)|AccessibilityService服务类|
 |[AssistsCore](#assistscore)|基础类，对AccessibilityService API进行一系列的包装便于调用|
-|[AssistsWindowManager](#)|浮窗管理，管理浮窗添加、删除、触控手势切换、隐藏、浮窗toast|
-|[AssistsWindowWrapper](#)|浮窗包装，对浮窗移动、缩放做统一包装|
+|[AssistsWindowManager](#assistswindowmanager)|浮窗管理，管理浮窗添加、删除、触控手势切换、隐藏、浮窗toast|
+|[AssistsWindowWrapper](#assistswindowwrapper)|浮窗包装，对浮窗移动、缩放做统一包装|
 ## 进阶
 |类|描述|
 |-|-|
-|[MPManager](#)|屏幕录制管理，利用屏幕录制截取屏幕内容快捷获取图片，结合OpencvWrapper可以对图片进行识别操作等|
-|[OpencvWrapper](#)|Opencv包装，当前仅结合[MPManager](#)做简单的模版匹配包装，可自行结合[Assists]()、[MPManager](#)做更深层包装实现基于机器视觉的自动化|
+|[MPManager](#mpmanager)|屏幕录制管理，利用屏幕录制截取屏幕内容快捷获取图片，结合OpencvWrapper可以对图片进行识别操作等|
+|[OpencvWrapper](#opencvwrapper)|Opencv包装，当前仅结合[MPManager](#mpmanager)做简单的模版匹配包装，可自行结合[Assists](#assistscore)、[MPManager](#mpmanager)做更深层包装实现基于机器视觉的自动化|
 ## 高级
 |类|描述|
 |-|-|
-|[StepManager](#)|步骤管理器，对于实现自动化脚本提供一个快速实现业务、可复用、易维护的步骤框架及管理器|
-|[StepImpl](#)|步骤实现类，用于实现自动化脚本时继承此类|
+|[StepManager](#stepmanager)|步骤管理器，对于实现自动化脚本提供一个快速实现业务、可复用、易维护的步骤框架及管理器|
+|[StepImpl](#stepimpl)|步骤实现类，用于实现自动化脚本时继承此类|
 
 ### AssistsService
 无障碍服务核心类，负责处理无障碍服务的生命周期和事件分发，提供全局服务实例访问和监听器管理功能。
@@ -795,3 +795,103 @@ val result = OpencvWrapper.matchTemplate(screenMat, templateMat, mask)
 3. 获取匹配结果时可以设置忽略距离，避免相近位置重复匹配
 4. 所有涉及图像操作的方法都需要注意空值处理
 5. 图像掩膜创建支持HSV颜色空间的阈值分割，可以更精确地控制匹配区域
+
+### StepManager
+步骤管理器，用于管理和执行自动化步骤的核心类。提供步骤注册、执行、监听等功能，支持协程异步执行和步骤间延时控制。
+
+#### 重要属性
+
+|属性|描述|
+|-|-|
+|`DEFAULT_STEP_DELAY`|步骤默认间隔时长（毫秒），用于控制连续步骤执行之间的默认等待时间|
+|`stepListeners`|步骤监听器，用于监听步骤执行的状态和进度|
+|`stepCollector`|步骤收集器映射，存储所有已注册的步骤实现类及其对应的步骤收集器|
+|`coroutine`|协程作用域，提供步骤异步执行的协程环境|
+|`isStop`|控制停止操作的变量，当设置为true时，将取消步骤器下的所有步骤|
+
+#### 核心方法
+
+|方法|描述|
+|-|-|
+|`execute(stepImpl: Class<T>, stepTag: Int, delay: Long, data: Any?, begin: Boolean)`|执行指定步骤，支持通过Class对象指定步骤实现类|
+|`execute(implClassName: String, stepTag: Int, delay: Long, data: Any?, begin: Boolean)`|执行指定步骤，支持通过类名字符串指定步骤实现类|
+|`register(implClassName: String)`|注册步骤实现类，创建步骤收集器并初始化步骤实现类|
+
+#### 使用示例
+
+1. 注册和执行步骤
+```kotlin
+// 注册步骤实现类
+StepManager.register("com.example.MyStepImpl")
+
+// 执行步骤
+StepManager.execute(
+    MyStepImpl::class.java,  // 步骤实现类
+    stepTag = 1,             // 步骤标识
+    delay = 1000,            // 延迟执行时间
+    data = "some data",      // 步骤数据
+    begin = true             // 作为起始步骤
+)
+```
+
+2. 停止步骤执行
+```kotlin
+// 设置停止标志，将取消所有正在执行的步骤
+StepManager.isStop = true
+```
+
+#### 注意事项
+
+1. 执行步骤前需要先注册对应的步骤实现类
+2. 步骤执行支持延迟和数据传递
+3. 可以通过begin参数指定是否作为起始步骤（会重置isStop标志）
+4. 步骤执行在协程中进行，支持异步操作
+
+### StepImpl
+步骤实现基类，用于实现自动化脚本的基础类，提供步骤实现的框架和协程执行环境。继承此类的子类需要实现onImpl方法来定义具体的步骤逻辑。
+
+#### 核心方法
+
+|方法|描述|
+|-|-|
+|`onImpl(collector: StepCollector)`|步骤实现方法，子类必须实现此方法来定义具体的步骤逻辑|
+|`runIO(function: suspend () -> Unit)`|在IO线程执行任务，适用于执行IO操作、网络请求等耗时任务|
+|`runMain(function: suspend () -> Unit)`|在主线程执行任务，适用于执行UI操作、更新界面等任务|
+
+#### 使用示例
+
+1. 创建步骤实现类
+```kotlin
+class MyStepImpl : StepImpl() {
+    override fun onImpl(collector: StepCollector) {
+        // 注册步骤1
+        collector.collect(1) { operator ->
+            // 在IO线程执行耗时操作
+            runIO {
+                // 执行耗时任务
+            }
+            
+            // 在主线程更新UI
+            runMain {
+                // 更新界面
+            }
+            
+            // 返回下一步
+            Step.next(2)
+        }
+        
+        // 注册步骤2
+        collector.collect(2) { operator ->
+            // 步骤逻辑
+            Step.none
+        }
+    }
+}
+```
+
+#### 注意事项
+
+1. 子类必须实现onImpl方法来定义步骤逻辑
+2. 使用runIO执行耗时操作，避免阻塞主线程
+3. 使用runMain执行UI相关操作，确保在主线程更新界面
+4. 每个步骤都需要返回一个Step对象来指示下一步操作
