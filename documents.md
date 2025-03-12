@@ -821,9 +821,6 @@ val result = OpencvWrapper.matchTemplate(screenMat, templateMat, mask)
 
 1. 注册和执行步骤
 ```kotlin
-// 注册步骤实现类
-StepManager.register("com.example.MyStepImpl")
-
 // 执行步骤
 StepManager.execute(
     MyStepImpl::class.java,  // 步骤实现类
