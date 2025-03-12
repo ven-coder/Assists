@@ -9,7 +9,7 @@
 6. 远程控制
 
 # Assists作用
-基于Android无障碍服务（AccessibilityService）封装的增强库
+基于Android无障碍服务（AccessibilityService）封装的库
 1. 简化自动化脚本开发
 2. 为自动化脚本提供各种增强能力
 3. 提高脚本易维护性
