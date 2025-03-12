@@ -1,49 +1,44 @@
-# Assists
-Android无障碍服务（AccessibilityService）开发框架，快速开发复杂自动化任务、远程协助、监听等
-***
-## Android无障碍服务能做什么
-利用Android无障碍服务可以开发一些Android系统内的自动化任务，比如经典的微信自动抢红包、支付宝蚂蚁森林自动浇水、芭芭农场自动施肥等
- 
-还可以开发远程协助功能，市面上向日葵等一些远程协助功能就是利用无障碍服务和投屏权限开发的
+**利用Android无障碍服务（AccessibilityService）能做什么**
 
-还能开发一些拓客、引流、营销系统，抖音自动点赞评论、微博自动转发评论关注等
+可以开发各种各样的自动化脚本程序以及协助脚本，比如：
+1. 微信自动抢红包
+2. 微信自动接听电话
+3. 支付宝蚂蚁森林自动浇水
+4. 支付宝芭芭农场自动施肥、自动收集能量...
+5. 各种平台的拓客、引流、营销系统
+6. 远程控制
 
-总之，利用Android的无障碍服务可以开发各种自动化的任务或者界面信息监听、远程协助等
+# Assists作用
+基于Android无障碍服务（AccessibilityService）封装的增强库
+1. 简化自动化脚本开发
+2. 为自动化脚本提供各种增强能力
+3. 提高脚本易维护性
 
-## Assists开发框架能做什么
+# 主要能力
+1. 易于使用的无障碍服务API
+2. 浮窗管理器：易于实现及管理浮窗
+3. 步骤器：为快速实现、可复用、易维护的自动化步骤提供框架及管理
+4. 配套屏幕管理：快速生成输出屏幕截图、元素截图
+5. 屏幕管理结合opencv：便于屏幕内容识别为自动化提供服务
 
-按照Google官方文档继承实现的无障碍服务，对于复杂的自动化任务，不仅代码逻辑实现不清晰，后期的修改维护也会很头疼，所以在实践过程中实现了这个框架
+# 一些示例
 
-使用这个框架下开发Android无障碍服务业务可以让你的业务开发更加快速、逻辑更加健壮且容易维护。
+| 基础示例 | 进阶示例 | 高级示例 |
+| - | - |-|
+| <img src="https://github.com/user-attachments/assets/b537bab4-cc55-41c2-8f81-9e8b965e939a" width=200/> | <img src="https://github.com/user-attachments/assets/9b50628c-603e-47d1-a6ae-5600358575fc" width=200/> |<img src="https://github.com/user-attachments/assets/262b9028-5926-478b-93bd-3e20110db391" width=200/>|
 
-## 框架项目亮点
-1. 包装无障碍服务设置简单配置即可使用
-2. 利用kotlin拓展AccessibilityNodeInfo，使元素的操作更加简洁
-3. 结合kotlin协程封装步骤器，可使复杂自动化业务逻辑低耦合又不容易交叉出错且易于维护
-4. 利用框架实现各种示例供参考
-
-## v3.2.0更新日志-2025-03-02
-1. 简化无障碍服务api调用
-2. 封装屏幕录制：简化权限请求（增加自动授权）、截取屏幕、截取图片类型元素
-3. 封装浮窗管理：支持窗口拖动、缩放、堆叠、浮窗toast、手势拦截切换等
-4. 示例增加基础无障碍服务api调用示例等
-
-### [版本历史](https://github.com/ven-coder/Assists/releases)
-
-## 功能计划
-- 脚本录制
-- js支持
-- flutter插件
-
-## Demo部分演示
-| 图像识别支付宝自动收能量 |自动发朋友圈|自动滑动朋友圈| 无障碍服务开启引导 |
+| 自动收能量 |自动发朋友圈|自动滑动朋友圈| 无障碍服务开启引导 |
 |:-:|:-:|:-:|:-:|
 | <img src="https://github.com/ven-coder/Assists/assets/27257149/8d1d09b2-e4b3-44dc-b5df-68fcdcac7a62" width=180 /> |<img src="https://github.com/ven-coder/Assists/assets/27257149/4713656b-a8ff-4c99-9814-a0b883ebbe64" width=180 />|<img src="https://github.com/ven-coder/Assists/assets/27257149/056ef46b-8076-4f90-ab5a-263ff308f8e8" width=180 />| <img src="https://github.com/user-attachments/assets/9e20a757-8d8f-47e6-999b-8532b4e6827a" width=180 /> |
-防止下拉通知栏|通知/Toast监听|自动接听微信电话|
-|<img src="https://github.com/user-attachments/assets/76613db4-c0a9-4ad8-abde-ec0ef8f7ed09" width=180 />|<img src="https://github.com/user-attachments/assets/cc6a861a-3512-43c0-9c1d-4e61229dc527" width=180 />|<img src="https://github.com/user-attachments/assets/25472235-8d6d-4327-9bc5-db47253b7f0e" width=180 />
+防止下拉通知栏|通知/Toast监听|自动接听微信电话|窗口缩放&拖动|
+|<img src="https://github.com/user-attachments/assets/76613db4-c0a9-4ad8-abde-ec0ef8f7ed09" width=180 />|<img src="https://github.com/user-attachments/assets/cc6a861a-3512-43c0-9c1d-4e61229dc527" width=180 />|<img src="https://github.com/user-attachments/assets/25472235-8d6d-4327-9bc5-db47253b7f0e" width=180 />|<img src="https://github.com/user-attachments/assets/184fb248-66e0-4bb4-aaae-c1b8c4cef70a" width=180 />|
 
+##### 更多示例可以直接下载demo查看
+<img src="https://github.com/ven-coder/Assists/assets/27257149/c4ce8c21-ac8b-4d3f-bfe4-257a525fb3c5" width=200/>
 
-## 使用
+[&#128229;直接下载](https://www.pgyer.com/1zaijG)
+
+# 🚀 快速开始
 ### 1. 导入依赖
 #### 1.1 项目根目录build.gradle添加
 ```
@@ -71,7 +66,7 @@ dependencies {
 }
 ```
 
-### 2. 注册服务
+### 2. 注册&开启服务
 #### 1.1 主模块AndroidManifest.xml中注册服务
 一定要在主模块中注册服务，不然进程被杀服务也会自动被关闭需要再次开启（小米可保持杀进程保持开启，其他vivo、oppo、鸿蒙机型似乎不行）
 ```xml
@@ -96,7 +91,8 @@ dependencies {
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-            <intent-filter>
+            <!--android:priority="10000" 可提高服务在设置中的权重，排在前面-->
+            <intent-filter android:priority="10000">
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
             <meta-data
@@ -108,16 +104,25 @@ dependencies {
 
 </manifest>
 ```
-至此，开启无障碍服务后即可使用包装的API
+#### 1.2 开启服务
+调用```Assists.openAccessibilitySetting()```跳转到无障碍服务设置页面，找到对应的应用开启服务。
+服务开启后执行以下API测试是否成功集成：
+```
+Assists.getAllNodes().forEach { it.logNode() }
+```
+这段代码是获取当前页面所有节点元素的基本信息在Logcat（tag：assists_log）打印出来，如下图：
 
-## 步骤器-快速实现复杂业务
+<img src="https://github.com/user-attachments/assets/81725dc3-d924-44f4-89fe-75938ae659e9" width=350/>
+
+至此，已成功集成Assists。如果没有任何输出请检查集成步骤是否正确。
+
+# 步骤器-快速实现复杂自动化脚本
 步骤器可以帮助快速实现复杂的业务场景，比如自动发朋友圈、获取微信所有好友昵称、自动删除好友...等等都是一些逻辑较多的业务场景，步骤器可帮助快速实现。
 ### 1.继承```StepImpl```
 直接在接口`onImpl(collector: StepCollector)`写步骤逻辑，每个步骤自定义步骤的序号，用于区分执行的步骤。如果重复则会以最后一个步骤为准
 
 ```kotlin
-//OpenWechat为该业务场景的分类
-class OpenWechat:StepImpl() {
+class MyStepImpl:StepImpl() {
     override fun onImpl(collector: StepCollector) {
 	//定义步骤序号为1的逻辑
         collector.next(1) {// 1为步骤的序号
@@ -147,20 +152,29 @@ class OpenWechat:StepImpl() {
 执行前请确保无障碍服务已开启
 
 ```kotlin
-//从OpenWechat的步骤序号1开始执行，isBegin需要为true，默认false
-StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
+//从MyStepImpl步骤1开始执行，isBegin是否作为起始步骤，默认false
+StepManager.execute(MyStepImpl::class.java, 1, isBegin = true)
 ```
 
-#### 以上具体使用最好直接查看Simple源码
+### 3. 停止执行
+```kotlin
+// 设置停止标志，将取消所有正在执行的步骤
+StepManager.isStop = true
+```
+## 更新日志
+### v3.2.0
+更新时间：2025-03-02
+1. 简化无障碍服务api调用
+2. 封装屏幕录制：简化权限请求（增加自动授权）、截取屏幕、截取图片类型元素
+3. 封装浮窗管理：支持窗口拖动、缩放、堆叠、浮窗toast、手势拦截切换等
+4. 示例增加基础无障碍服务api调用示例等
 
-#### 这里有些不是很完整的文档：[https://github.com/ven-coder/Assists/wiki](https://github.com/ven-coder/Assists/wiki)
+### [版本历史](https://github.com/ven-coder/Assists/releases)
 
-## Demo下载
-扫码下载
-<br/>
-<img src="https://github.com/ven-coder/Assists/assets/27257149/c4ce8c21-ac8b-4d3f-bfe4-257a525fb3c5" width=200/>
-
-[&#128229;直接下载](https://www.pgyer.com/1zaijG)
+## 功能计划
+- 脚本录制
+- js支持
+- flutter插件
 
 ## 有问题欢迎反馈交流（微信群二维码失效可以加我拉进群）
 
@@ -171,11 +185,11 @@ StepManager.execute(OpenWechat::class.java, 1, isBegin = true)
 
 ## 我的付费社群
 付费社群提供的服务：
-1. 完整易于阅读的开发文档（补充中...）
+1. 完整易于阅读的开发文档
 2. Assists开发指导
-3. 开发疑难问答
-4. 基于Assists开发的抖音养号，小红书养号，支付宝能量收集，支付宝农场，无线远程控制等源码（补充中...）
-5. 群友互助资源对接
+3. 开发疑难解答
+4. 群友互助资源对接
+5. 基于Assists开发的抖音养号，小红书养号，支付宝能量收集，支付宝农场，无线远程控制等源码（补充中...）
 
 ##### 微信扫扫即可加入
 <img src="https://github.com/ven-coder/Assists/assets/27257149/7ae8e825-f489-46e3-96f0-ed03d12db9e8" width=200/>
