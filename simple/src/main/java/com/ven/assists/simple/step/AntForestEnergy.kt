@@ -169,11 +169,11 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
             } else {
                 delay(500)
                 overLog("开始点击能量球")
-                runMain { AssistsWindowManager.untouchableByAll() }
+                runMain { AssistsWindowManager.nonTouchableByAll() }
                 delay(500)
                 points.forEach {
                     overLog("点击第 ${points.indexOf(it) + 1} 个能量球（${it.x + temp3.width() / 2},${it.y + temp3.height() / 2}）")
-                    runMain { AssistsWindowManager.untouchableByAll() }
+                    runMain { AssistsWindowManager.nonTouchableByAll() }
                     delay(250)
                     AssistsCore.gestureClick((it.x + temp3.width() / 2).toFloat(), (it.y + temp3.height() / 2).toFloat())
                     delay(250)
@@ -201,7 +201,7 @@ class AntForestEnergy : StepImpl(), AssistsServiceListener {
                                 }, AssistsWindowManager.createLayoutParams(), isStack = true)
                             }
                         }
-                        runMain { AssistsWindowManager.untouchableByAll() }
+                        runMain { AssistsWindowManager.nonTouchableByAll() }
                         delay(250)
                         overLog("点击找能量")
                         delay(250)
