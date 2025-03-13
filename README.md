@@ -194,6 +194,7 @@ StepManager.isStop = true
 3. 开发疑难解答
 4. 群友互助资源对接
 5. 基于Assists开发的抖音养号，小红书养号，支付宝能量收集，支付宝农场，无线远程控制等源码（补充中...）
+<img width="591" alt="image" src="https://github.com/user-attachments/assets/73b33d95-a277-43e6-9c3d-aeaa236657d4" />
 
 ##### 微信扫扫即可加入
 <img src="https://github.com/ven-coder/Assists/assets/27257149/7ae8e825-f489-46e3-96f0-ed03d12db9e8" width=200/>
