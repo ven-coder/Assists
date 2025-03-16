@@ -87,7 +87,7 @@ dependencies {
         android:usesCleartextTraffic="true">
         <!-- 添加代码 ↓-->
         <service
-            android:name="com.ven.assists.AssistsService"
+            android:name="com.ven.assists.service.AssistsService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
