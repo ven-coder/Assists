@@ -506,11 +506,7 @@ object AssistsCore {
         duration: Long,
     ): Boolean {
         val builder = GestureDescription.Builder()
-        val strokeDescription = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            GestureDescription.StrokeDescription(path, startTime, duration, true)
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
+        val strokeDescription = GestureDescription.StrokeDescription(path, startTime, duration)
         val gestureDescription = builder.addStroke(strokeDescription).build()
         val deferred = CompletableDeferred<Boolean>()
         val runResult = runMain {
