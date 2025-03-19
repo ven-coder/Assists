@@ -57,11 +57,11 @@ allprojects {
 dependencies {
     //按需添加
     //基础库（必须）
-    implementation "com.github.ven-coder.Assists:assists-base:v3.2.1"
+    implementation "com.github.ven-coder.Assists:assists-base:最新版本"
     //屏幕录制相关（可选）
-    implementation "com.github.ven-coder.Assists:assists-mp:v3.2.1"
+    implementation "com.github.ven-coder.Assists:assists-mp:最新版本"
     //opencv相关（可选）
-    implementation "com.github.ven-coder.Assists:assists-opcv:v3.2.1"
+    implementation "com.github.ven-coder.Assists:assists-opcv:最新版本"
     
 }
 ```
@@ -162,6 +162,10 @@ StepManager.execute(MyStepImpl::class.java, 1, isBegin = true)
 StepManager.isStop = true
 ```
 ## 更新日志
+### v3.2.11
+更新时间：2025-03-19
+1. 修复手势执行一直未释放问题
+
 ### v3.2.1
 更新时间：2025-03-13
 1. 优化代码完善注释
