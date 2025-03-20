@@ -164,11 +164,12 @@ StepManager.isStop = true
 
 ## 其他教程博客
 ### 获取节点信息
-[使用Appium获取节点信息](https://juejin.cn/post/7483409317564907530)
-[使用uiautomatorviewer获取节点信息](https://blog.csdn.net/weixin_37496178/article/details/138328871?fromshare=blogdetail&sharetype=blogdetail&sharerId=138328871&sharerefer=PC&sharesource=weixin_37496178&sharefrom=from_link)
+- [使用Appium获取节点信息](https://juejin.cn/post/7483409317564907530)
+
+- [使用uiautomatorviewer获取节点信息](https://blog.csdn.net/weixin_37496178/article/details/138328871?fromshare=blogdetail&sharetype=blogdetail&sharerId=138328871&sharerefer=PC&sharesource=weixin_37496178&sharefrom=from_link)
 
 ### 示例教程
-[Appium结合AccessibilityService实现自动化微信登录](https://juejin.cn/post/7483409317564907530)
+- [Appium结合AccessibilityService实现自动化微信登录](https://juejin.cn/post/7483409317564907530)
 
 ## 更新日志
 ### v3.2.11
