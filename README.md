@@ -164,6 +164,8 @@ StepManager.isStop = true
 
 ## 其他教程博客
 ### 获取节点信息
+- [使用weditor获取节点信息](https://juejin.cn/post/7484188555735613492)
+
 - [使用Appium获取节点信息](https://juejin.cn/post/7483409317564907530)
 
 - [使用uiautomatorviewer获取节点信息](https://blog.csdn.net/weixin_37496178/article/details/138328871?fromshare=blogdetail&sharetype=blogdetail&sharerId=138328871&sharerefer=PC&sharesource=weixin_37496178&sharefrom=from_link)
