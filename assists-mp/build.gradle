@@ -6,14 +6,12 @@ plugins {
 
 android {
     namespace 'com.ven.assists_mp'
-    compileSdk 34
+    compileSdk rootProject.ext.compileSdk
 
     defaultConfig {
-        minSdk 24
-
-
-        versionCode 4
-        versionName "3.2.0"
+        minSdk rootProject.ext.minSdk
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -33,8 +31,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.activity:activity-ktx:1.9.0'
-    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation "androidx.activity:activity-ktx:${rootProject.ext.activityKtxVersion}"
+    implementation "androidx.core:core-ktx:${rootProject.ext.coreKtxVersion}"
     implementation project(':assists')
 }
 
@@ -45,7 +43,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.ven-coder'
                 artifactId = 'assists-mp'
-                version = '3.2.11'
+                version = rootProject.ext.mavenVersion
             }
         }
     }

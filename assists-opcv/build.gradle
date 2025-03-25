@@ -6,13 +6,12 @@ plugins {
 
 android {
     namespace 'com.ven.assists_opcv'
-    compileSdk 34
+    compileSdk rootProject.ext.compileSdk
 
     defaultConfig {
-        minSdk 24
-
-        versionCode 4
-        versionName "3.2.0"
+        minSdk rootProject.ext.minSdk
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -32,8 +31,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.13.1'
-    api 'org.opencv:opencv:4.9.0'
+    implementation "androidx.core:core-ktx:${rootProject.ext.coreKtxVersion}"
+    api "org.opencv:opencv:${rootProject.ext.opencvVersion}"
     implementation project(':assists')
     implementation project(':assists-mp')
 }
@@ -45,7 +44,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.ven-coder'
                 artifactId = 'assists-opcv'
-                version = '3.2.11'
+                version = rootProject.ext.mavenVersion
             }
         }
     }

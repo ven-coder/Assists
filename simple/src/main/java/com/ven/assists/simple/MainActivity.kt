@@ -25,6 +25,7 @@ import com.ven.assists.simple.overlays.OverlayAdvanced
 import com.ven.assists.simple.overlays.OverlayBasic
 import com.ven.assists.simple.overlays.OverlayPro
 import com.ven.assists.utils.CoroutineWrapper
+import com.ven.assists.utils.NodeClassValue
 import kotlinx.coroutines.delay
 
 
@@ -130,7 +131,6 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
         setContentView(viewBind.root)
         AssistsService.listeners.add(this)
         checkPermission()
-
     }
 
     private fun checkPermission() {

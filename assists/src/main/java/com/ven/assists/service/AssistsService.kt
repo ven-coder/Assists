@@ -13,7 +13,7 @@ import java.util.Collections
  * 负责处理无障碍服务的生命周期和事件分发
  * 提供全局服务实例访问和监听器管理功能
  */
-class AssistsService : AccessibilityService() {
+open class AssistsService : AccessibilityService() {
     companion object {
         /**
          * 全局服务实例
