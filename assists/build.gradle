@@ -5,13 +5,12 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'org.jetbrains.dokka'
 android {
     namespace 'com.ven.assists.base'
-    compileSdk 34
+    compileSdk rootProject.ext.compileSdk
 
     defaultConfig {
-        minSdk 24
-
-        versionCode 4
-        versionName "3.2.0"
+        minSdk rootProject.ext.minSdk
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -33,14 +32,12 @@ android {
     }
 }
 
-
-
 dependencies {
-    implementation 'androidx.core:core-ktx:1.13.1'
-    implementation 'androidx.activity:activity-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.22')
-    api 'com.blankj:utilcodex:1.31.1'
+    implementation "androidx.core:core-ktx:${rootProject.ext.coreKtxVersion}"
+    implementation "androidx.activity:activity-ktx:${rootProject.ext.activityKtxVersion}"
+    implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompatVersion}"
+    implementation platform("org.jetbrains.kotlin:kotlin-bom:${rootProject.ext.kotlinBomVersion}")
+    api "com.blankj:utilcodex:${rootProject.ext.utilcodexVersion}"
 }
 
 dokkaHtml {
@@ -52,7 +49,6 @@ dokkaHtml {
 //    }
 }
 
-
 afterEvaluate {
     publishing {
         publications {
@@ -60,7 +56,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.ven-coder'
                 artifactId = 'assists-base'
-                version = '3.2.11'
+                version = rootProject.ext.mavenVersion
             }
         }
     }
