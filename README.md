@@ -99,6 +99,23 @@ dependencies {
                 android:name="android.accessibilityservice"
                 android:resource="@xml/assists_service" />
         </service>
+        
+        <!-- 或者使用下面的服务可以解决一些应用混淆节点的问题，比如微信8.0.51以上版本获取的节点元素错乱问题 -->
+        <!-- ⚠️ 选其一 -->
+        <service
+            android:name="com.google.android.accessibility.selecttospeak.SelectToSpeakService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <!--android:priority="10000" 可提高服务在设置中的权重，排在前面     -->
+            <intent-filter android:priority="10000">
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/assists_service" />
+        </service>
+        
         <!-- 添加代码 ↑-->
     </application>
 
@@ -174,6 +191,11 @@ StepManager.isStop = true
 - [Appium结合AccessibilityService实现自动化微信登录](https://juejin.cn/post/7483409317564907530)
 
 ## 更新日志
+### v3.2.12
+更新时间：2025-03-25
+1. assists-mp去掉对于opencv减少不必要的包体积
+2. 兼容微信8.0.51以上版本获取的节点元素被混淆问题
+
 ### v3.2.11
 更新时间：2025-03-19
 1. 修复手势执行一直未释放问题
