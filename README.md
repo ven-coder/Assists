@@ -198,11 +198,6 @@ StepManager.isStop = true
 
 ### [版本历史](https://github.com/ven-coder/Assists/releases)
 
-## 功能计划
-- 脚本录制
-- js支持
-- flutter插件
-
 ## 有问题欢迎反馈交流（微信群二维码失效可以加我拉进群）
 
 | 交流群| 个人微信 |
