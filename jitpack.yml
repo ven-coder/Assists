@@ -1,5 +1,2 @@
 jdk:
   - openjdk17
-
-install:
-  - ./gradlew clean
