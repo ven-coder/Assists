@@ -10,14 +10,18 @@ import android.graphics.PixelFormat
 import android.hardware.display.DisplayManager
 import android.media.Image
 import android.media.ImageReader
+import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.LogUtils
@@ -56,6 +60,8 @@ object MPManager {
 
     /** 图像读取器实例 */
     private var imageReader: ImageReader? = null
+
+    var mediaProjectionCallback:MediaProjection.Callback?=null
 
     /** 屏幕录制是否已启用 */
     var isEnable = false
@@ -145,6 +151,21 @@ object MPManager {
                 intent.getParcelableExtra<Intent>(REQUEST_DATA)
             }
             val mediaProjection = mediaProjectionManager.getMediaProjection(requestCode, requestData!!)
+            mediaProjection.registerCallback(object : MediaProjection.Callback() {
+                override fun onStop() {
+                    mediaProjectionCallback?.onStop()
+                }
+
+                @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+                override fun onCapturedContentResize(width: Int, height: Int) {
+                    mediaProjectionCallback?.onCapturedContentResize(width, height)
+                }
+
+                @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+                override fun onCapturedContentVisibilityChanged(isVisible: Boolean) {
+                    mediaProjectionCallback?.onCapturedContentVisibilityChanged(isVisible)
+                }
+            }, Handler(Looper.getMainLooper()))
             mediaProjection.createVirtualDisplay(
                 "assists_mp",
                 screenWidth,
