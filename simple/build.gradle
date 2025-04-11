@@ -54,9 +54,9 @@ dependencies {
 //    implementation project(':assists')
 //    implementation project(':assists-mp')
 //    implementation project(':assists-opcv')
-    implementation "com.github.ven-coder.Assists:assists-base:v3.2.12"
-    implementation "com.github.ven-coder.Assists:assists-opcv:v3.2.12"
-    implementation "com.github.ven-coder.Assists:assists-mp:v3.2.12"
+    implementation "com.github.ven-coder.Assists:assists-base:v3.2.14"
+    implementation "com.github.ven-coder.Assists:assists-opcv:v3.2.14"
+    implementation "com.github.ven-coder.Assists:assists-mp:v3.2.14"
     implementation "androidx.room:room-runtime:${rootProject.ext.roomVersion}"
     implementation "androidx.room:room-ktx:${rootProject.ext.roomVersion}"
     implementation "com.github.mrmike:ok2curl:${rootProject.ext.ok2curlVersion}"
