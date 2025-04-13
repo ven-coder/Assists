@@ -259,17 +259,27 @@ object MPManager {
         } ?: let { throw RuntimeException("Please request permission for screen recording first") }
     }
 
+
     /**
      * 获取指定元素的截图
-     * @param screenshot 完整的屏幕截图
+     * @param screenshot 完整的屏幕截图, 默认为null（默认为null将自动截取当前屏幕作为完整截图）
      * @return 元素区域的位图，如果失败返回null
      */
-    fun AccessibilityNodeInfo.getBitmap(screenshot: Bitmap): Bitmap? {
+    fun AccessibilityNodeInfo.getBitmap(screenshot: Bitmap? = null): Bitmap? {
         runCatching {
-            getBoundsInScreen().let {
-                val bitmap = Bitmap.createBitmap(screenshot, it.left, it.top, it.width(), it.height())
-                return@runCatching bitmap
+            getBoundsInScreen().let { nodeBounds ->
+                screenshot?.let {
+                    val bitmap = Bitmap.createBitmap(it, nodeBounds.left, nodeBounds.top, nodeBounds.width(), nodeBounds.height())
+                    return@runCatching bitmap
+                } ?: let {
+                    takeScreenshot2Bitmap()?.let {
+                        val bitmap = Bitmap.createBitmap(it, nodeBounds.left, nodeBounds.top, nodeBounds.width(), nodeBounds.height())
+                        return@runCatching bitmap
+                    }
+                }
+
             }
+            return@runCatching null
         }.onSuccess {
             return it
         }
@@ -278,22 +288,35 @@ object MPManager {
 
     /**
      * 将指定元素的截图保存到文件
-     * @param screenshot 完整的屏幕截图
+     * @param screenshot 完整的屏幕截图，默认为null（默认为null将自动截取当前屏幕作为完整截图）
      * @param file 保存的目标文件，默认保存到应用内部文件目录
      * @return 保存成功返回文件对象，失败返回null
      */
     fun AccessibilityNodeInfo.takeScreenshot2File(
-        screenshot: Bitmap,
+        screenshot: Bitmap? = null,
         file: File = File(
             PathUtils.getInternalAppFilesPath(),
             "screenshot_${System.currentTimeMillis()}.png"
         )
     ): File? {
-        val bitmap = getBitmap(screenshot) ?: return null
-        val result = ImageUtils.save(bitmap, file, Bitmap.CompressFormat.PNG)
-        if (result) {
-            return file
+
+        screenshot?.let {
+            val bitmap = getBitmap(it) ?: return null
+            val result = ImageUtils.save(bitmap, file, Bitmap.CompressFormat.PNG)
+            if (result) {
+                return file
+            }
+        } ?: let {
+            takeScreenshot2Bitmap()?.let {
+                val bitmap = getBitmap(it) ?: return null
+                val result = ImageUtils.save(bitmap, file, Bitmap.CompressFormat.PNG)
+                if (result) {
+                    return file
+                }
+            }
         }
+
+
         return null
     }
 

@@ -12,6 +12,7 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.isVisible
+import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.PermissionUtils.SimpleCallback
@@ -106,10 +107,12 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
     }
 
     override fun onServiceConnected(service: AssistsService) {
-        onBackApp()
+//        onBackApp()
         checkServiceEnable()
         AssistsCore.getAllNodes().forEach { it.logNode() }
-
+        if (AssistsCore.getPackageName() != AppUtils.getAppPackageName()) {
+            CoroutineWrapper.launch { AssistsCore.launchApp(AppUtils.getAppPackageName()) }
+        }
     }
 
     private fun onBackApp() {

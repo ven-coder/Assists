@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
+import androidx.core.os.bundleOf
+import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
@@ -86,16 +88,18 @@ object OverlayPro : AssistsServiceListener {
                         }
                     }
                     btnTakeScreenshot.setOnClickListener {
-                        runCatching {
-                            val file = MPManager.takeScreenshot2File()
-                            AssistsService.instance?.startActivity(Intent(AssistsService.instance, ScreenshotReviewActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                putExtra("path", file?.path)
-                            })
-                        }.onFailure {
-                            LogUtils.d(it)
-                            "截图失败，尝试请求授予屏幕录制后重试".overlayToast()
+                        CoroutineWrapper.launch {
+                            runCatching {
+                                val file = MPManager.takeScreenshot2File()
+                                AssistsCore.launchApp(Intent(AssistsService.instance, ScreenshotReviewActivity::class.java).apply {
+                                    putExtra("path", file?.path)
+                                })
+                            }.onFailure {
+                                LogUtils.d(it)
+                                "截图失败，尝试请求授予屏幕录制后重试".overlayToast()
+                            }
                         }
+
                     }
                     btnTakeScreenshotAllImage.setOnClickListener {
                         takeScreenshotAllImage()
@@ -122,56 +126,12 @@ object OverlayPro : AssistsServiceListener {
                 }
                 AssistsWindowManager.showAll()
 
-                // 创建并显示通知
-                val context = AssistsService.instance ?: return@runCatching
-                val notificationManager = android.app.NotificationManager::class.java.getMethod("from", Context::class.java)
-                    .invoke(null, context) as android.app.NotificationManager
-
-                // 创建通知渠道（Android 8.0及以上需要）
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val channelId = "image_gallery_channel"
-                    val channelName = "Image Gallery"
-                    val importance = android.app.NotificationManager.IMPORTANCE_HIGH
-                    val channel = android.app.NotificationChannel(channelId, channelName, importance)
-                    notificationManager.createNotificationChannel(channel)
-                }
-
-                // 创建点击通知的PendingIntent
-                val intent = Intent(context, ImageGalleryActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                AssistsCore.launchApp(Intent(AssistsService.instance, ImageGalleryActivity::class.java).apply {
                     putStringArrayListExtra("extra_image_paths", list)
-                }
-                val pendingIntent = android.app.PendingIntent.getActivity(
-                    context,
-                    0,
-                    intent,
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                        android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT
-                    else
-                        android.app.PendingIntent.FLAG_UPDATE_CURRENT
-                )
-
-                // 构建通知
-                val notificationBuilder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    android.app.Notification.Builder(context, "image_gallery_channel")
-                } else {
-                    @Suppress("DEPRECATION")
-                    android.app.Notification.Builder(context)
-                }
-
-                val notification = notificationBuilder
-                    .setContentTitle("图片已捕获")
-                    .setContentText("已捕获 ${list.size} 张图片，点击查看")
-                    .setSmallIcon(android.R.drawable.ic_menu_gallery)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .build()
-
-                // 显示通知
-                notificationManager.notify(1001, notification)
+                })
 
                 // 显示提示
-                "已捕获 ${list.size} 张图片，请查看通知".overlayToast()
+                "已捕获 ${list.size} 张图片".overlayToast()
             }.onFailure {
                 LogUtils.d(it)
                 "截图失败，尝试请求授予屏幕录制后重试".overlayToast()

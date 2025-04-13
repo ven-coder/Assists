@@ -14,9 +14,13 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.core.graphics.toColorInt
 import androidx.core.os.bundleOf
 import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.ven.assists.service.AssistsService
@@ -42,7 +46,7 @@ object AssistsCore {
      * 以下是一系列用于快速判断元素类型的扩展函数
      * 通过比对元素的className来判断元素类型
      */
-    
+
     /** 判断元素是否是FrameLayout */
     fun AccessibilityNodeInfo.isFrameLayout(): Boolean {
         return className == NodeClassValue.FrameLayout
@@ -270,6 +274,7 @@ object AssistsCore {
             }
         }
         nodeList = viewId?.let {
+            if (it.isEmpty()) return@let nodeList
             return@let arrayListOf<AccessibilityNodeInfo>().apply {
                 addAll(nodeList.filter {
                     return@filter it.viewIdResourceName == viewId
@@ -280,6 +285,8 @@ object AssistsCore {
         }
 
         nodeList = text?.let {
+            if (it.isEmpty()) return@let nodeList
+
             return@let arrayListOf<AccessibilityNodeInfo>().apply {
                 addAll(nodeList.filter {
                     return@filter it.txt() == text
@@ -287,6 +294,8 @@ object AssistsCore {
             }
         } ?: let { return@let nodeList }
         nodeList = des?.let {
+            if (it.isEmpty()) return@let nodeList
+
             return@let arrayListOf<AccessibilityNodeInfo>().apply {
                 addAll(nodeList.filter {
                     return@filter it.des() == des
@@ -756,6 +765,60 @@ object AssistsCore {
      */
     fun AccessibilityNodeInfo.scrollBackward(): Boolean {
         return performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+    }
+
+    suspend fun launchApp(intent: Intent): Boolean {
+        val completableDeferred = CompletableDeferred<Boolean>()
+        val view = View(AssistsService.instance).apply {
+            setOnClickListener {
+                runCatching {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    AssistsService.instance?.startActivity(intent)
+                    completableDeferred.complete(true)
+                }.onFailure {
+                    completableDeferred.complete(false)
+                }
+            }
+        }
+        runMain { AssistsWindowManager.add(view) }
+        CoroutineWrapper.launch {
+            delay(250)
+            val clickResult = gestureClick(ScreenUtils.getScreenWidth() / 2.toFloat(), ScreenUtils.getScreenHeight() / 2.toFloat())
+            if (!clickResult) {
+                completableDeferred.complete(false)
+            }
+            delay(250)
+            runMain { AssistsWindowManager.removeView(view) }
+        }
+        return completableDeferred.await()
+    }
+
+
+    suspend fun launchApp(packageName: String): Boolean {
+        val completableDeferred = CompletableDeferred<Boolean>()
+        val view = View(AssistsService.instance).apply {
+            setOnClickListener {
+                runCatching {
+                    val intent = AssistsService.instance?.packageManager?.getLaunchIntentForPackage(packageName)
+                    intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    AssistsService.instance?.startActivity(intent)
+                    completableDeferred.complete(true)
+                }.onFailure {
+                    completableDeferred.complete(false)
+                }
+            }
+        }
+        runMain { AssistsWindowManager.add(view) }
+        CoroutineWrapper.launch {
+            delay(250)
+            val clickResult = gestureClick(ScreenUtils.getScreenWidth() / 2.toFloat(), ScreenUtils.getScreenHeight() / 2.toFloat())
+            if (!clickResult) {
+                completableDeferred.complete(false)
+            }
+            delay(250)
+            runMain { AssistsWindowManager.removeView(view) }
+        }
+        return completableDeferred.await()
     }
 
     /**
