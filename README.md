@@ -190,12 +190,6 @@ StepManager.isStop = true
 ### 示例教程
 - [Appium结合AccessibilityService实现自动化微信登录](https://juejin.cn/post/7483409317564907530)
 
-## 更新日志
-### v3.2.12
-更新时间：2025-03-25
-1. assists-mp去掉对于opencv减少不必要的包体积
-2. 兼容微信8.0.51以上版本获取的节点元素被混淆问题
-
 ### [版本历史](https://github.com/ven-coder/Assists/releases)
 
 ## 有问题欢迎反馈交流（微信群二维码失效可以加我拉进群）
