@@ -23,9 +23,9 @@
 
 # 一些示例
 
-| 基础示例 | 进阶示例 | 高级示例 |
-| - | - |-|
-| <img src="https://github.com/user-attachments/assets/b537bab4-cc55-41c2-8f81-9e8b965e939a" width=200/> | <img src="https://github.com/user-attachments/assets/9b50628c-603e-47d1-a6ae-5600358575fc" width=200/> |<img src="https://github.com/user-attachments/assets/262b9028-5926-478b-93bd-3e20110db391" width=200/>|
+| 基础示例 | 进阶示例 | 高级示例 | 图片截取 |
+| - | - |-|-|
+| <img src="https://github.com/user-attachments/assets/b537bab4-cc55-41c2-8f81-9e8b965e939a" width=180/> | <img src="https://github.com/user-attachments/assets/9b50628c-603e-47d1-a6ae-5600358575fc" width=180/> |<img src="https://github.com/user-attachments/assets/262b9028-5926-478b-93bd-3e20110db391" width=180/>| <img src="https://github.com/user-attachments/assets/522236e4-5880-4f00-9f4c-76728df3cfe6" width=180/> |
 
 | 自动收能量 |自动发朋友圈|自动滑动朋友圈| 无障碍服务开启引导 |
 |:-:|:-:|:-:|:-:|
