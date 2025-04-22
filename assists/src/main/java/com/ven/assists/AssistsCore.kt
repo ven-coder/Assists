@@ -153,19 +153,10 @@ object AssistsCore {
      * @param text 可选的文本过滤条件
      * @return 符合条件的元素列表
      */
-    fun findById(id: String, text: String? = null): List<AccessibilityNodeInfo> {
-        var nodeInfos = AssistsService.instance?.rootInActiveWindow?.findById(id) ?: arrayListOf()
-
-        nodeInfos = text?.let {
-            nodeInfos.filter {
-                if (it.txt() == text) {
-                    return@filter true
-                }
-                return@filter false
-            }
-        } ?: let { nodeInfos }
-
-        return nodeInfos
+    fun findById(id: String, filterText: String? = null, filterDes: String? = null, filterClass: String? = null): List<AccessibilityNodeInfo> {
+        var nodes = AssistsService.instance?.rootInActiveWindow?.findById(id) ?: arrayListOf()
+        val filterNodes = filterNodes(nodes, filterText = filterText, filterDes = filterDes, filterClass = filterClass)
+        return filterNodes
     }
 
     /**
@@ -173,12 +164,15 @@ object AssistsCore {
      * @param id 元素的资源id
      * @return 符合条件的元素列表
      */
-    fun AccessibilityNodeInfo?.findById(id: String): List<AccessibilityNodeInfo> {
-        if (this == null) return arrayListOf()
-        findAccessibilityNodeInfosByViewId(id)?.let {
-            return it
-        }
-        return arrayListOf()
+    fun AccessibilityNodeInfo?.findById(
+        id: String,
+        filterText: String? = null,
+        filterDes: String? = null,
+        filterClass: String? = null
+    ): List<AccessibilityNodeInfo> {
+        val nodes = this?.findAccessibilityNodeInfosByViewId(id) ?: arrayListOf()
+        val filterNodes = filterNodes(nodes, filterText = filterText, filterDes = filterDes, filterClass = filterClass)
+        return filterNodes
     }
 
     /**
@@ -186,8 +180,10 @@ object AssistsCore {
      * @param text 要查找的文本内容
      * @return 符合条件的元素列表
      */
-    fun findByText(text: String): List<AccessibilityNodeInfo> {
-        return AssistsService.instance?.rootInActiveWindow?.findByText(text) ?: arrayListOf()
+    fun findByText(text: String, filterViewId: String? = null, filterDes: String? = null, filterClass: String? = null): List<AccessibilityNodeInfo> {
+        val nodes = AssistsService.instance?.rootInActiveWindow?.findByText(text) ?: arrayListOf()
+        val filterNodes = filterNodes(nodes, filterViewId = filterViewId, filterDes = filterDes, filterClass = filterClass)
+        return filterNodes
     }
 
     /**
@@ -195,17 +191,15 @@ object AssistsCore {
      * @param text 要匹配的文本内容
      * @return 文本完全匹配的元素列表
      */
-    fun findByTextAllMatch(text: String): List<AccessibilityNodeInfo> {
-        val listResult = arrayListOf<AccessibilityNodeInfo>()
-        val list = AssistsService.instance?.rootInActiveWindow?.findByText(text)
-        list?.let {
-            it.forEach {
-                if (TextUtils.equals(it.text, text)) {
-                    listResult.add(it)
-                }
-            }
-        }
-        return listResult
+    fun findByTextAllMatch(
+        text: String,
+        filterViewId: String? = null,
+        filterDes: String? = null,
+        filterClass: String? = null
+    ): List<AccessibilityNodeInfo> {
+        val nodes = AssistsService.instance?.rootInActiveWindow?.findByText(text) ?: arrayListOf()
+        val filterNodes = filterNodes(nodes, filterViewId = filterViewId, filterDes = filterDes, filterClass = filterClass)
+        return filterNodes
     }
 
     /**
@@ -213,12 +207,49 @@ object AssistsCore {
      * @param text 要查找的文本内容
      * @return 符合条件的元素列表
      */
-    fun AccessibilityNodeInfo?.findByText(text: String): List<AccessibilityNodeInfo> {
-        if (this == null) return arrayListOf()
-        findAccessibilityNodeInfosByText(text)?.let {
-            return it
+    fun AccessibilityNodeInfo?.findByText(
+        text: String,
+        filterViewId: String? = null,
+        filterDes: String? = null,
+        filterClass: String? = null
+    ): List<AccessibilityNodeInfo> {
+
+        val nodes = this?.findAccessibilityNodeInfosByText(text) ?: arrayListOf()
+
+        val filterNodes = filterNodes(nodes, filterViewId = filterViewId, filterDes = filterDes, filterClass = filterClass)
+        return filterNodes
+    }
+
+
+    private fun filterNodes(
+        nodes: List<AccessibilityNodeInfo>,
+        filterViewId: String? = null,
+        filterDes: String? = null,
+        filterClass: String? = null,
+        filterText: String? = null
+    ): List<AccessibilityNodeInfo> {
+        val filterNodes = nodes.filter { node ->
+
+            filterViewId?.let {
+                if (it.isEmpty()) return@let
+                return@filter node.viewIdResourceName?.equals(filterViewId) == true
+            }
+            filterText?.let {
+                if (it.isEmpty()) return@let
+                return@filter node.text?.toString()?.equals(filterText) == true
+            }
+            filterDes?.let {
+                if (it.isEmpty()) return@let
+                return@filter node.contentDescription?.toString()?.equals(filterDes) == true
+            }
+            filterClass?.let {
+                if (it.isEmpty()) return@let
+                return@filter node.className?.toString()?.equals(filterClass) == true
+            }
+
+            true
         }
-        return arrayListOf()
+        return filterNodes
     }
 
     /**
@@ -383,10 +414,16 @@ object AssistsCore {
      * 获取当前窗口中的所有元素
      * @return 包含所有元素的列表
      */
-    fun getAllNodes(): ArrayList<AccessibilityNodeInfo> {
+    fun getAllNodes(
+        filterViewId: String? = null,
+        filterDes: String? = null,
+        filterClass: String? = null,
+        filterText: String? = null
+    ): List<AccessibilityNodeInfo> {
         val nodeList = arrayListOf<AccessibilityNodeInfo>()
         AssistsService.instance?.rootInActiveWindow?.getNodes(nodeList)
-        return nodeList
+        val filterNodes = filterNodes(nodeList, filterViewId, filterDes, filterClass, filterText)
+        return filterNodes
     }
 
     /**
@@ -546,6 +583,12 @@ object AssistsCore {
         return boundsInScreen
     }
 
+    fun AccessibilityNodeInfo.getBoundsInParent(): Rect {
+        val rect = Rect()
+        getBoundsInParent(rect)
+        return rect
+    }
+
     /**
      * 点击元素
      * @return 点击操作是否成功
@@ -607,6 +650,61 @@ object AssistsCore {
         delay(switchWindowIntervalDelay)
         runMain { AssistsWindowManager.touchableByAll() }
         return result
+    }
+
+    suspend fun AccessibilityNodeInfo.nodeGestureClickByDouble(
+        offsetX: Float = ScreenUtils.getScreenWidth() * 0.01953f,
+        offsetY: Float = ScreenUtils.getScreenWidth() * 0.01953f,
+        switchWindowIntervalDelay: Long = 250,
+        clickDuration: Long = 25,
+        clickInterval: Long = 25,
+    ): Boolean {
+        AssistsWindowManager.nonTouchableByAll()
+        delay(switchWindowIntervalDelay)
+        val bounds = getBoundsInScreen()
+
+        val x = bounds.centerX().toFloat() + offsetX
+        val y = bounds.centerY().toFloat() + offsetY
+
+        AssistsCore.gestureClick(x, y, clickDuration)
+        delay(clickInterval)
+        AssistsCore.gestureClick(x, y, clickDuration)
+        AssistsWindowManager.touchableByAll()
+        return true
+    }
+
+    fun AccessibilityNodeInfo.isVisible(
+        compareNode: AccessibilityNodeInfo? = null,
+        isFullyByCompareNode: Boolean = false,
+    ): Boolean {
+        compareNode?.let {
+
+            if (!isVisibleToUser) return@let false
+
+            val compareNodeBounds = it.getBoundsInScreen()
+            val nodeBounds = getBoundsInScreen()
+            if (isFullyByCompareNode) {
+
+                if (compareNodeBounds.contains(nodeBounds)) {
+                    return false
+                }
+                if (Rect.intersects(compareNodeBounds, nodeBounds)) {
+                    return false
+                }
+                return true
+
+            } else {
+
+                if (compareNodeBounds.contains(nodeBounds)) {
+                    return false
+                }
+
+                return true
+
+            }
+
+        }
+        return isVisibleToUser
     }
 
     /**
