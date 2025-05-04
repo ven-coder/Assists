@@ -1,4 +1,4 @@
-package com.ven.assists_mp
+package com.ven.assists.mp
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.graphics.Color
-import android.media.projection.MediaProjection
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi

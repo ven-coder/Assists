@@ -1,16 +1,12 @@
 package com.ven.assists.simple.overlays
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
-import androidx.core.os.bundleOf
-import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
@@ -27,8 +23,8 @@ import com.ven.assists.simple.common.LogWrapper
 import com.ven.assists.simple.common.LogWrapper.logAppend
 import com.ven.assists.simple.databinding.ProOverlayBinding
 import com.ven.assists.utils.CoroutineWrapper
-import com.ven.assists_mp.MPManager
-import com.ven.assists_mp.MPManager.takeScreenshot2File
+import com.ven.assists.mp.MPManager
+import com.ven.assists.mp.MPManager.takeScreenshot2File
 import kotlinx.coroutines.delay
 
 @SuppressLint("StaticFieldLeak")
@@ -90,7 +86,7 @@ object OverlayPro : AssistsServiceListener {
                     btnTakeScreenshot.setOnClickListener {
                         CoroutineWrapper.launch {
                             runCatching {
-                                val file = MPManager.takeScreenshot2File()
+                                val file = takeScreenshot2File()
                                 AssistsCore.launchApp(Intent(AssistsService.instance, ScreenshotReviewActivity::class.java).apply {
                                     putExtra("path", file?.path)
                                 })

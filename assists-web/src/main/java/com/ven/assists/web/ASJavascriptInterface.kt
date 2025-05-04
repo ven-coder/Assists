@@ -8,7 +8,6 @@ import android.webkit.WebView
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
-import com.blankj.utilcode.util.TimeUtils
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -35,19 +34,15 @@ import com.ven.assists.AssistsCore.setNodeText
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists.window.AssistsWindowManager
 import com.ven.assists.window.AssistsWindowManager.overlayToast
-import com.ven.web.MPManager
-import com.ven.web.MPManager.getBitmap
-import com.ven.web.MPManager.takeScreenshot2File
-import kotlinx.coroutines.CompletableDeferred
+import com.ven.assists.mp.MPManager
+import com.ven.assists.mp.MPManager.getBitmap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 
-class AXJavascriptInterface(val webView: WebView) {
+class ASJavascriptInterface(val webView: WebView) {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     fun <T> callback(result: CallResponse<T>) {

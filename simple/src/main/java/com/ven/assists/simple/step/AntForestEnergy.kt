@@ -18,8 +18,8 @@ import com.ven.assists.stepper.StepCollector
 import com.ven.assists.stepper.StepImpl
 import com.ven.assists.stepper.StepManager
 import com.ven.assists.utils.CoroutineWrapper
-import com.ven.assists_mp.MPManager
-import com.ven.assists_opcv.OpencvWrapper
+import com.ven.assists.mp.MPManager
+import com.ven.assists.opcv.OpencvWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

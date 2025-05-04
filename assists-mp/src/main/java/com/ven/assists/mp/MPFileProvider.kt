@@ -1,4 +1,4 @@
-package com.ven.assists_mp
+package com.ven.assists.mp
 
 import android.app.Application
 import androidx.core.content.FileProvider

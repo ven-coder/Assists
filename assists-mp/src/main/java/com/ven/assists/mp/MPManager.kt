@@ -1,9 +1,8 @@
-package com.ven.assists_mp
+package com.ven.assists.mp
 
 import android.app.Activity
 import android.app.Application
 import android.app.Service.MEDIA_PROJECTION_SERVICE
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.PixelFormat
@@ -198,9 +197,9 @@ object MPManager {
     suspend fun request(autoAllow: Boolean = true, timeOut: Long = 5000): Boolean {
         var projectionManager: MediaProjectionManager? = null
         AssistsService.instance?.let {
-            projectionManager = it.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+            projectionManager = it.getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         } ?: let {
-            projectionManager = ActivityUtils.getTopActivity()?.getSystemService(Context.MEDIA_PROJECTION_SERVICE)?.let {
+            projectionManager = ActivityUtils.getTopActivity()?.getSystemService(MEDIA_PROJECTION_SERVICE)?.let {
                 it as MediaProjectionManager
             }
         }

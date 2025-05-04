@@ -7,9 +7,8 @@ import android.webkit.WebViewClient
 import android.webkit.WebChromeClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import org.json.JSONObject
 
-class AXWebView @JvmOverloads constructor(
+class ASWebView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -59,6 +58,6 @@ class AXWebView @JvmOverloads constructor(
         isFocusableInTouchMode = true
         isFocusable = true
 
-        addJavascriptInterface(AXJavascriptInterface(this), "assistsx")
+        addJavascriptInterface(ASJavascriptInterface(this), "assistsx")
     }
 }

@@ -1,4 +1,4 @@
-package com.ven.assists_opcv
+package com.ven.assists.opcv
 
 import android.app.Application
 import androidx.core.content.FileProvider

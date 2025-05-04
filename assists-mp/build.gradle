@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.ven.assists_mp'
+    namespace 'com.ven.assists.mp'
     compileSdk rootProject.ext.compileSdk
 
     defaultConfig {
