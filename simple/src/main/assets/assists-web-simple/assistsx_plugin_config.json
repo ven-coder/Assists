@@ -1,0 +1,11 @@
+{
+    "name": "AssistsX示例",
+    "version": "1.0.0",
+    "description": "AssistsX示例",
+    "isShowOverlay": true,
+    "needScreenCapture": true,
+    "packageName": "com.assistsx.example",
+    "main": "index.html",
+    "icon": "vite.svg",
+    "overlayTitle": "AssistsX示例"
+}

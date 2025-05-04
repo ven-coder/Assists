@@ -25,6 +25,7 @@ import com.ven.assists.simple.databinding.ActivityMainBinding
 import com.ven.assists.simple.overlays.OverlayAdvanced
 import com.ven.assists.simple.overlays.OverlayBasic
 import com.ven.assists.simple.overlays.OverlayPro
+import com.ven.assists.simple.overlays.OverlayWeb
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists.utils.NodeClassValue
 import kotlinx.coroutines.delay
@@ -66,6 +67,17 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
                     OverlayAdvanced.hide()
                 } else {
                     OverlayAdvanced.show()
+                }
+            }
+            btnWeb.setOnClickListener {
+                OverlayWeb.onClose = {
+                    OverlayWeb.hide()
+                }
+                if (OverlayWeb.showed) {
+                    OverlayWeb.hide()
+                } else {
+
+                    OverlayWeb.show()
                 }
             }
         }

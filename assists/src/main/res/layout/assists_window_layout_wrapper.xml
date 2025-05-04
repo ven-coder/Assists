@@ -27,6 +27,8 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="center"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textColor="@android:color/white"
             android:textSize="18dp"
             tools:text="Assists" />
@@ -56,12 +58,55 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <ImageView
-        android:id="@+id/iv_scale"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="bottom"
-        android:padding="10dp"
-        android:src="@drawable/scale" />
+    <LinearLayout
+        android:id="@+id/ll_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_scale"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:padding="10dp"
+            android:src="@drawable/scale" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iv_web_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:padding="7dp"
+            android:src="@drawable/icon2"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/iv_web_forward"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:padding="7dp"
+            android:src="@drawable/icon1"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/iv_web_refresh"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:padding="10dp"
+            android:src="@drawable/icon3"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+
+    </LinearLayout>
 
 </LinearLayout>
