@@ -213,7 +213,7 @@ StepManager.isStop = true
 `assists-web`是基础的web支持库，封装了webview js接口对web端调用的支持，但是对于web端本地开发调试不友好，需要了解android端相关知识
 
 ## AssistsX脚本平台
-为了支持本地开发调试和动态化加载脚本，特地开发了脚本平台App：[AssistsX]()，可支持脚本的本地安装，在线安装，局域网加载，远程加载
+为了支持本地开发调试和动态化加载脚本，特地开发了脚本平台App：[AssistsX](https://www.pgyer.com/SqGaCx8C)，可支持脚本的本地安装，在线安装，局域网加载，远程加载
 
 ### [开发文档传送门]()
 
