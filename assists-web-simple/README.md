@@ -15,7 +15,7 @@
 > 或者直接将编译打包好的`assistsx-simple.zip`传至手机也可以
 
 
-<img src="https://github.com/user-attachments/assets/7dc27910-be61-473b-8900-f09c16ca5f46" width=250>
+<img src="https://github.com/user-attachments/assets/7dc27910-be61-473b-8900-f09c16ca5f46" width="250">
 
 ## 局域网加载运行
 
@@ -31,4 +31,4 @@
 
 打开[AssistsX](https://www.pgyer.com/SqGaCx8C)，点击立即安装，选择**扫描局域网**，点击对应扫描到插件的 **+** 号即可完成插件添加
 
-<img src="https://github.com/user-attachments/assets/d0f24763-266e-4e3c-bd64-a63be9e6c68c" width=250/>
+<img src="https://github.com/user-attachments/assets/d0f24763-266e-4e3c-bd64-a63be9e6c68c" width="250"/>
