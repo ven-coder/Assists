@@ -32,3 +32,54 @@
 打开[AssistsX](https://www.pgyer.com/SqGaCx8C)，点击立即安装，选择**扫描局域网**，点击对应扫描到插件的 **+** 号即可完成插件添加
 
 <img src="https://github.com/user-attachments/assets/d0f24763-266e-4e3c-bd64-a63be9e6c68c" width="250"/>
+
+# 快速开始
+## 1. 创建项目
+- 创建vite模版项目`npm create vite@latest assistsx-helloword -- --template vue`
+- 安装assistsx依赖`npm install assistsx@latest`
+## 2. 创建插件配置
+在目录`public`下创建文件`assistsx_plugin_config.json`文件，将以下`json`复制粘贴到文件中
+```
+{
+"name": "AssistsX示例",
+"version": "1.0.0",
+"description": "AssistsX示例",
+"isShowOverlay": true,
+"needScreenCapture": true,
+"packageName": "com.assistsx.example",
+"main": "index.html",
+"icon": "vite.svg",
+"overlayTitle": "AssistsX示例"
+}
+```
+## 3. 编写脚本插件
+写一个最简单的，点击微信搜索进入搜索页面
+```agsl
+const handleClick = () => {
+  AssistsX.findById("com.tencent.mm:id/jha")[0].click()
+}
+```
+
+增加一个测试按钮调用这个方法
+```agsl
+<button type="button" @click="handleClick">测试按钮</button>
+```
+
+## 4. 加载插件
+1. 我们使用局域网加载插件，加载插件前需要配置项目允许局域网访问，在文件`vite.config.js`添加以下配置
+```
+export default defineConfig({
+  plugins: [vue()],
+  server: {
+    host: '0.0.0.0', // 允许局域网访问
+    port: 5173
+  },
+})
+```
+2. 打开AssistsX，扫描局域网插件添加
+
+<img src="https://github.com/user-attachments/assets/d0f24763-266e-4e3c-bd64-a63be9e6c68c" width="250"/>
+
+3. 测试插件：点击开始，打开微信消息列表，点击测试按钮
+
+<img src="https://github.com/user-attachments/assets/e6e59149-ed78-42de-81a7-c3476b5472e6" width="250"/>
