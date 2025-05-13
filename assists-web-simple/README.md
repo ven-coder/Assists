@@ -76,6 +76,8 @@ export default defineConfig({
   },
 })
 ```
+运行项目`npm run dev`以便AssistsX直接加载
+
 2. 打开AssistsX，扫描局域网插件添加
 
 <img src="https://github.com/user-attachments/assets/d0f24763-266e-4e3c-bd64-a63be9e6c68c" width="250"/>
