@@ -215,7 +215,7 @@ StepManager.isStop = true
 ## AssistsX脚本平台
 为了支持本地开发调试和动态化加载脚本，特地开发了脚本平台App：[AssistsX](https://www.pgyer.com/SqGaCx8C)，可支持脚本的本地安装，在线安装，局域网加载，远程加载
 
-### [开发文档传送门]()
+### [开发文档传送门](https://github.com/ven-coder/Assists/tree/master/assists-web-simple)
 
 ## 其他教程博客
 
