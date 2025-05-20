@@ -235,8 +235,8 @@ StepManager.isStop = true
 
 | 交流群| 个人微信 |
 |:---------:|:-----------:|
-| <img src="https://github.com/user-attachments/assets/25fe0c68-dff7-43f7-a431-883430ec52a4" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
-1群已满200人，要进1群可加我拉进1群
+| <img src="https://github.com/user-attachments/assets/9110a310-733b-42d0-85cc-37993ebc3d3b" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
+1群已满200人，要进1群可加我备注进1群
 
 ### ❤️ 已入驻爱发电，感谢[支持](https://afdian.com/a/vencoder)
 
