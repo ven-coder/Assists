@@ -14,6 +14,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SizeUtils
 import com.ven.assists.service.AssistsService
 import com.ven.assists.utils.CoroutineWrapper
@@ -65,8 +66,8 @@ object AssistsWindowManager {
                 or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
                 or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
 
-        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
-        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
+        layoutParams.height = ScreenUtils.getScreenHeight()
+        layoutParams.width = ScreenUtils.getScreenWidth()
         layoutParams.gravity = Gravity.START or Gravity.TOP
         layoutParams.format = PixelFormat.RGBA_8888
         //此处layoutParams.type不建议使用TYPE_TOAST，因为在一些版本较低的系统中会出现拖动异常的问题，虽然它不需要权限
@@ -176,6 +177,14 @@ object AssistsWindowManager {
             layoutParams.nonTouchableByLayoutParams()
         }
         viewList.add(ViewWrapper(view, layoutParams))
+    }
+
+    suspend fun setFlags(flag: Int) {
+        withContext(Dispatchers.Main) {
+            viewList.forEach {
+                it.layoutParams.flags = flag
+            }
+        }
     }
 
     /**
@@ -319,6 +328,7 @@ object AssistsWindowManager {
                     text = this@overlayToast
                     setTextColor(Color.WHITE)
                     setPadding(SizeUtils.dp2px(10f))
+                    layoutParams= ViewGroup.LayoutParams(-2,-2)
                 }
                 val assistsWindowWrapper = AssistsWindowWrapper(textView, wmLayoutParams = createLayoutParams().apply {
                     width = -2

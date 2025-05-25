@@ -9,18 +9,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Path
 import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.view.accessibility.AccessibilityNodeInfo
-import androidx.core.graphics.toColorInt
 import androidx.core.os.bundleOf
 import com.blankj.utilcode.util.ActivityUtils
-import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.ven.assists.service.AssistsService
@@ -747,10 +743,14 @@ object AssistsCore {
     fun AccessibilityNodeInfo.paste(text: String?): Boolean {
         performAction(AccessibilityNodeInfo.ACTION_FOCUS)
         AssistsService.instance?.let {
-            val clip = ClipData.newPlainText("${System.currentTimeMillis()}", text)
-            val clipboardManager = (it.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
-            clipboardManager.setPrimaryClip(clip)
-            clipboardManager.primaryClip
+//            val clip = ClipData.newPlainText("${System.currentTimeMillis()}", text)
+//            val clipboardManager = (it.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+//            clipboardManager.setPrimaryClip(clip)
+//            clipboardManager.primaryClip
+
+            val clipboard = it.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("label", text)
+            clipboard.setPrimaryClip(clip)
             return performAction(AccessibilityNodeInfo.ACTION_PASTE)
         }
         return false

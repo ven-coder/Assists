@@ -62,6 +62,17 @@ class ASJavascriptInterface(val webView: WebView) {
         runCatching {
             val request = GsonUtils.fromJson<CallRequest<JsonObject>>(json, object : TypeToken<CallRequest<JsonObject>>() {}.type)
             when (request.method) {
+                CallMethod.setOverlayFlags-> {
+                    request.arguments?.apply {
+                        val flagList = arrayListOf<Int>()
+                        get("flags")?.asJsonArray?.forEach {
+                            flagList.add(it.asInt)
+                        }
+                        val flags = flagList.reduce { a, b -> a or b }
+                        CoroutineWrapper.launch { AssistsWindowManager.setFlags(flags) }
+                    }
+                }
+
                 CallMethod.takeScreenshot -> {
 
                     val overlayHiddenScreenshotDelayMillis = request.arguments?.get("overlayHiddenScreenshotDelayMillis")?.asLong ?: 250

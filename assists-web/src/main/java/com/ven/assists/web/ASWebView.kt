@@ -1,5 +1,6 @@
 package com.ven.assists.web
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.webkit.WebView
@@ -8,6 +9,7 @@ import android.webkit.WebChromeClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
+@SuppressLint("SetJavaScriptEnabled")
 class ASWebView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -34,6 +36,8 @@ class ASWebView @JvmOverloads constructor(
             loadWithOverviewMode = true
             allowUniversalAccessFromFileURLs = true
             allowFileAccessFromFileURLs = true
+            domStorageEnabled=true
+            databaseEnabled=true
             setWebContentsDebuggingEnabled(true)
         }
 

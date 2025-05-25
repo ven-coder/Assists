@@ -150,6 +150,7 @@ class AssistsWindowWrapper(
             // 根据配置显示或隐藏操作按钮和背景
             flHeader.isVisible = showOption
             ivScale.isVisible = showOption
+            llBottomBar.isVisible = showOption
             if (!showBackground) {
                 root.background = null
             }
