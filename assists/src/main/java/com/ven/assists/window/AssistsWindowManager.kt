@@ -179,6 +179,73 @@ object AssistsWindowManager {
         viewList.add(ViewWrapper(view, layoutParams))
     }
 
+    /**
+     * FLAG_NOT_FOCUSABLE
+     * 8
+     * 0x08
+     * 不获取焦点
+     * FLAG_NOT_TOUCHABLE
+     * 16
+     * 0x10
+     * 不响应触摸
+     * FLAG_NOT_TOUCH_MODAL
+     * 32
+     * 0x20
+     * 不拦截触摸
+     * FLAG_WATCH_OUTSIDE_TOUCH
+     * 4
+     * 0x04
+     * 监听窗外点击
+     * FLAG_LAYOUT_NO_LIMITS
+     * 512
+     * 0x200
+     * 可绘制超出屏幕
+     * FLAG_LAYOUT_IN_SCREEN
+     * 256
+     * 0x100
+     * 屏幕全区域布局
+     * FLAG_FULLSCREEN
+     * 1024
+     * 0x400
+     * 全屏显示
+     * FLAG_DIM_BEHIND
+     * 2
+     * 0x02
+     * 背景变暗
+     * FLAG_SECURE
+     * 8192
+     * 0x2000
+     * 防录屏防截图
+     * FLAG_KEEP_SCREEN_ON
+     * 128
+     * 0x80
+     * 保持常亮
+     * FLAG_SHOW_WHEN_LOCKED
+     * 524288
+     * 0x80000
+     * 锁屏时可见
+     * FLAG_DISMISS_KEYGUARD
+     * 4194304
+     * 0x400000
+     * 解锁屏幕
+     * FLAG_TURN_SCREEN_ON
+     * 2097152
+     * 0x200000
+     * 点亮屏幕
+     * FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+     * 128
+     * 0x80
+     * 自动锁屏（不常用）
+     * FLAG_SHOW_WALLPAPER
+     * 1048576
+     * 0x100000
+     * 显示墙纸
+     * FLAG_HARDWARE_ACCELERATED
+     * 16777216
+     * 0x1000000
+     * 强制硬件加速
+     *
+     */
     suspend fun setFlags(flag: Int) {
         withContext(Dispatchers.Main) {
             viewList.forEach {
