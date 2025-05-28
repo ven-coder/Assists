@@ -85,6 +85,3 @@ export default defineConfig({
 3. 测试插件：点击开始，打开微信消息列表，点击测试按钮
 
 <img src="https://github.com/user-attachments/assets/e6e59149-ed78-42de-81a7-c3476b5472e6" width="250"/>
-
-
-# [开发指南&API文档]()
