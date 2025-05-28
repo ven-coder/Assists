@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.BarUtils
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.ven.assists.AssistsCore
@@ -26,6 +27,7 @@ import com.ven.assists.window.AssistsWindowManager
 import com.ven.assists.window.AssistsWindowManager.overlayToast
 import com.ven.assists.window.AssistsWindowWrapper
 import com.ven.assists.simple.MultiTouchDrawingActivity
+import com.ven.assists.simple.ScreenshotReviewActivity
 import com.ven.assists.simple.TestActivity
 import com.ven.assists.simple.databinding.BasicOverlayBinding
 import com.ven.assists.utils.CoroutineWrapper
@@ -42,12 +44,20 @@ object OverlayBasic : AssistsServiceListener {
                     //点击
                     btnClick.setOnClickListener {
                         CoroutineWrapper.launch {
-                            AssistsService.instance?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            })
-                            delay(1000)
-                            AssistsCore.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.click()
+//                            AssistsService.instance?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
+//                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//                            })
+//                            delay(1000)
+//                            AssistsCore.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.click()
+
+                            val file = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                val bitmap = AssistsCore.takeScreenshot()
+                                LogUtils.d(bitmap)
+                            } else {
+                                TODO("VERSION.SDK_INT < R")
+                            }
                         }
+
                     }
                     //手势点击
                     btnGestureClick.setOnClickListener {
@@ -82,9 +92,10 @@ object OverlayBasic : AssistsServiceListener {
                     //单指手势（画圆）
                     btnGestureSingleDraw.setOnClickListener {
                         CoroutineWrapper.launch(isMain = true) {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, MultiTouchDrawingActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            })
+                            ActivityUtils.getTopActivity()
+                                ?.startActivity(Intent(AssistsService.instance, MultiTouchDrawingActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                })
                             delay(1000)
 
                             performCircularGestureSingle()
@@ -93,9 +104,10 @@ object OverlayBasic : AssistsServiceListener {
                     //双指手势（画圆）
                     btnGestureDoubleDraw.setOnClickListener {
                         CoroutineWrapper.launch(isMain = true) {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, MultiTouchDrawingActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            })
+                            ActivityUtils.getTopActivity()
+                                ?.startActivity(Intent(AssistsService.instance, MultiTouchDrawingActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                })
                             delay(1000)
 
                             performCircularGestureDouble()
@@ -104,9 +116,10 @@ object OverlayBasic : AssistsServiceListener {
                     //单指手势（不规则）
                     btnGestureThreeDraw.setOnClickListener {
                         CoroutineWrapper.launch(isMain = true) {
-                            ActivityUtils.getTopActivity()?.startActivity(Intent(AssistsService.instance, MultiTouchDrawingActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            })
+                            ActivityUtils.getTopActivity()
+                                ?.startActivity(Intent(AssistsService.instance, MultiTouchDrawingActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                })
                             delay(1000)
 
                             performSnakeGesture()

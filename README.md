@@ -204,18 +204,68 @@ StepManager.execute(MyStepImpl::class.java, 1, isBegin = true)
 StepManager.isStop = true
 ```
 
-# Html+js/vue/vite开发自动化脚本
+## API列表
 
-> ⚠️当前处于可用但非稳定版本
+### 初始化和服务管理
 
-本仓库源码中包含了一个通过vite编写的一个自动化脚本示例：`assists-web-simple`，可自行下载编译。项目中已经有编译好的vite示例在 `simple/src/main/assets/assists-web-simple`目录下，在当前示例App中可直接加载查看这个vite编写的自动化脚本。
+| 方法名 | 说明 | 返回值 |
+|--------|------|--------|
+| `init(application: Application)` | 初始化AssistsCore | 无 |
+| `openAccessibilitySetting()` | 打开系统无障碍服务设置页面 | 无 |
+| `isAccessibilityServiceEnabled()` | 检查无障碍服务是否已开启 | Boolean |
+| `getPackageName()` | 获取当前窗口所属的应用包名 | String |
 
-`assists-web`是基础的web支持库，封装了webview js接口对web端调用的支持，但是对于web端本地开发调试不友好，需要了解android端相关知识
+### 元素查找
 
-## AssistsX脚本平台
-为了支持本地开发调试和动态化加载脚本，特地开发了脚本平台App：[AssistsX](https://www.pgyer.com/SqGaCx8C)，可支持脚本的本地安装，在线安装，局域网加载，远程加载
+| 方法名 | 说明 | 返回值 |
+|--------|------|--------|
+| `findById(id, filterText?, filterDes?, filterClass?)` | 通过id查找所有符合条件的元素 | List<AccessibilityNodeInfo> |
+| `AccessibilityNodeInfo.findById(id, filterText?, filterDes?, filterClass?)` | 在指定元素范围内通过id查找元素 | List<AccessibilityNodeInfo> |
+| `findByText(text, filterViewId?, filterDes?, filterClass?)` | 通过文本内容查找所有符合条件的元素 | List<AccessibilityNodeInfo> |
+| `findByTextAllMatch(text, filterViewId?, filterDes?, filterClass?)` | 查找所有文本完全匹配的元素 | List<AccessibilityNodeInfo> |
+| `AccessibilityNodeInfo.findByText(text, filterViewId?, filterDes?, filterClass?)` | 在指定元素范围内通过文本查找元素 | List<AccessibilityNodeInfo> |
+| `findByTags(className, viewId?, text?, des?)` | 根据多个条件查找元素 | List<AccessibilityNodeInfo> |
+| `AccessibilityNodeInfo.findByTags(className, viewId?, text?, des?)` | 在指定元素范围内根据多个条件查找元素 | List<AccessibilityNodeInfo> |
+| `getAllNodes(filterViewId?, filterDes?, filterClass?, filterText?)` | 获取当前窗口中的所有元素 | List<AccessibilityNodeInfo> |
 
-### [开发文档传送门](https://github.com/ven-coder/Assists/tree/master/assists-web-simple)
+### 元素信息获取
+
+| 方法名 | 说明 | 返回值 |
+|--------|------|--------|
+| `AccessibilityNodeInfo.txt()` | 获取元素的文本内容 | String |
+| `AccessibilityNodeInfo.des()` | 获取元素的描述内容 | String |
+| `AccessibilityNodeInfo.getAllText()` | 获取元素的所有文本内容（包括text和contentDescription） | ArrayList<String> |
+| `AccessibilityNodeInfo.containsText(text)` | 判断元素是否包含指定文本 | Boolean |
+| `AccessibilityNodeInfo.getBoundsInScreen()` | 获取元素在屏幕中的位置信息 | Rect |
+| `AccessibilityNodeInfo.getBoundsInParent()` | 获取元素在父容器中的位置信息 | Rect |
+| `AccessibilityNodeInfo.isVisible(compareNode?, isFullyByCompareNode?)` | 判断元素是否可见 | Boolean |
+
+### 元素层级操作
+
+| 方法名 | 说明 | 返回值 |
+|--------|------|--------|
+| `AccessibilityNodeInfo.getNodes()` | 获取指定元素下的所有子元素 | ArrayList<AccessibilityNodeInfo> |
+| `AccessibilityNodeInfo.getChildren()` | 获取元素的直接子元素 | ArrayList<AccessibilityNodeInfo> |
+| `AccessibilityNodeInfo.findFirstParentByTags(className)` | 查找第一个符合指定类型的父元素 | AccessibilityNodeInfo? |
+| `AccessibilityNodeInfo.findFirstParentClickable()` | 查找元素的第一个可点击的父元素 | AccessibilityNodeInfo? |
+
+### 元素操作
+
+| 方法名 | 说明 | 返回值 |
+|--------|------|--------|
+| `AccessibilityNodeInfo.click()` | 点击元素 | Boolean |
+| `AccessibilityNodeInfo.longClick()` | 长按元素 | Boolean |
+| `AccessibilityNodeInfo.paste(text)` | 向元素粘贴文本 | Boolean |
+| `AccessibilityNodeInfo.setNodeText(text)` | 设置元素的文本内容 | Boolean |
+| `AccessibilityNodeInfo.selectionText(selectionStart, selectionEnd)` | 选择元素中的文本 | Boolean |
+| `AccessibilityNodeInfo.scrollForward()` | 向前滚动可滚动元素 | Boolean |
+| `AccessibilityNodeInfo.scrollBackward()` | 向后滚动可滚动元素 | Boolean |
+
+### [更多API]()
+
+## 示例教程
+
+- [Appium结合AccessibilityService实现自动化微信登录](https://juejin.cn/post/7483409317564907530)
 
 ## 其他教程博客
 
@@ -224,10 +274,6 @@ StepManager.isStop = true
 - [使用weditor获取节点信息](https://juejin.cn/post/7484188555735613492)
 - [使用Appium获取节点信息](https://juejin.cn/post/7483409317564907530)
 - [使用uiautomatorviewer获取节点信息](https://blog.csdn.net/weixin_37496178/article/details/138328871?fromshare=blogdetail&sharetype=blogdetail&sharerId=138328871&sharerefer=PC&sharesource=weixin_37496178&sharefrom=from_link)
-
-### 示例教程
-
-- [Appium结合AccessibilityService实现自动化微信登录](https://juejin.cn/post/7483409317564907530)
 
 ### [版本历史](https://github.com/ven-coder/Assists/releases)
 
@@ -256,6 +302,19 @@ StepManager.isStop = true
 <img src="https://github.com/ven-coder/Assists/assets/27257149/7ae8e825-f489-46e3-96f0-ed03d12db9e8" width=200/>
 
 ##### 定制开发可直接联系个人微信：x39598
+
+# 新增支持Html+js/vue/vite开发自动化脚本
+
+> ⚠️当前处于可用但非稳定版本
+
+本仓库源码中包含了一个通过vite编写的一个自动化脚本示例：`assists-web-simple`，可自行下载编译。项目中已经有编译好的vite示例在 `simple/src/main/assets/assists-web-simple`目录下，在当前示例App中可直接加载查看这个vite编写的自动化脚本。
+
+`assists-web`是基础的web支持库，封装了webview js接口对web端调用的支持，但是对于web端本地开发调试不友好，需要了解android端相关知识
+
+## AssistsX脚本平台
+为了支持本地开发调试和动态化加载脚本，特地开发了脚本平台App：[AssistsX](https://www.pgyer.com/SqGaCx8C)，可支持脚本的本地安装，在线安装，局域网加载，远程加载
+
+### [开发文档传送门](https://github.com/ven-coder/Assists/tree/master/assists-web-simple)
 
 # License
 

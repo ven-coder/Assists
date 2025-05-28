@@ -1,23 +1,31 @@
 package com.ven.assists
 
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.AccessibilityService.TakeScreenshotCallback
 import android.accessibilityservice.GestureDescription
 import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
 import android.graphics.Path
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
+import android.view.Display
 import android.view.View
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.ven.assists.service.AssistsService
 import com.ven.assists.utils.CoroutineWrapper
@@ -26,6 +34,8 @@ import com.ven.assists.utils.runMain
 import com.ven.assists.window.AssistsWindowManager
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
+import java.io.File
+import java.util.concurrent.Executors
 
 /**
  * 无障碍服务核心类
@@ -146,7 +156,9 @@ object AssistsCore {
     /**
      * 通过id查找所有符合条件的元素
      * @param id 元素的资源id
-     * @param text 可选的文本过滤条件
+     * @param filterText 可选的文本过滤条件
+     * @param filterDes 可选的描述文本过滤条件
+     * @param filterClass 可选的类名过滤条件
      * @return 符合条件的元素列表
      */
     fun findById(id: String, filterText: String? = null, filterDes: String? = null, filterClass: String? = null): List<AccessibilityNodeInfo> {
@@ -158,6 +170,9 @@ object AssistsCore {
     /**
      * 在指定元素范围内通过id查找所有符合条件的元素
      * @param id 元素的资源id
+     * @param filterText 可选的文本过滤条件
+     * @param filterDes 可选的描述文本过滤条件
+     * @param filterClass 可选的类名过滤条件
      * @return 符合条件的元素列表
      */
     fun AccessibilityNodeInfo?.findById(
@@ -174,6 +189,9 @@ object AssistsCore {
     /**
      * 通过文本内容查找所有符合条件的元素
      * @param text 要查找的文本内容
+     * @param filterViewId 可选的资源id过滤条件
+     * @param filterDes 可选的描述文本过滤条件
+     * @param filterClass 可选的类名过滤条件
      * @return 符合条件的元素列表
      */
     fun findByText(text: String, filterViewId: String? = null, filterDes: String? = null, filterClass: String? = null): List<AccessibilityNodeInfo> {
@@ -185,6 +203,9 @@ object AssistsCore {
     /**
      * 查找所有文本完全匹配的元素
      * @param text 要匹配的文本内容
+     * @param filterViewId 可选的资源id过滤条件
+     * @param filterDes 可选的描述文本过滤条件
+     * @param filterClass 可选的类名过滤条件
      * @return 文本完全匹配的元素列表
      */
     fun findByTextAllMatch(
@@ -201,6 +222,9 @@ object AssistsCore {
     /**
      * 在指定元素范围内通过文本查找所有符合条件的元素
      * @param text 要查找的文本内容
+     * @param filterViewId 可选的资源id过滤条件
+     * @param filterDes 可选的描述文本过滤条件
+     * @param filterClass 可选的类名过滤条件
      * @return 符合条件的元素列表
      */
     fun AccessibilityNodeInfo?.findByText(
@@ -216,7 +240,15 @@ object AssistsCore {
         return filterNodes
     }
 
-
+    /**
+     * 根据指定条件过滤元素列表
+     * @param nodes 要过滤的元素列表
+     * @param filterViewId 可选的资源id过滤条件
+     * @param filterDes 可选的描述文本过滤条件
+     * @param filterClass 可选的类名过滤条件
+     * @param filterText 可选的文本过滤条件
+     * @return 过滤后的元素列表
+     */
     private fun filterNodes(
         nodes: List<AccessibilityNodeInfo>,
         filterViewId: String? = null,
@@ -408,6 +440,10 @@ object AssistsCore {
 
     /**
      * 获取当前窗口中的所有元素
+     * @param filterViewId 可选的资源id过滤条件
+     * @param filterDes 可选的描述文本过滤条件
+     * @param filterClass 可选的类名过滤条件
+     * @param filterText 可选的文本过滤条件
      * @return 包含所有元素的列表
      */
     fun getAllNodes(
@@ -579,6 +615,10 @@ object AssistsCore {
         return boundsInScreen
     }
 
+    /**
+     * 获取元素在父容器中的位置信息
+     * @return 包含元素在父容器中位置信息的Rect对象
+     */
     fun AccessibilityNodeInfo.getBoundsInParent(): Rect {
         val rect = Rect()
         getBoundsInParent(rect)
@@ -648,6 +688,15 @@ object AssistsCore {
         return result
     }
 
+    /**
+     * 在元素位置执行双击手势
+     * @param offsetX X轴偏移量
+     * @param offsetY Y轴偏移量
+     * @param switchWindowIntervalDelay 窗口切换延迟时间
+     * @param clickDuration 单次点击持续时间
+     * @param clickInterval 两次点击之间的间隔时间
+     * @return 手势是否执行成功
+     */
     suspend fun AccessibilityNodeInfo.nodeGestureClickByDouble(
         offsetX: Float = ScreenUtils.getScreenWidth() * 0.01953f,
         offsetY: Float = ScreenUtils.getScreenWidth() * 0.01953f,
@@ -669,6 +718,12 @@ object AssistsCore {
         return true
     }
 
+    /**
+     * 判断元素是否可见
+     * @param compareNode 可选的比较节点，用于判断当前元素是否被该节点遮挡
+     * @param isFullyByCompareNode 是否要求完全不被比较节点遮挡
+     * @return true表示元素可见，false表示元素不可见或被遮挡
+     */
     fun AccessibilityNodeInfo.isVisible(
         compareNode: AccessibilityNodeInfo? = null,
         isFullyByCompareNode: Boolean = false,
@@ -743,11 +798,6 @@ object AssistsCore {
     fun AccessibilityNodeInfo.paste(text: String?): Boolean {
         performAction(AccessibilityNodeInfo.ACTION_FOCUS)
         AssistsService.instance?.let {
-//            val clip = ClipData.newPlainText("${System.currentTimeMillis()}", text)
-//            val clipboardManager = (it.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
-//            clipboardManager.setPrimaryClip(clip)
-//            clipboardManager.primaryClip
-
             val clipboard = it.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("label", text)
             clipboard.setPrimaryClip(clip)
@@ -865,6 +915,11 @@ object AssistsCore {
         return performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
     }
 
+    /**
+     * 通过Intent启动应用
+     * @param intent 要启动的应用Intent
+     * @return 启动操作是否成功
+     */
     suspend fun launchApp(intent: Intent): Boolean {
         val completableDeferred = CompletableDeferred<Boolean>()
         val view = View(AssistsService.instance).apply {
@@ -891,7 +946,11 @@ object AssistsCore {
         return completableDeferred.await()
     }
 
-
+    /**
+     * 通过包名启动应用
+     * @param packageName 要启动的应用包名
+     * @return 启动操作是否成功
+     */
     suspend fun launchApp(packageName: String): Boolean {
         val completableDeferred = CompletableDeferred<Boolean>()
         val view = View(AssistsService.instance).apply {
@@ -920,13 +979,94 @@ object AssistsCore {
     }
 
     /**
+     * 截取指定元素的屏幕截图并保存到文件
+     * @param file 保存截图的文件，默认为应用内部文件路径下的时间戳命名文件
+     * @param format 图片压缩格式，默认为PNG
+     * @return 保存成功时返回文件对象，失败时返回null
+     */
+    @RequiresApi(Build.VERSION_CODES.R)
+    suspend fun AccessibilityNodeInfo.takeScreenshotSave(
+        file: File = File(PathUtils.getInternalAppFilesPath() + "/${System.currentTimeMillis()}.png"),
+        format: CompressFormat = Bitmap.CompressFormat.PNG
+    ): File? {
+        takeScreenshot()?.let {
+            val result = ImageUtils.save(it, file, format)
+            if (result) {
+                return file
+            }
+        }
+        return null
+    }
+
+    /**
+     * 截取整个屏幕并保存到文件
+     * @param file 保存截图的文件，默认为应用内部文件路径下的时间戳命名文件
+     * @param format 图片压缩格式，默认为PNG
+     * @return 保存成功时返回文件对象，失败时返回null
+     */
+    @RequiresApi(Build.VERSION_CODES.R)
+    suspend fun takeScreenshotSave(
+        file: File = File(PathUtils.getInternalAppFilesPath() + "/${System.currentTimeMillis()}.png"),
+        format: CompressFormat = Bitmap.CompressFormat.PNG
+    ): File? {
+        takeScreenshot()?.let {
+            val result = ImageUtils.save(it, file, format)
+            if (result) {
+                return file
+            }
+        }
+        return null
+    }
+
+    /**
+     * 截取指定元素的屏幕截图
+     * @return 截图成功时返回Bitmap对象，失败时返回null
+     */
+    @RequiresApi(Build.VERSION_CODES.R)
+    suspend fun AccessibilityNodeInfo.takeScreenshot(): Bitmap? {
+        AssistsCore.takeScreenshot()?.let {
+            return getBoundsInScreen().let { nodeBounds ->
+                val bitmap = Bitmap.createBitmap(it, nodeBounds.left, nodeBounds.top, nodeBounds.width(), nodeBounds.height())
+                return@let bitmap
+            }
+        }
+        return null
+    }
+
+    /**
+     * 截取整个屏幕
+     * @return 截图成功时返回Bitmap对象，失败时返回null
+     */
+    @RequiresApi(Build.VERSION_CODES.R)
+    suspend fun takeScreenshot(): Bitmap? {
+        val completableDeferred = CompletableDeferred<Bitmap?>()
+        AssistsService.instance?.takeScreenshot(Display.DEFAULT_DISPLAY, Executors.newSingleThreadExecutor(), object : TakeScreenshotCallback {
+            override fun onSuccess(screenshot: AccessibilityService.ScreenshotResult) {
+                Bitmap.wrapHardwareBuffer(
+                    screenshot.hardwareBuffer,
+                    screenshot.colorSpace
+                )?.let {
+                    completableDeferred.complete(it)
+                } ?: let {
+                    completableDeferred.complete(null)
+                }
+            }
+
+            override fun onFailure(errorCode: Int) {
+                completableDeferred.complete(null)
+            }
+        })
+        return completableDeferred.await()
+    }
+
+    /**
      * 在日志中输出元素的详细信息
      * @param tag 日志标签
      */
     fun AccessibilityNodeInfo.logNode(tag: String = LOG_TAG) {
         StringBuilder().apply {
             val rect = getBoundsInScreen()
-            append("-------------------------------------\n")
+            append(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
             append("位置:left=${rect.left}, top=${rect.top}, right=${rect.right}, bottom=${rect.bottom} \n")
             append("文本:$text \n")
             append("内容描述:$contentDescription \n")
@@ -936,6 +1076,7 @@ object AssistsCore {
             append("是否可滚动:$isScrollable \n")
             append("是否可点击:$isClickable \n")
             append("是否可用:$isEnabled \n")
+            append("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n")
             Log.d(tag, toString())
         }
     }
