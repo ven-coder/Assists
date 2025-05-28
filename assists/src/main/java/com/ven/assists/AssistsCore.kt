@@ -527,28 +527,31 @@ object AssistsCore {
         gesture: GestureDescription,
         nonTouchableWindowDelay: Long = 100,
     ): Boolean {
-        val completableDeferred = CompletableDeferred<Boolean>()
+        return runCatching {
+            val completableDeferred = CompletableDeferred<Boolean>()
 
-        val gestureResultCallback = object : AccessibilityService.GestureResultCallback() {
-            override fun onCompleted(gestureDescription: GestureDescription?) {
-                CoroutineWrapper.launch { AssistsWindowManager.touchableByAll() }
-                completableDeferred.complete(true)
-            }
+            val gestureResultCallback = object : AccessibilityService.GestureResultCallback() {
+                override fun onCompleted(gestureDescription: GestureDescription?) {
+                    CoroutineWrapper.launch { AssistsWindowManager.touchableByAll() }
+                    completableDeferred.complete(true)
+                }
 
-            override fun onCancelled(gestureDescription: GestureDescription?) {
-                CoroutineWrapper.launch { AssistsWindowManager.touchableByAll() }
-                completableDeferred.complete(false)
+                override fun onCancelled(gestureDescription: GestureDescription?) {
+                    CoroutineWrapper.launch { AssistsWindowManager.touchableByAll() }
+                    completableDeferred.complete(false)
+                }
             }
-        }
-        val runResult = AssistsService.instance?.let {
-            AssistsWindowManager.nonTouchableByAll()
-            delay(nonTouchableWindowDelay)
-            runMain { it.dispatchGesture(gesture, gestureResultCallback, null) }
-        } ?: let {
-            return false
-        }
-        if (!runResult) return false
-        return completableDeferred.await()
+            val runResult = AssistsService.instance?.let {
+                AssistsWindowManager.nonTouchableByAll()
+                delay(nonTouchableWindowDelay)
+                runMain { it.dispatchGesture(gesture, gestureResultCallback, null) }
+            } ?: let {
+                return false
+            }
+            if (!runResult) return false
+            return@runCatching completableDeferred.await()
+        }.getOrDefault(false)
+
     }
 
     /**
@@ -565,10 +568,12 @@ object AssistsCore {
         startTime: Long,
         duration: Long,
     ): Boolean {
-        val path = Path()
-        path.moveTo(startLocation[0], startLocation[1])
-        path.lineTo(endLocation[0], endLocation[1])
-        return gesture(path, startTime, duration)
+        return runCatching {
+            val path = Path()
+            path.moveTo(startLocation[0], startLocation[1])
+            path.lineTo(endLocation[0], endLocation[1])
+            return@runCatching gesture(path, startTime, duration)
+        }.getOrDefault(false)
     }
 
     /**
@@ -583,26 +588,29 @@ object AssistsCore {
         startTime: Long,
         duration: Long,
     ): Boolean {
-        val builder = GestureDescription.Builder()
-        val strokeDescription = GestureDescription.StrokeDescription(path, startTime, duration)
-        val gestureDescription = builder.addStroke(strokeDescription).build()
-        val deferred = CompletableDeferred<Boolean>()
-        val runResult = runMain {
-            return@runMain AssistsService.instance?.dispatchGesture(gestureDescription, object : AccessibilityService.GestureResultCallback() {
-                override fun onCompleted(gestureDescription: GestureDescription) {
-                    deferred.complete(true)
-                }
+        return runCatching {
+            val builder = GestureDescription.Builder()
+            val strokeDescription = GestureDescription.StrokeDescription(path, startTime, duration)
+            val gestureDescription = builder.addStroke(strokeDescription).build()
+            val deferred = CompletableDeferred<Boolean>()
+            val runResult = runMain {
+                return@runMain AssistsService.instance?.dispatchGesture(gestureDescription, object : AccessibilityService.GestureResultCallback() {
+                    override fun onCompleted(gestureDescription: GestureDescription) {
+                        deferred.complete(true)
+                    }
 
-                override fun onCancelled(gestureDescription: GestureDescription) {
-                    deferred.complete(false)
+                    override fun onCancelled(gestureDescription: GestureDescription) {
+                        deferred.complete(false)
+                    }
+                }, null) ?: let {
+                    return@runMain false
                 }
-            }, null) ?: let {
-                return@runMain false
             }
-        }
-        if (!runResult) return false
-        val result = deferred.await()
-        return result
+            if (!runResult) return false
+            val result = deferred.await()
+            return result
+        }.getOrDefault(false)
+
     }
 
     /**
@@ -674,18 +682,20 @@ object AssistsCore {
         switchWindowIntervalDelay: Long = 250,
         duration: Long = 25
     ): Boolean {
-        runMain { AssistsWindowManager.nonTouchableByAll() }
-        delay(switchWindowIntervalDelay)
-        val rect = getBoundsInScreen()
-        val result = gesture(
-            floatArrayOf(rect.left.toFloat() + offsetX, rect.top.toFloat() + offsetY),
-            floatArrayOf(rect.left.toFloat() + offsetX, rect.top.toFloat() + offsetY),
-            0,
-            duration,
-        )
-        delay(switchWindowIntervalDelay)
-        runMain { AssistsWindowManager.touchableByAll() }
-        return result
+        return runCatching {
+            runMain { AssistsWindowManager.nonTouchableByAll() }
+            delay(switchWindowIntervalDelay)
+            val rect = getBoundsInScreen()
+            val result = gesture(
+                floatArrayOf(rect.left.toFloat() + offsetX, rect.top.toFloat() + offsetY),
+                floatArrayOf(rect.left.toFloat() + offsetX, rect.top.toFloat() + offsetY),
+                0,
+                duration,
+            )
+            delay(switchWindowIntervalDelay)
+            runMain { AssistsWindowManager.touchableByAll() }
+            return@runCatching result
+        }.getOrDefault(false)
     }
 
     /**
@@ -704,18 +714,20 @@ object AssistsCore {
         clickDuration: Long = 25,
         clickInterval: Long = 25,
     ): Boolean {
-        AssistsWindowManager.nonTouchableByAll()
-        delay(switchWindowIntervalDelay)
-        val bounds = getBoundsInScreen()
+        return runCatching {
+            AssistsWindowManager.nonTouchableByAll()
+            delay(switchWindowIntervalDelay)
+            val bounds = getBoundsInScreen()
 
-        val x = bounds.centerX().toFloat() + offsetX
-        val y = bounds.centerY().toFloat() + offsetY
+            val x = bounds.centerX().toFloat() + offsetX
+            val y = bounds.centerY().toFloat() + offsetY
 
-        AssistsCore.gestureClick(x, y, clickDuration)
-        delay(clickInterval)
-        AssistsCore.gestureClick(x, y, clickDuration)
-        AssistsWindowManager.touchableByAll()
-        return true
+            AssistsCore.gestureClick(x, y, clickDuration)
+            delay(clickInterval)
+            AssistsCore.gestureClick(x, y, clickDuration)
+            AssistsWindowManager.touchableByAll()
+            return@runCatching true
+        }.getOrDefault(true)
     }
 
     /**
