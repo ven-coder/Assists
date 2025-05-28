@@ -161,6 +161,7 @@ AssistsCore是Assists框架的核心类，提供了所有主要的无障碍服�
 - [爱发电支持](https://afdian.com/a/vencoder) - 您的每一份支持都是我们前进的动力
 - 加入付费社群获得更多技术支持和源码资源
 - 一杯Coffee的微信赞赏
+<img width="200" alt="image" src="https://github.com/user-attachments/assets/3862a40c-631c-4ab0-b1e7-00ec3e3e00ad" />
 
 
 ### 📞 联系我
