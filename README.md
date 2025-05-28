@@ -261,7 +261,7 @@ StepManager.isStop = true
 | `AccessibilityNodeInfo.scrollForward()` | 向前滚动可滚动元素 | Boolean |
 | `AccessibilityNodeInfo.scrollBackward()` | 向后滚动可滚动元素 | Boolean |
 
-### [更多API]()
+### [更多API](https://github.com/ven-coder/Assists/blob/master/API_REFERENCE.md)
 
 ## 示例教程
 
@@ -284,10 +284,22 @@ StepManager.isStop = true
 | <img src="https://github.com/user-attachments/assets/0893a4b6-dba7-4d0e-a010-ba09ba8d5e32" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
 1群已满200人，要进1群可加我备注进1群
 
-### ❤️ 已入驻爱发电，感谢[支持](https://afdian.com/a/vencoder)
+# 💝 支持开源
 
-## 我的付费社群
+开源不易，您的支持是我坚持的动力！
 
+如果Assists框架对您的项目有帮助，可以通过以下方式支持我喔：
+
+### ⭐ Star支持
+- 给项目点个Star，让更多开发者发现这个框架
+- 分享给身边的朋友和同事
+
+### 💰 赞助支持
+- [爱发电支持](https://afdian.com/a/vencoder) - 您的每一份支持都是我们前进的动力
+- 一杯Coffee的微信赞赏
+<img width="200" alt="image" src="https://github.com/user-attachments/assets/3862a40c-631c-4ab0-b1e7-00ec3e3e00ad" />
+
+### 💁 付费社群
 付费社群提供的服务：
 
 1. 完整易于阅读的开发文档
@@ -297,11 +309,13 @@ StepManager.isStop = true
 5. 基于Assists开发的抖音养号，小红书养号，支付宝能量收集，支付宝农场，无线远程控制等源码（补充中...）
    <img width="500" alt="image" src="https://github.com/user-attachments/assets/7607a4e6-4845-474e-a9c6-e685cc306523" />
 
-##### 微信扫扫即可加入
+微信扫扫即可加入
 
 <img src="https://github.com/ven-coder/Assists/assets/27257149/7ae8e825-f489-46e3-96f0-ed03d12db9e8" width=200/>
 
-##### 定制开发可直接联系个人微信：x39598
+**定制开发可直接联系个人微信: x39598**
+
+**感谢所有的支持者，得到你们的支持我将会更加完善开源库的能力！** 🚀
 
 # 新增支持Html+js/vue/vite开发自动化脚本
 
