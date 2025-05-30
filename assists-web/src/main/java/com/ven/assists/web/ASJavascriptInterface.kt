@@ -2,6 +2,7 @@ package com.ven.assists.web
 
 import android.graphics.Bitmap
 import android.graphics.Rect
+import android.os.Build
 import android.util.Base64
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
@@ -31,6 +32,7 @@ import com.ven.assists.AssistsCore.scrollBackward
 import com.ven.assists.AssistsCore.scrollForward
 import com.ven.assists.AssistsCore.selectionText
 import com.ven.assists.AssistsCore.setNodeText
+import com.ven.assists.AssistsCore.takeScreenshot
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists.window.AssistsWindowManager
 import com.ven.assists.window.AssistsWindowManager.overlayToast
@@ -62,7 +64,7 @@ class ASJavascriptInterface(val webView: WebView) {
         runCatching {
             val request = GsonUtils.fromJson<CallRequest<JsonObject>>(json, object : TypeToken<CallRequest<JsonObject>>() {}.type)
             when (request.method) {
-                CallMethod.setOverlayFlags-> {
+                CallMethod.setOverlayFlags -> {
                     request.arguments?.apply {
                         val flagList = arrayListOf<Int>()
                         get("flags")?.asJsonArray?.forEach {
@@ -74,29 +76,41 @@ class ASJavascriptInterface(val webView: WebView) {
                 }
 
                 CallMethod.takeScreenshot -> {
-
-                    val overlayHiddenScreenshotDelayMillis = request.arguments?.get("overlayHiddenScreenshotDelayMillis")?.asLong ?: 250
-
                     CoroutineWrapper.launch {
+                        val overlayHiddenScreenshotDelayMillis = request.arguments?.get("overlayHiddenScreenshotDelayMillis")?.asLong ?: 250
                         AssistsWindowManager.hideAll()
                         delay(overlayHiddenScreenshotDelayMillis)
-                        val takeScreenshot2Bitmap = MPManager.takeScreenshot2Bitmap()
-                        AssistsWindowManager.showTop()
-
-                        takeScreenshot2Bitmap ?: let {
-                            callback(CallResponse<JsonObject>(code = -1, message = "截屏失败", callbackId = request.callbackId))
-                            return@launch
-                        }
                         val list = arrayListOf<String>()
-                        request.nodes?.forEach {
-                            val bitmap = NodeCacheManager.get(it.nodeId)?.getBitmap(screenshot = takeScreenshot2Bitmap)
-                            bitmap?.let {
-                                val base64 = bitmapToBase64(it)
-                                list.add(base64)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            val screenshot = AssistsCore.takeScreenshot()
+                            AssistsWindowManager.showTop()
+
+                            request.nodes?.forEach {
+                                val bitmap = NodeCacheManager.get(it.nodeId)?.takeScreenshot(screenshot = screenshot)
+                                bitmap?.let {
+                                    val base64 = bitmapToBase64(it)
+                                    list.add(base64)
+                                }
+                                bitmap?.recycle()
                             }
-                            bitmap?.recycle()
+                        } else {
+                            val takeScreenshot2Bitmap = MPManager.takeScreenshot2Bitmap()
+                            AssistsWindowManager.showTop()
+
+                            takeScreenshot2Bitmap ?: let {
+                                callback(CallResponse<JsonObject>(code = -1, message = "截屏失败", callbackId = request.callbackId))
+                                return@launch
+                            }
+                            request.nodes?.forEach {
+                                val bitmap = NodeCacheManager.get(it.nodeId)?.getBitmap(screenshot = takeScreenshot2Bitmap)
+                                bitmap?.let {
+                                    val base64 = bitmapToBase64(it)
+                                    list.add(base64)
+                                }
+                                bitmap?.recycle()
+                            }
+                            takeScreenshot2Bitmap.recycle()
                         }
-                        takeScreenshot2Bitmap.recycle()
                         callback(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
                             add("images", JsonArray().apply {
                                 list.forEach {

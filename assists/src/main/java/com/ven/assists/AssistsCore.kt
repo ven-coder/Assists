@@ -1035,14 +1035,25 @@ object AssistsCore {
      * @return 截图成功时返回Bitmap对象，失败时返回null
      */
     @RequiresApi(Build.VERSION_CODES.R)
-    suspend fun AccessibilityNodeInfo.takeScreenshot(): Bitmap? {
-        AssistsCore.takeScreenshot()?.let {
-            return getBoundsInScreen().let { nodeBounds ->
-                val bitmap = Bitmap.createBitmap(it, nodeBounds.left, nodeBounds.top, nodeBounds.width(), nodeBounds.height())
-                return@let bitmap
+    suspend fun AccessibilityNodeInfo.takeScreenshot(screenshot: Bitmap? = null): Bitmap? {
+        val result = runCatching {
+
+            val bitmap = screenshot?.let {
+                return@let getBoundsInScreen().let { nodeBounds ->
+                    val bitmap = Bitmap.createBitmap(it, nodeBounds.left, nodeBounds.top, nodeBounds.width(), nodeBounds.height())
+                    return@let bitmap
+                }
+            } ?: let {
+                return@let AssistsCore.takeScreenshot()?.let {
+                    return@let getBoundsInScreen().let { nodeBounds ->
+                        val bitmap = Bitmap.createBitmap(it, nodeBounds.left, nodeBounds.top, nodeBounds.width(), nodeBounds.height())
+                        return@let bitmap
+                    }
+                }
             }
+            return@runCatching bitmap
         }
-        return null
+        return result.getOrNull()
     }
 
     /**
