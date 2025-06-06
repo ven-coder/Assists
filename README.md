@@ -330,6 +330,10 @@ StepManager.isStop = true
 
 ### [开发文档传送门](https://github.com/ven-coder/Assists/tree/master/assists-web-simple)
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ven-coder/Assists&type=Date)](https://www.star-history.com/#ven-coder/Assists&Date)
+
 # License
 
 [GNU General Public License v3.0](https://github.com/ven-coder/Assists/blob/master/LICENSE)
