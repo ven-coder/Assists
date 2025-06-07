@@ -284,6 +284,9 @@ StepManager.isStop = true
 | <img src="https://github.com/user-attachments/assets/fb9c6d75-4b19-42ab-90f2-65799cfec648" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
 1群已满200人，要进1群可加我备注进1群
 
+# 🎉新增JS支持库
+新增支持通过Web端实现Android平台自动化脚本的JS库：**[assistsx-js](https://github.com/ven-coder/assistsx-js)**
+
 # 💝 支持开源
 
 开源不易，您的支持是我坚持的动力！
@@ -316,19 +319,6 @@ StepManager.isStop = true
 **定制开发可直接联系个人微信: x39598**
 
 **感谢所有的支持者，得到你们的支持我将会更加完善开源库的能力！** 🚀
-
-# 新增支持Html+js/vue/vite开发自动化脚本
-
-> ⚠️当前处于可用但非稳定版本
-
-本仓库源码中包含了一个通过vite编写的一个自动化脚本示例：`assists-web-simple`，可自行下载编译。项目中已经有编译好的vite示例在 `simple/src/main/assets/assists-web-simple`目录下，在当前示例App中可直接加载查看这个vite编写的自动化脚本。
-
-`assists-web`是基础的web支持库，封装了webview js接口对web端调用的支持，但是对于web端本地开发调试不友好，需要了解android端相关知识
-
-## AssistsX脚本平台
-为了支持本地开发调试和动态化加载脚本，特地开发了脚本平台App：[AssistsX](https://www.pgyer.com/SqGaCx8C)，可支持脚本的本地安装，在线安装，局域网加载，远程加载
-
-### [开发文档传送门](https://github.com/ven-coder/Assists/tree/master/assists-web-simple)
 
 ## Star History
 
