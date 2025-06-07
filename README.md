@@ -316,7 +316,7 @@ StepManager.isStop = true
 
 <img src="https://github.com/ven-coder/Assists/assets/27257149/7ae8e825-f489-46e3-96f0-ed03d12db9e8" width=200/>
 
-**定制开发可直接联系个人微信: x39598**
+**定制开发可联系个人微信: x39598**
 
 **感谢所有的支持者，得到你们的支持我将会更加完善开源库的能力！** 🚀
 
