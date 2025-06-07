@@ -45,6 +45,9 @@
 
 [&#128229;直接下载](https://www.pgyer.com/1zaijG)
 
+# 🎉新增JS支持库
+新增支持通过Web端实现Android平台自动化脚本的JS库：**[assistsx-js](https://github.com/ven-coder/assistsx-js)**
+
 # 🚀 快速开始
 
 ### 1. 导入依赖
@@ -283,9 +286,6 @@ StepManager.isStop = true
 |:---------:|:-----------:|
 | <img src="https://github.com/user-attachments/assets/fb9c6d75-4b19-42ab-90f2-65799cfec648" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
 1群已满200人，要进1群可加我备注进1群
-
-# 🎉新增JS支持库
-新增支持通过Web端实现Android平台自动化脚本的JS库：**[assistsx-js](https://github.com/ven-coder/assistsx-js)**
 
 # 💝 支持开源
 
