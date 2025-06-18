@@ -37,4 +37,5 @@ object CallMethod {
     const val nodeGestureClickByDouble="nodeGestureClickByDouble"
     const val takeScreenshot="takeScreenshot"
     const val setOverlayFlags="setOverlayFlags"
+    const val scanQR="scanQR"
 }

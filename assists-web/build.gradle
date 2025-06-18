@@ -36,6 +36,7 @@ dependencies {
     implementation "com.google.code.gson:gson:2.11.0"
     implementation project(':assists')
     implementation project(':assists-mp')
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
 }
 task sourcesJar(type: Jar) {
     archiveClassifier.set('sources')
@@ -48,7 +49,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.ven-coder'
                 artifactId = 'assists-web'
-                version = '0.0.21-SNAPSHOT'
+                version = '0.0.22-SNAPSHOT'
                 artifact sourcesJar
             }
         }

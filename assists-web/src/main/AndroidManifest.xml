@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ven.assists_web">
 
-    <application>
+    <application android:hardwareAccelerated="true">
         <provider
             android:name="com.ven.assists.web.CustomFileProvider"
             android:authorities="${applicationId}.assistsweb.fileprovider"

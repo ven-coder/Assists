@@ -12,6 +12,7 @@ import com.blankj.utilcode.util.ScreenUtils
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
+import com.journeyapps.barcodescanner.ScanOptions
 import com.ven.assists.AssistsCore
 import com.ven.assists.AssistsCore.click
 import com.ven.assists.AssistsCore.containsText
@@ -33,16 +34,17 @@ import com.ven.assists.AssistsCore.scrollForward
 import com.ven.assists.AssistsCore.selectionText
 import com.ven.assists.AssistsCore.setNodeText
 import com.ven.assists.AssistsCore.takeScreenshot
+import com.ven.assists.mp.MPManager
+import com.ven.assists.mp.MPManager.getBitmap
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists.window.AssistsWindowManager
 import com.ven.assists.window.AssistsWindowManager.overlayToast
-import com.ven.assists.mp.MPManager
-import com.ven.assists.mp.MPManager.getBitmap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+
 
 class ASJavascriptInterface(val webView: WebView) {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -64,6 +66,19 @@ class ASJavascriptInterface(val webView: WebView) {
         runCatching {
             val request = GsonUtils.fromJson<CallRequest<JsonObject>>(json, object : TypeToken<CallRequest<JsonObject>>() {}.type)
             when (request.method) {
+                CallMethod.scanQR -> {
+                    CoroutineWrapper.launch {
+                        val scanIntentResult = CustomFileProvider.requestLaunchersScan(ScanOptions())
+                        callback(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
+                            addProperty("value", scanIntentResult?.contents ?: "")
+                        }, callbackId = request.callbackId))
+                    }
+
+                    result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
+                        addProperty("resultType", "callback")
+                    }))
+                }
+
                 CallMethod.setOverlayFlags -> {
                     request.arguments?.apply {
                         val flagList = arrayListOf<Int>()

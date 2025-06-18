@@ -172,7 +172,7 @@ class MyStepImpl:StepImpl() {
             //步骤1逻辑
 	    ...
             //返回下一步需要执行的序号，通过Step.get([序号])，如果需要重复该步骤可返回Step.repeat，如果返回Step.none则不执行任何步骤，相当于停止
-            return@next Step.get(2) //将会执行步骤2逻辑
+            return@next Step.get(2, delay = 1000) //将会执行步骤2逻辑
         }.next(2) {
             //步骤2逻辑
 	    ...
