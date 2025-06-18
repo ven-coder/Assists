@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.ven.assists_web">
 
     <application android:hardwareAccelerated="true">
@@ -12,6 +13,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/assists_web_provider_paths" />
         </provider>
+
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="portrait"
+            tools:replace="screenOrientation" />
 
     </application>
 
