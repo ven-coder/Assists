@@ -19,6 +19,14 @@ class ASWebView @JvmOverloads constructor(
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     var onReceivedTitle: ((title: String) -> Unit)? = null
+    val javascriptInterface = ASJavascriptInterface(webView = this)
+
+    var callIntercept: ((json: String) -> CallInterceptResult)? = null
+        set(value) {
+            field = value
+            javascriptInterface.callIntercept = value
+        }
+
 
     init {
         // 初始化WebView设置
@@ -36,8 +44,8 @@ class ASWebView @JvmOverloads constructor(
             loadWithOverviewMode = true
             allowUniversalAccessFromFileURLs = true
             allowFileAccessFromFileURLs = true
-            domStorageEnabled=true
-            databaseEnabled=true
+            domStorageEnabled = true
+            databaseEnabled = true
             setWebContentsDebuggingEnabled(true)
         }
 
@@ -61,7 +69,6 @@ class ASWebView @JvmOverloads constructor(
         requestFocus()
         isFocusableInTouchMode = true
         isFocusable = true
-
-        addJavascriptInterface(ASJavascriptInterface(this), "assistsx")
+        addJavascriptInterface(javascriptInterface, "assistsx")
     }
 }

@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Build
 import android.util.Base64
+import android.view.LayoutInflater
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.blankj.utilcode.util.GsonUtils
@@ -36,17 +37,21 @@ import com.ven.assists.AssistsCore.setNodeText
 import com.ven.assists.AssistsCore.takeScreenshot
 import com.ven.assists.mp.MPManager
 import com.ven.assists.mp.MPManager.getBitmap
+import com.ven.assists.service.AssistsService
 import com.ven.assists.utils.CoroutineWrapper
+import com.ven.assists.utils.runIO
 import com.ven.assists.window.AssistsWindowManager
 import com.ven.assists.window.AssistsWindowManager.overlayToast
+import com.ven.assists.window.AssistsWindowWrapper
+import com.ven.assists_web.databinding.WebFloatingWindowBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
-
 class ASJavascriptInterface(val webView: WebView) {
+    var callIntercept: ((json: String) -> CallInterceptResult)? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     fun <T> callback(result: CallResponse<T>) {
@@ -61,11 +66,54 @@ class ASJavascriptInterface(val webView: WebView) {
     }
 
     @JavascriptInterface
-    fun call(json: String): String {
+    fun call(originJson: String): String {
+        var requestJson = originJson
+
+        runCatching {
+            callIntercept?.invoke(originJson)?.let {
+                if (it.intercept) {
+                    return it.result
+                } else {
+                    requestJson = it.result
+                }
+            }
+        }.onFailure { LogUtils.e(it) }
+
         var result = GsonUtils.toJson(CallResponse<Any>(code = -1))
         runCatching {
-            val request = GsonUtils.fromJson<CallRequest<JsonObject>>(json, object : TypeToken<CallRequest<JsonObject>>() {}.type)
+            val request = GsonUtils.fromJson<CallRequest<JsonObject>>(requestJson, object : TypeToken<CallRequest<JsonObject>>() {}.type)
             when (request.method) {
+                CallMethod.addWebFloatingWindow -> {
+                    CoroutineWrapper.launch(isMain = true) {
+                        val url = request.arguments?.get("url")?.asString ?: ""
+                        val initialWidth = request.arguments?.get("initialWidth")?.asInt ?: (ScreenUtils.getScreenWidth() * 0.8).toInt()
+                        val initialHeight = request.arguments?.get("initialHeight")?.asInt ?: (ScreenUtils.getScreenHeight() * 0.5).toInt()
+                        val minWidth = request.arguments?.get("minWidth")?.asInt ?: (ScreenUtils.getScreenHeight() * 0.5).toInt()
+                        val minHeight = request.arguments?.get("minHeight")?.asInt ?: (ScreenUtils.getScreenHeight() * 0.5).toInt()
+                        val initialCenter = request.arguments?.get("initialCenter")?.asBoolean ?: true
+
+                        AssistsWindowManager.add(
+                            windowWrapper = AssistsWindowWrapper(
+                                wmLayoutParams = AssistsWindowManager.createLayoutParams().apply {
+                                    width = initialWidth
+                                    height = initialHeight
+                                },
+                                view = WebFloatingWindowBinding.inflate(LayoutInflater.from(AssistsService.instance)).apply {
+                                    webView.loadUrl(url)
+                                }.root
+                            ).apply {
+                                this.minWidth = minWidth
+                                this.minHeight = minHeight
+                                this.initialCenter = initialCenter
+                            }
+                        )
+                    }
+
+                    result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
+                        addProperty("resultType", "callback")
+                    }))
+                }
+
                 CallMethod.scanQR -> {
                     CoroutineWrapper.launch {
                         val scanIntentResult = CustomFileProvider.requestLaunchersScan(ScanOptions())
