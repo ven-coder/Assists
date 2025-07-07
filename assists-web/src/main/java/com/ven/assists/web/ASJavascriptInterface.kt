@@ -116,7 +116,9 @@ class ASJavascriptInterface(val webView: WebView) {
 
                 CallMethod.scanQR -> {
                     CoroutineWrapper.launch {
+                        AssistsWindowManager.hideAll()
                         val scanIntentResult = CustomFileProvider.requestLaunchersScan(ScanOptions())
+                        AssistsWindowManager.showTop()
                         callback(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
                             addProperty("value", scanIntentResult?.contents ?: "")
                         }, callbackId = request.callbackId))
