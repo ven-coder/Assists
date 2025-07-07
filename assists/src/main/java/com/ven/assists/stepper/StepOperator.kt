@@ -95,7 +95,7 @@ class StepOperator(
 
             Step.repeat -> {
                 repeatCount++
-                StepManager.execute(implClassName, step, delay = nextStep.delay, data = data)
+                StepManager.execute(implClassName, step, delay = nextStep.delay, data = if (nextStep.data == null) data else nextStep.data)
             }
 
             else -> {
