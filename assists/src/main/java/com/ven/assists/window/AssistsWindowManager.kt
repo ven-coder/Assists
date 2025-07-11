@@ -256,6 +256,7 @@ object AssistsWindowManager {
         withContext(Dispatchers.Main) {
             viewList.values.forEach {
                 it.layoutParams.flags = flag
+                updateViewLayout(it.view, it.layoutParams)
             }
         }
     }
@@ -355,6 +356,13 @@ object AssistsWindowManager {
     suspend fun nonTouchableByAll() {
         viewList.values.forEach { it.nonTouchableByWrapper() }
     }
+
+    fun WindowManager.LayoutParams.focusInput() {
+        flags = (WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+    }
+
 
     /**
      * 设置布局参数为可触摸状态

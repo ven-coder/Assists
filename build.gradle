@@ -10,8 +10,8 @@ buildscript {
         
         // 应用版本
         versionCode = 11
-        versionName = "3.2.171"
-        mavenVersion = "3.2.171"
+        versionName = "3.2.172"
+        mavenVersion = "3.2.172"
         
         // 依赖库版本
         coreKtxVersion = "1.13.1"
