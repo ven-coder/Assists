@@ -385,6 +385,7 @@ object AssistsCore {
             }
         }
         nodeList = viewId?.let {
+            if (it.isEmpty())return@let nodeList
             return@let arrayListOf<AccessibilityNodeInfo>().apply {
                 addAll(nodeList.filter {
                     return@filter it.viewIdResourceName == viewId
@@ -395,6 +396,7 @@ object AssistsCore {
         }
 
         nodeList = text?.let {
+            if (it.isEmpty())return@let nodeList
             return@let arrayListOf<AccessibilityNodeInfo>().apply {
                 addAll(nodeList.filter {
                     return@filter it.txt() == text
@@ -402,6 +404,7 @@ object AssistsCore {
             }
         } ?: let { return@let nodeList }
         nodeList = des?.let {
+            if (it.isEmpty())return@let nodeList
             return@let arrayListOf<AccessibilityNodeInfo>().apply {
                 addAll(nodeList.filter {
                     return@filter it.des() == des
