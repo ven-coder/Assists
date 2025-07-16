@@ -5,7 +5,11 @@ import android.content.Intent
 import android.view.accessibility.AccessibilityEvent
 import com.blankj.utilcode.util.LogUtils
 import com.ven.assists.AssistsCore
+import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists.window.AssistsWindowManager
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import java.util.Collections
 
 /**
@@ -29,6 +33,11 @@ open class AssistsService : AccessibilityService() {
          * 用于分发服务生命周期和无障碍事件
          */
         val listeners: MutableList<AssistsServiceListener> = Collections.synchronizedList(arrayListOf<AssistsServiceListener>())
+
+//        val onAccessibilityEventFlow =
+//            MutableSharedFlow<AccessibilityEvent>(replay = 0, extraBufferCapacity = 64, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+//        val onServiceConnectedFlow =
+//            MutableSharedFlow<AssistsService>(replay = 0, extraBufferCapacity = 64, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     }
 
     /**

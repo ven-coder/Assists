@@ -9,6 +9,7 @@ import java.util.UUID
 
 class Node(
     val nodeId: String,
+    val packageName: String,
     val text: String,
     val des: String,
     val viewId: String,
@@ -48,6 +49,7 @@ fun AccessibilityNodeInfo.toNode(): Node {
     getBoundsInScreen(boundsInScreenRect)
 
     val node = Node(
+        packageName = packageName?.toString() ?: "",
         nodeId = NodeCacheManager.add(this),
         text = this.text?.toString() ?: "",
         des = this.contentDescription?.toString() ?: "",
