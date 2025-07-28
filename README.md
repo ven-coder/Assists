@@ -284,7 +284,7 @@ StepManager.isStop = true
 
 | 交流群| 个人微信 |
 |:---------:|:-----------:|
-| <img src="https://github.com/user-attachments/assets/469fe030-8bb6-41f3-ac35-fe48ceaaa0e6" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
+| <img src="https://github.com/user-attachments/assets/0385fb61-5a9e-4959-8e19-36bcf06d4b88" width=200/> | <img src="https://github.com/user-attachments/assets/49378ec3-71a2-4a5e-8510-bec4ec8d915e" width=200/>
 1群已满200人，要进1群可加我备注进1群
 
 
