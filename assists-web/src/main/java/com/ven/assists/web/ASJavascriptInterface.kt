@@ -83,7 +83,7 @@ class ASJavascriptInterface(val webView: WebView) {
         runCatching {
             val request = GsonUtils.fromJson<CallRequest<JsonObject>>(requestJson, object : TypeToken<CallRequest<JsonObject>>() {}.type)
             when (request.method) {
-                CallMethod.addWebFloatingWindow -> {
+                CallMethod.loadWebViewOverlay -> {
                     CoroutineWrapper.launch(isMain = true) {
                         val url = request.arguments?.get("url")?.asString ?: ""
                         val initialWidth = request.arguments?.get("initialWidth")?.asInt ?: (ScreenUtils.getScreenWidth() * 0.8).toInt()

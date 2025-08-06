@@ -38,6 +38,6 @@ object CallMethod {
     const val takeScreenshot = "takeScreenshot"
     const val setOverlayFlags = "setOverlayFlags"
     const val scanQR = "scanQR"
-    const val addWebFloatingWindow = "addWebFloatingWindow"
+    const val loadWebViewOverlay = "loadWebViewOverlay"
     const val getLocalDomain = "getLocalDomain"
 }
