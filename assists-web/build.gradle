@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.ven.assists_web'
+    namespace 'com.ven.assists.web'
     compileSdk rootProject.ext.compileSdk
 
     defaultConfig {

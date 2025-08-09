@@ -1,6 +1,7 @@
 package com.ven.assists.web
 
 import android.graphics.Bitmap
+import android.graphics.Path
 import android.graphics.Rect
 import android.os.Build
 import android.util.Base64
@@ -40,10 +41,11 @@ import com.ven.assists.mp.MPManager.getBitmap
 import com.ven.assists.service.AssistsService
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists.utils.runIO
+import com.ven.assists.utils.runMain
+import com.ven.assists.web.databinding.WebFloatingWindowBinding
 import com.ven.assists.window.AssistsWindowManager
 import com.ven.assists.window.AssistsWindowManager.overlayToast
 import com.ven.assists.window.AssistsWindowWrapper
-import com.ven.assists_web.databinding.WebFloatingWindowBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -191,11 +193,30 @@ class ASJavascriptInterface(val webView: WebView) {
                     }))
                 }
 
-                CallMethod.dispatchGesture -> {
-                    ScreenUtils.getScreenHeight()
-//                    AssistsCore.dispatchGesture()
-//
-//                    result = GsonUtils.toJson(CallResponse<List<Node>>(code = 0, data = nodes))
+                CallMethod.performLinearGesture -> {
+                    CoroutineWrapper.launch {
+                        val startPoint = request.arguments?.get("startPoint")?.asJsonObject ?: JsonObject()
+                        val endPoint = request.arguments?.get("endPoint")?.asJsonObject ?: JsonObject()
+                        val path = Path()
+                        path.moveTo(startPoint.get("x").asFloat, startPoint.get("y").asFloat)
+                        path.lineTo(endPoint.get("x").asFloat, endPoint.get("y").asFloat)
+                        val switchWindowIntervalDelay = request.arguments?.get("switchWindowIntervalDelay")?.asLong ?: 250
+                        CoroutineWrapper.launch {
+                            AssistsWindowManager.nonTouchableByAll()
+                            delay(switchWindowIntervalDelay)
+                            val result =
+                                AssistsCore.gesture(path = path, startTime = 0, duration = request.arguments?.get("duration")?.asLong ?: 1000)
+                            AssistsWindowManager.touchableByAll()
+                            if (result) {
+                                callback(CallResponse<Boolean>(code = 0, data = true, callbackId = request.callbackId))
+                            } else {
+                                callback(CallResponse<Boolean>(code = -1, data = false, callbackId = request.callbackId))
+                            }
+                        }
+                    }
+                    result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
+                        addProperty("resultType", "callback")
+                    }))
                 }
 
                 CallMethod.getAppScreenSize -> {
@@ -210,14 +231,14 @@ class ASJavascriptInterface(val webView: WebView) {
                     }))
                 }
 
-                CallMethod.gestureClick -> {
+                CallMethod.clickByGesture -> {
                     CoroutineWrapper.launch {
                         AssistsCore.gestureClick(x = request.arguments?.get("x")?.asFloat ?: 0f, y = request.arguments?.get("y")?.asFloat ?: 0f)
                     }
                     result = GsonUtils.toJson(CallResponse<Boolean>(code = 0, data = true))
                 }
 
-                CallMethod.nodeGestureClick -> {
+                CallMethod.clickNodeByGesture -> {
                     CoroutineWrapper.launch {
                         val offsetX = request.arguments?.get("offsetX")?.asFloat ?: (ScreenUtils.getScreenWidth() * 0.01953f)
                         val offsetY = request.arguments?.get("offsetY")?.asFloat ?: (ScreenUtils.getScreenWidth() * 0.01953f)
@@ -236,7 +257,7 @@ class ASJavascriptInterface(val webView: WebView) {
                     }))
                 }
 
-                CallMethod.nodeGestureClickByDouble -> {
+                CallMethod.doubleClickNodeByGesture -> {
                     CoroutineWrapper.launch {
                         val offsetX = request.arguments?.get("offsetX")?.asFloat ?: (ScreenUtils.getScreenWidth() * 0.01953f)
                         val offsetY = request.arguments?.get("offsetY")?.asFloat ?: (ScreenUtils.getScreenWidth() * 0.01953f)

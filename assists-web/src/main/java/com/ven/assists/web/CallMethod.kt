@@ -13,13 +13,11 @@ object CallMethod {
     const val getNodes = "getNodes"
     const val findFirstParentClickable = "findFirstParentClickable"
     const val getChildren = "getChildren"
-    const val dispatchGesture = "dispatchGesture"
     const val getBoundsInScreen = "getBoundsInScreen"
     const val getBoundsInParent = "getBoundsInParent"
     const val isVisible = "isVisible"
     const val click = "click"
     const val longClick = "longClick"
-    const val gestureClick = "gestureClick"
     const val back = "back"
     const val home = "home"
     const val notifications = "notifications"
@@ -33,11 +31,18 @@ object CallMethod {
     const val overlayToast = "overlayToast"
     const val getScreenSize = "getScreenSize"
     const val getAppScreenSize = "getAppScreenSize"
-    const val nodeGestureClick = "nodeGestureClick"
-    const val nodeGestureClickByDouble = "nodeGestureClickByDouble"
     const val takeScreenshot = "takeScreenshot"
     const val setOverlayFlags = "setOverlayFlags"
     const val scanQR = "scanQR"
     const val loadWebViewOverlay = "loadWebViewOverlay"
-    const val getLocalDomain = "getLocalDomain"
+
+
+    //手势方法
+    const val clickByGesture = "clickByGesture"
+    const val clickNodeByGesture = "clickNodeByGesture"
+    const val doubleClickNodeByGesture = "doubleClickNodeByGesture"
+    const val performLinearGesture = "performLinearGesture"
+
+    //TODO 获取app信息
+    const val getAppInfoByPackageName = "getAppInfoByPackageName"
 }
