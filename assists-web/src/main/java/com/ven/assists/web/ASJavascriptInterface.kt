@@ -8,6 +8,7 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
@@ -85,30 +86,50 @@ class ASJavascriptInterface(val webView: WebView) {
         runCatching {
             val request = GsonUtils.fromJson<CallRequest<JsonObject>>(requestJson, object : TypeToken<CallRequest<JsonObject>>() {}.type)
             when (request.method) {
+                CallMethod.getAppInfo -> {
+                    val packageName = request.arguments?.get("packageName")?.asString ?: ""
+                    CoroutineWrapper.launch {
+                        runCatching {
+                            val appInfo = AppUtils.getAppInfo(packageName)
+                            callback(CallResponse(code = 0, data = appInfo, callbackId = request.callbackId))
+                        }.onFailure {
+                            callback(CallResponse(code = 0, data = JsonObject(), callbackId = request.callbackId))
+                        }
+                    }
+
+                }
+
                 CallMethod.loadWebViewOverlay -> {
                     CoroutineWrapper.launch(isMain = true) {
-                        val url = request.arguments?.get("url")?.asString ?: ""
-                        val initialWidth = request.arguments?.get("initialWidth")?.asInt ?: (ScreenUtils.getScreenWidth() * 0.8).toInt()
-                        val initialHeight = request.arguments?.get("initialHeight")?.asInt ?: (ScreenUtils.getScreenHeight() * 0.5).toInt()
-                        val minWidth = request.arguments?.get("minWidth")?.asInt ?: (ScreenUtils.getScreenHeight() * 0.5).toInt()
-                        val minHeight = request.arguments?.get("minHeight")?.asInt ?: (ScreenUtils.getScreenHeight() * 0.5).toInt()
-                        val initialCenter = request.arguments?.get("initialCenter")?.asBoolean ?: true
+                        runCatching {
+                            val url = request.arguments?.get("url")?.asString ?: ""
+                            val initialWidth = request.arguments?.get("initialWidth")?.asInt ?: (ScreenUtils.getScreenWidth() * 0.8).toInt()
+                            val initialHeight = request.arguments?.get("initialHeight")?.asInt ?: (ScreenUtils.getScreenHeight() * 0.5).toInt()
+                            val minWidth = request.arguments?.get("minWidth")?.asInt ?: (ScreenUtils.getScreenHeight() * 0.5).toInt()
+                            val minHeight = request.arguments?.get("minHeight")?.asInt ?: (ScreenUtils.getScreenHeight() * 0.5).toInt()
+                            val initialCenter = request.arguments?.get("initialCenter")?.asBoolean ?: true
 
-                        AssistsWindowManager.add(
-                            windowWrapper = AssistsWindowWrapper(
-                                wmLayoutParams = AssistsWindowManager.createLayoutParams().apply {
-                                    width = initialWidth
-                                    height = initialHeight
-                                },
-                                view = WebFloatingWindowBinding.inflate(LayoutInflater.from(AssistsService.instance)).apply {
-                                    webView.loadUrl(url)
-                                }.root
-                            ).apply {
-                                this.minWidth = minWidth
-                                this.minHeight = minHeight
-                                this.initialCenter = initialCenter
-                            }
-                        )
+                            AssistsWindowManager.add(
+                                windowWrapper = AssistsWindowWrapper(
+                                    wmLayoutParams = AssistsWindowManager.createLayoutParams().apply {
+                                        width = initialWidth
+                                        height = initialHeight
+                                    },
+                                    view = WebFloatingWindowBinding.inflate(LayoutInflater.from(AssistsService.instance)).apply {
+                                        webView.loadUrl(url)
+                                    }.root
+                                ).apply {
+                                    this.minWidth = minWidth
+                                    this.minHeight = minHeight
+                                    this.initialCenter = initialCenter
+                                }
+                            )
+                        }.onSuccess {
+                            callback(CallResponse<Boolean>(code = 0, data = true, callbackId = request.callbackId))
+                        }.onFailure {
+                            callback(CallResponse<Boolean>(code = -1, data = false, callbackId = request.callbackId))
+                        }
+
                     }
 
                     result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
@@ -233,7 +254,13 @@ class ASJavascriptInterface(val webView: WebView) {
 
                 CallMethod.clickByGesture -> {
                     CoroutineWrapper.launch {
-                        AssistsCore.gestureClick(x = request.arguments?.get("x")?.asFloat ?: 0f, y = request.arguments?.get("y")?.asFloat ?: 0f)
+                        val result =
+                            AssistsCore.gestureClick(x = request.arguments?.get("x")?.asFloat ?: 0f, y = request.arguments?.get("y")?.asFloat ?: 0f)
+                        if (result) {
+                            callback(CallResponse<Boolean>(code = 0, data = true, callbackId = request.callbackId))
+                        } else {
+                            callback(CallResponse<Boolean>(code = -1, data = false, callbackId = request.callbackId))
+                        }
                     }
                     result = GsonUtils.toJson(CallResponse<Boolean>(code = 0, data = true))
                 }
@@ -244,13 +271,17 @@ class ASJavascriptInterface(val webView: WebView) {
                         val offsetY = request.arguments?.get("offsetY")?.asFloat ?: (ScreenUtils.getScreenWidth() * 0.01953f)
                         val switchWindowIntervalDelay = request.arguments?.get("switchWindowIntervalDelay")?.asLong ?: 250
                         val clickDuration = request.arguments?.get("clickDuration")?.asLong ?: 25
-                        NodeCacheManager.get(request.node?.nodeId ?: "")?.nodeGestureClick(
+                        val result = NodeCacheManager.get(request.node?.nodeId ?: "")?.nodeGestureClick(
                             offsetX = offsetX,
                             offsetY = offsetY,
                             switchWindowIntervalDelay = switchWindowIntervalDelay,
                             duration = clickDuration
-                        )
-                        callback(CallResponse<Boolean>(code = 0, data = true, callbackId = request.callbackId))
+                        ) ?: false
+                        if (result) {
+                            callback(CallResponse<Boolean>(code = 0, data = true, callbackId = request.callbackId))
+                        } else {
+                            callback(CallResponse<Boolean>(code = -1, data = false, callbackId = request.callbackId))
+                        }
                     }
                     result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
                         addProperty("resultType", "callback")
@@ -259,25 +290,30 @@ class ASJavascriptInterface(val webView: WebView) {
 
                 CallMethod.doubleClickNodeByGesture -> {
                     CoroutineWrapper.launch {
-                        val offsetX = request.arguments?.get("offsetX")?.asFloat ?: (ScreenUtils.getScreenWidth() * 0.01953f)
-                        val offsetY = request.arguments?.get("offsetY")?.asFloat ?: (ScreenUtils.getScreenWidth() * 0.01953f)
-                        val switchWindowIntervalDelay = request.arguments?.get("switchWindowIntervalDelay")?.asLong ?: 250
-                        val clickDuration = request.arguments?.get("clickDuration")?.asLong ?: 25
-                        val clickInterval = request.arguments?.get("clickInterval")?.asLong ?: 100
-                        val bounds = NodeCacheManager.get(request.node?.nodeId ?: "")?.getBoundsInScreen()
+                        runCatching {
+                            val offsetX = request.arguments?.get("offsetX")?.asFloat ?: (ScreenUtils.getScreenWidth() * 0.01953f)
+                            val offsetY = request.arguments?.get("offsetY")?.asFloat ?: (ScreenUtils.getScreenWidth() * 0.01953f)
+                            val switchWindowIntervalDelay = request.arguments?.get("switchWindowIntervalDelay")?.asLong ?: 250
+                            val clickDuration = request.arguments?.get("clickDuration")?.asLong ?: 25
+                            val clickInterval = request.arguments?.get("clickInterval")?.asLong ?: 100
+                            val bounds = NodeCacheManager.get(request.node?.nodeId ?: "")?.getBoundsInScreen()
 
-                        AssistsWindowManager.nonTouchableByAll()
-                        delay(switchWindowIntervalDelay)
+                            AssistsWindowManager.nonTouchableByAll()
+                            delay(switchWindowIntervalDelay)
 
-                        val x = (bounds?.centerX()?.toFloat() ?: 0f) + offsetX
-                        val y = (bounds?.centerY()?.toFloat() ?: 0f) + offsetY
+                            val x = (bounds?.centerX()?.toFloat() ?: 0f) + offsetX
+                            val y = (bounds?.centerY()?.toFloat() ?: 0f) + offsetY
 
-                        AssistsCore.gestureClick(x, y, clickDuration)
-                        delay(clickInterval)
-                        AssistsCore.gestureClick(x, y, clickDuration)
-                        AssistsWindowManager.touchableByAll()
+                            AssistsCore.gestureClick(x, y, clickDuration)
+                            delay(clickInterval)
+                            AssistsCore.gestureClick(x, y, clickDuration)
+                            AssistsWindowManager.touchableByAll()
 
-                        callback(CallResponse<Boolean>(code = 0, data = true, callbackId = request.callbackId))
+                            callback(CallResponse<Boolean>(code = 0, data = true, callbackId = request.callbackId))
+                        }.onFailure {
+                            callback(CallResponse<Boolean>(code = -1, data = false, callbackId = request.callbackId))
+                        }
+
                     }
                     result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
                         addProperty("resultType", "callback")

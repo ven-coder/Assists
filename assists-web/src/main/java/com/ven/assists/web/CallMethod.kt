@@ -43,6 +43,5 @@ object CallMethod {
     const val doubleClickNodeByGesture = "doubleClickNodeByGesture"
     const val performLinearGesture = "performLinearGesture"
 
-    //TODO 获取app信息
-    const val getAppInfoByPackageName = "getAppInfoByPackageName"
+    const val getAppInfo = "getAppInfo"
 }
