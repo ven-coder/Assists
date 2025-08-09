@@ -19,6 +19,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.Display
 import android.view.View
+import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
@@ -28,11 +29,13 @@ import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.ven.assists.service.AssistsService
+import com.ven.assists.service.AssistsServiceListener
 import com.ven.assists.utils.CoroutineWrapper
 import com.ven.assists.utils.NodeClassValue
 import com.ven.assists.utils.runMain
 import com.ven.assists.window.AssistsWindowManager
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import java.io.File
 import java.util.concurrent.Executors
@@ -385,7 +388,7 @@ object AssistsCore {
             }
         }
         nodeList = viewId?.let {
-            if (it.isEmpty())return@let nodeList
+            if (it.isEmpty()) return@let nodeList
             return@let arrayListOf<AccessibilityNodeInfo>().apply {
                 addAll(nodeList.filter {
                     return@filter it.viewIdResourceName == viewId
@@ -396,7 +399,7 @@ object AssistsCore {
         }
 
         nodeList = text?.let {
-            if (it.isEmpty())return@let nodeList
+            if (it.isEmpty()) return@let nodeList
             return@let arrayListOf<AccessibilityNodeInfo>().apply {
                 addAll(nodeList.filter {
                     return@filter it.txt() == text
@@ -404,7 +407,7 @@ object AssistsCore {
             }
         } ?: let { return@let nodeList }
         nodeList = des?.let {
-            if (it.isEmpty())return@let nodeList
+            if (it.isEmpty()) return@let nodeList
             return@let arrayListOf<AccessibilityNodeInfo>().apply {
                 addAll(nodeList.filter {
                     return@filter it.des() == des
@@ -672,6 +675,21 @@ object AssistsCore {
     }
 
     /**
+     * 通过手势长按
+     */
+    suspend fun longPressByGesture(
+        x: Float,
+        y: Float,
+        duration: Long = 600
+    ): Boolean {
+        return gesture(
+            floatArrayOf(x, y), floatArrayOf(x, y),
+            0,
+            duration,
+        )
+    }
+
+    /**
      * 在元素位置执行点击手势
      * @param offsetX X轴偏移量
      * @param offsetY Y轴偏移量
@@ -819,6 +837,89 @@ object AssistsCore {
             return performAction(AccessibilityNodeInfo.ACTION_PASTE)
         }
         return false
+    }
+
+    /**
+     * 长按当前节点并自动粘贴
+     * ⚠️当前仅对小米10，澎湃OS 1.0.5.0进行测试，其他机型系统版本请自行测试
+     */
+    suspend fun AccessibilityNodeInfo.longPressGestureAutoPaste(
+        text: String,
+        matchedText: String = "粘贴",
+        matchedPackageName: String? = null,
+        timeoutMillis: Long = 1500,
+        longPressDuration: Long = 600,
+    ): Boolean {
+
+        val rect = getBoundsInScreen()
+
+        return this@AssistsCore.longPressGestureAutoPaste(
+            x = rect.left.toFloat() + rect.width() / 2,
+            y = rect.top.toFloat() + rect.height() / 2,
+            text = text,
+            matchedText = matchedText,
+            matchedPackageName = matchedPackageName,
+            timeoutMillis = timeoutMillis,
+            longPressDuration = longPressDuration,
+        )
+    }
+
+    /**
+     * 长按并自动粘贴
+     * ⚠️当前仅对小米10，澎湃OS 1.0.5.0进行测试，其他机型系统版本请自行测试
+     */
+    suspend fun longPressGestureAutoPaste(
+        x: Float,
+        y: Float,
+        text: String,
+        matchedText: String = "粘贴",
+        matchedPackageName: String? = null,
+        timeoutMillis: Long = 1500,
+        longPressDuration: Long = 600,
+    ): Boolean {
+
+        val completableDeferred = CompletableDeferred<Boolean>()
+
+        val serviceListener = object : AssistsServiceListener {
+            override fun onAccessibilityEvent(event: AccessibilityEvent) {
+                runCatching {
+                    if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+                        event.text.contains(matchedText) &&
+                        (matchedPackageName == null || event.packageName.toString() == matchedPackageName)
+                    ) {
+                        val source = event.source
+                        source?.getNodes()?.forEach { node ->
+                            if (node.isClickable && node.containsText(matchedText)) {
+                                val result = node.click()
+                                completableDeferred.complete(result)
+                                return@runCatching result
+                            }
+                        }
+                    }
+                    return@runCatching false
+                }
+            }
+        }
+        AssistsService.listeners.add(serviceListener)
+        val timeoutJob = CoroutineWrapper.launch {
+            delay(timeoutMillis)
+            completableDeferred.complete(false)
+        }
+        AssistsService.instance?.let {
+            val clipboard = it.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("label", text)
+            clipboard.setPrimaryClip(clip)
+        }
+        CoroutineWrapper.launch {
+            val result = longPressByGesture(x, y, duration = longPressDuration)
+            if (!result) {
+                completableDeferred.complete(false)
+            }
+        }
+        val result = completableDeferred.await()
+        AssistsService.listeners.remove(serviceListener)
+        timeoutJob.cancel()
+        return result
     }
 
     /**

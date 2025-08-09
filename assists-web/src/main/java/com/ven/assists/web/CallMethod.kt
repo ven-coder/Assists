@@ -42,6 +42,7 @@ object CallMethod {
     const val clickNodeByGesture = "clickNodeByGesture"
     const val doubleClickNodeByGesture = "doubleClickNodeByGesture"
     const val performLinearGesture = "performLinearGesture"
+    const val longPressGestureAutoPaste = "longPressGestureAutoPaste"
 
     const val getAppInfo = "getAppInfo"
 }

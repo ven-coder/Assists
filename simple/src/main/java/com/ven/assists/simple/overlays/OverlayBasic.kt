@@ -16,6 +16,7 @@ import com.blankj.utilcode.util.TimeUtils
 import com.ven.assists.AssistsCore
 import com.ven.assists.AssistsCore.click
 import com.ven.assists.AssistsCore.longClick
+import com.ven.assists.AssistsCore.longPressGestureAutoPaste
 import com.ven.assists.AssistsCore.nodeGestureClick
 import com.ven.assists.AssistsCore.scrollBackward
 import com.ven.assists.AssistsCore.scrollForward
@@ -44,18 +45,11 @@ object OverlayBasic : AssistsServiceListener {
                     //点击
                     btnClick.setOnClickListener {
                         CoroutineWrapper.launch {
-//                            AssistsService.instance?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
-//                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//                            })
-//                            delay(1000)
-//                            AssistsCore.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.click()
-
-                            val file = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                                val bitmap = AssistsCore.takeScreenshot()
-                                LogUtils.d(bitmap)
-                            } else {
-                                TODO("VERSION.SDK_INT < R")
-                            }
+                            AssistsService.instance?.startActivity(Intent(AssistsService.instance, TestActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            })
+                            delay(1000)
+                            AssistsCore.findById("com.ven.assists.demo:id/btn_test").firstOrNull()?.click()
                         }
 
                     }

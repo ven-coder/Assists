@@ -30,6 +30,7 @@ import com.ven.assists.AssistsCore.getBoundsInScreen
 import com.ven.assists.AssistsCore.getChildren
 import com.ven.assists.AssistsCore.getNodes
 import com.ven.assists.AssistsCore.longClick
+import com.ven.assists.AssistsCore.longPressGestureAutoPaste
 import com.ven.assists.AssistsCore.nodeGestureClick
 import com.ven.assists.AssistsCore.paste
 import com.ven.assists.AssistsCore.scrollBackward
@@ -86,6 +87,50 @@ class ASJavascriptInterface(val webView: WebView) {
         runCatching {
             val request = GsonUtils.fromJson<CallRequest<JsonObject>>(requestJson, object : TypeToken<CallRequest<JsonObject>>() {}.type)
             when (request.method) {
+                CallMethod.longPressGestureAutoPaste -> {
+                    CoroutineWrapper.launch {
+                        val matchedPackageName = request.arguments?.get("matchedPackageName")?.asString
+                        val text = request.arguments?.get("text")?.asString ?: ""
+                        val matchedText = request.arguments?.get("matchedText")?.asString ?: "粘贴"
+                        val timeoutMillis = request.arguments?.get("timeoutMillis")?.asLong ?: 1500
+                        val longPressDuration = request.arguments?.get("longPressDuration")?.asLong ?: 600
+                        val point = request.arguments?.get("point")?.asJsonObject ?: JsonObject()
+
+                        val switchWindowIntervalDelay = request.arguments?.get("switchWindowIntervalDelay")?.asLong ?: 250
+                        AssistsWindowManager.nonTouchableByAll()
+                        delay(switchWindowIntervalDelay)
+
+                        val x = point.get("x")?.asFloat ?: 0f
+                        val y = point.get("y")?.asFloat ?: 0f
+                        var result = false
+                        if (request.node?.nodeId.isNullOrEmpty()) {
+                            result = AssistsCore.longPressGestureAutoPaste(
+                                x = x,
+                                y = y,
+                                text = text,
+                                matchedPackageName = matchedPackageName,
+                                matchedText = matchedText,
+                                timeoutMillis = timeoutMillis,
+                                longPressDuration = longPressDuration
+                            )
+                        } else {
+                            result = NodeCacheManager.get(request?.node?.nodeId ?: "")?.longPressGestureAutoPaste(
+                                text = text,
+                                matchedPackageName = matchedPackageName,
+                                matchedText = matchedText,
+                                timeoutMillis = timeoutMillis,
+                                longPressDuration = longPressDuration
+                            ) ?: false
+                        }
+                        AssistsWindowManager.touchableByAll()
+                        callback(CallResponse(code = if (result) 0 else 1, data = result, callbackId = request.callbackId))
+
+                    }
+                    result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
+                        addProperty("resultType", "callback")
+                    }))
+                }
+
                 CallMethod.getAppInfo -> {
                     val packageName = request.arguments?.get("packageName")?.asString ?: ""
                     CoroutineWrapper.launch {
@@ -96,7 +141,9 @@ class ASJavascriptInterface(val webView: WebView) {
                             callback(CallResponse(code = 0, data = JsonObject(), callbackId = request.callbackId))
                         }
                     }
-
+                    result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
+                        addProperty("resultType", "callback")
+                    }))
                 }
 
                 CallMethod.loadWebViewOverlay -> {
@@ -222,17 +269,15 @@ class ASJavascriptInterface(val webView: WebView) {
                         path.moveTo(startPoint.get("x").asFloat, startPoint.get("y").asFloat)
                         path.lineTo(endPoint.get("x").asFloat, endPoint.get("y").asFloat)
                         val switchWindowIntervalDelay = request.arguments?.get("switchWindowIntervalDelay")?.asLong ?: 250
-                        CoroutineWrapper.launch {
-                            AssistsWindowManager.nonTouchableByAll()
-                            delay(switchWindowIntervalDelay)
-                            val result =
-                                AssistsCore.gesture(path = path, startTime = 0, duration = request.arguments?.get("duration")?.asLong ?: 1000)
-                            AssistsWindowManager.touchableByAll()
-                            if (result) {
-                                callback(CallResponse<Boolean>(code = 0, data = true, callbackId = request.callbackId))
-                            } else {
-                                callback(CallResponse<Boolean>(code = -1, data = false, callbackId = request.callbackId))
-                            }
+                        AssistsWindowManager.nonTouchableByAll()
+                        delay(switchWindowIntervalDelay)
+                        val result =
+                            AssistsCore.gesture(path = path, startTime = 0, duration = request.arguments?.get("duration")?.asLong ?: 1000)
+                        AssistsWindowManager.touchableByAll()
+                        if (result) {
+                            callback(CallResponse<Boolean>(code = 0, data = true, callbackId = request.callbackId))
+                        } else {
+                            callback(CallResponse<Boolean>(code = -1, data = false, callbackId = request.callbackId))
                         }
                     }
                     result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
