@@ -76,8 +76,8 @@ dependencies {
     implementation "com.github.ven-coder.Assists:assists-mp:最新版本"
     //opencv相关（可选）
     implementation "com.github.ven-coder.Assists:assists-opcv:最新版本"
-    //html+js/vue自动化脚本支持（可选，⚠️当前还处于可用但非稳定版本）
-    implementation "com.github.ven-coder.Assists:assists-web:0.0.21-SNAPSHOT"
+    //web端支持
+    implementation "com.github.ven-coder.Assists:assists-web:最新版本"
   
 }
 ```
