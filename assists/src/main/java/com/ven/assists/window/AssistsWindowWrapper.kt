@@ -29,35 +29,49 @@ class AssistsWindowWrapper(
 ) {
     /** 当前布局高度 */
     private var layoutHeight: Int = 0
+
     /** 当前布局宽度 */
     private var layoutWidth: Int = 0
+
     /** 触摸事件按下时的原始X坐标 */
     private var eventDownRawX = 0
+
     /** 触摸事件按下时的原始Y坐标 */
     private var eventDownRawY = 0
-    
+
     /** 最小高度限制，-1表示无限制 */
     var minHeight = -1
+
     /** 最小宽度限制，-1表示无限制 */
     var minWidth = -1
+
     /** 最大高度限制，-1表示无限制 */
     var maxHeight = -1
+
     /** 最大宽度限制，-1表示无限制 */
     var maxWidth = -1
+
     /** 初始X坐标 */
     var initialX = 0
+
     /** 初始Y坐标 */
     var initialY = 0
+
     /** X轴偏移量 */
     var initialXOffset = 0
+
     /** Y轴偏移量 */
     var initialYOffset = 0
+
     /** 是否初始居中显示 */
     var initialCenter = false
+
     /** 是否显示操作按钮（移动、缩放、关闭） */
     var showOption: Boolean = true
+
     /** 是否显示背景 */
     var showBackground = true
+
     /** 窗口布局参数 */
     var wmlp: WindowManager.LayoutParams = wmLayoutParams ?: let { AssistsWindowManager.createLayoutParams() }
 
@@ -137,6 +151,9 @@ class AssistsWindowWrapper(
                             val initialY = ScreenUtils.getScreenHeight() / 2 - measuredHeight / 2
                             wmlp.x = initialX
                             wmlp.y = initialY
+                        } else {
+                            wmlp.x = initialX
+                            wmlp.y = initialY
                         }
                         CoroutineWrapper.launch { AssistsWindowManager.updateViewLayout(root, wmlp) }
                         root.viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -156,6 +173,8 @@ class AssistsWindowWrapper(
             }
             // 添加内容视图
             flContainer.addView(view)
+            wmlp.x = initialX
+            wmlp.y = initialY
         }
     }
 
