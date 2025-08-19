@@ -1,14 +1,18 @@
 package com.ven.assists.web
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Path
 import android.graphics.Rect
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.util.Base64
 import android.view.LayoutInflater
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.DeviceUtils
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ScreenUtils
@@ -53,6 +57,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+import java.net.NetworkInterface
+import java.util.Collections
 
 class ASJavascriptInterface(val webView: WebView) {
     var callIntercept: ((json: String) -> CallInterceptResult)? = null
@@ -87,6 +93,29 @@ class ASJavascriptInterface(val webView: WebView) {
         runCatching {
             val request = GsonUtils.fromJson<CallRequest<JsonObject>>(requestJson, object : TypeToken<CallRequest<JsonObject>>() {}.type)
             when (request.method) {
+                CallMethod.getAndroidID -> {
+                    val androidID = DeviceUtils.getAndroidID()
+                    result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
+                        addProperty("androidID", androidID)
+                    }))
+                }
+
+                CallMethod.getMacAddress -> {
+                    CoroutineWrapper.launch {
+                        runCatching {
+                            val macAddress = DeviceUtils.getMacAddress()
+                            callback(CallResponse(code = 0, data = JsonObject().apply {
+                                addProperty("macAddress", macAddress)
+                            }, callbackId = request.callbackId))
+                        }.onFailure {
+                            callback(CallResponse(code = -1, data = JsonObject(), callbackId = request.callbackId, message = it.message))
+                        }
+                    }
+                    result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
+                        addProperty("resultType", "callback")
+                    }))
+                }
+
                 CallMethod.longPressGestureAutoPaste -> {
                     CoroutineWrapper.launch {
                         val matchedPackageName = request.arguments?.get("matchedPackageName")?.asString
@@ -123,7 +152,7 @@ class ASJavascriptInterface(val webView: WebView) {
                             ) ?: false
                         }
                         AssistsWindowManager.touchableByAll()
-                        callback(CallResponse(code = if (result) 0 else 1, data = result, callbackId = request.callbackId))
+                        callback(CallResponse(code = if (result) 0 else -1, data = result, callbackId = request.callbackId))
 
                     }
                     result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {

@@ -45,4 +45,6 @@ object CallMethod {
     const val longPressGestureAutoPaste = "longPressGestureAutoPaste"
 
     const val getAppInfo = "getAppInfo"
+    const val getMacAddress = "getMacAddress"
+    const val getAndroidID = "getAndroidID"
 }
