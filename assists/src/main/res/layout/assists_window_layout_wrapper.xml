@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/bg_1">
+    android:background="@drawable/bg_1"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/fl_header"
@@ -26,21 +26,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:ellipsize="end"
             android:textColor="@android:color/white"
             android:textSize="18dp"
             tools:text="Assists" />
-
-        <ImageView
-            android:id="@+id/iv_minimize"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="right"
-            android:padding="12dp"
-            android:src="@drawable/minimize"
-            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/iv_close"
@@ -70,6 +61,25 @@
             android:layout_gravity="bottom"
             android:padding="10dp"
             android:src="@drawable/scale" />
+
+        <ImageView
+            android:id="@+id/iv_maximize"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="5dp"
+            android:padding="8dp"
+            android:src="@drawable/window_max" />
+
+        <ImageView
+            android:id="@+id/iv_minimize"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="5dp"
+            android:paddingTop="1.5dp"
+            android:paddingHorizontal="8.5dp"
+            android:src="@drawable/window_min" />
 
         <View
             android:layout_width="0dp"

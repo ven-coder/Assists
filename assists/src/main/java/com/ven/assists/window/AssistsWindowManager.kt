@@ -118,6 +118,22 @@ object AssistsWindowManager {
         }
     }
 
+    suspend fun hide(view: View?, isTouchable: Boolean = true) {
+        view ?: return
+        withContext(Dispatchers.Main) {
+            viewList.values.forEach {
+                if (view == it.view) {
+                    it.view.isInvisible = true
+                    if (isTouchable) {
+                        it.touchableByWrapper()
+                    } else {
+                        it.nonTouchableByWrapper()
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * 显示最顶层浮窗
      * @param isTouchable 显示后是否可触摸，默认为true
@@ -339,7 +355,9 @@ object AssistsWindowManager {
      * @param view 要更新的视图
      * @param params 新的布局参数
      */
-    suspend fun updateViewLayout(view: View, params: ViewGroup.LayoutParams) {
+    suspend fun updateViewLayout(view: View?, params: ViewGroup.LayoutParams?) {
+        view ?: return
+        params ?: return
         runMain { windowManager.updateViewLayout(view, params) }
     }
 

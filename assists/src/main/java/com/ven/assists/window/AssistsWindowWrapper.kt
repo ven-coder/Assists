@@ -173,6 +173,17 @@ class AssistsWindowWrapper(
             }
             // 添加内容视图
             flContainer.addView(view)
+            ivMaximize.setOnClickListener {
+                wmlp.x = 0
+                wmlp.y = 0
+                wmlp.width = ScreenUtils.getScreenWidth()
+                wmlp.height = ScreenUtils.getScreenHeight()
+                CoroutineWrapper.launch { AssistsWindowManager.updateViewLayout(root, wmlp) }
+            }
+            ivMinimize.setOnClickListener {
+                CoroutineWrapper.launch { AssistsWindowManager.hide(root) }
+                WindowMinimizeManager.show()
+            }
             wmlp.x = initialX
             wmlp.y = initialY
         }

@@ -306,6 +306,7 @@ object AssistsCore {
     fun AccessibilityNodeInfo?.getAllText(): ArrayList<String> {
         if (this == null) return arrayListOf()
         val texts = arrayListOf<String>()
+        texts.filter { false }
         getText()?.let {
             texts.add(it.toString())
         }

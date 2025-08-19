@@ -35,14 +35,6 @@
                 android:textColor="@android:color/white"
                 android:textSize="18dp" />
 
-            <ImageView
-                android:id="@+id/iv_minimize"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="right"
-                android:visibility="gone"
-                android:padding="12dp"
-                android:src="@drawable/minimize" />
 
             <ImageView
                 android:id="@+id/iv_close"
@@ -65,14 +57,39 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <ImageView
-            android:id="@+id/iv_scale"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="bottom"
-            android:padding="10dp"
-            android:src="@drawable/scale" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
+            <ImageView
+                android:id="@+id/iv_scale"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"
+                android:padding="7.5dp"
+                android:src="@drawable/scale" />
+
+            <ImageView
+                android:id="@+id/iv_maximize"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="5dp"
+                android:padding="5dp"
+                android:src="@drawable/window_max" />
+
+            <ImageView
+                android:id="@+id/iv_minimize"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="5dp"
+                android:paddingStart="5.5dp"
+                android:paddingTop="2.5dp"
+                android:paddingEnd="5.5dp"
+                android:src="@drawable/window_min" />
+
+        </LinearLayout>
     </LinearLayout>
 
 
