@@ -7,6 +7,6 @@
         android:id="@+id/iv_image"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:src="@drawable/minimize_icon" />
+        android:src="@drawable/global_floating_icon" />
 
 </FrameLayout>

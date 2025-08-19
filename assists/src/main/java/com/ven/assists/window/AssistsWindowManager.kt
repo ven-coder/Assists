@@ -40,7 +40,7 @@ object AssistsWindowManager {
     /**
      * 浮窗视图列表，使用线程安全的集合
      */
-    private val viewList = Collections.synchronizedMap(mutableMapOf<String, ViewWrapper>())
+    val viewList = Collections.synchronizedMap(mutableMapOf<String, ViewWrapper>())
 
     /**
      * 初始化窗口管理器
@@ -308,6 +308,11 @@ object AssistsWindowManager {
             }?.let {
                 viewList.remove(it.uniqueId)
             }
+
+            if (viewList.size==1&&viewList.values.first().view== WindowMinimizeManager.viewBinding?.root){
+                WindowMinimizeManager.hide()
+            }
+
         } catch (e: Throwable) {
             LogUtils.e(e)
         }

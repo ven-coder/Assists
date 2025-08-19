@@ -123,8 +123,14 @@ object WindowMinimizeManager : AssistsServiceListener {
                 return true
             }
             if (event.action == MotionEvent.ACTION_UP) {
-                if (TimeUtils.getNowMills() - downTime < 100) {
-                    CoroutineWrapper.launch { AssistsWindowManager.showAll(isTouchable = true) }
+                if (TimeUtils.getNowMills() - downTime < 250) {
+
+                    if (AssistsWindowManager.viewList.size <= 1) {
+                        CoroutineWrapper.launch { "当天未添加浮窗".overlayToast() }
+                    } else {
+                        CoroutineWrapper.launch { AssistsWindowManager.showAll(isTouchable = true) }
+                    }
+
                 }
             }
 
@@ -178,8 +184,12 @@ object WindowMinimizeManager : AssistsServiceListener {
         viewBinding?.root?.isInvisible = true
     }
 
-    override fun onUnbind() {
+    fun close() {
+        AssistsWindowManager.removeView(viewBinding?.root)
         viewBinding = null
+    }
+
+    override fun onUnbind() {
     }
 
 }
