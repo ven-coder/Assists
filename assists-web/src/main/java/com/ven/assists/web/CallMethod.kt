@@ -47,4 +47,6 @@ object CallMethod {
     const val getAppInfo = "getAppInfo"
     const val getMacAddress = "getMacAddress"
     const val getAndroidID = "getAndroidID"
+    const val getUniqueDeviceId = "getUniqueDeviceId"
+
 }

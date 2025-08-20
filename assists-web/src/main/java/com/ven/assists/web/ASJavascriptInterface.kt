@@ -93,6 +93,13 @@ class ASJavascriptInterface(val webView: WebView) {
         runCatching {
             val request = GsonUtils.fromJson<CallRequest<JsonObject>>(requestJson, object : TypeToken<CallRequest<JsonObject>>() {}.type)
             when (request.method) {
+                CallMethod.getUniqueDeviceId -> {
+                    val uniqueDeviceId = DeviceUtils.getUniqueDeviceId()
+                    result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
+                        addProperty("uniqueDeviceId", uniqueDeviceId)
+                    }))
+                }
+
                 CallMethod.getAndroidID -> {
                     val androidID = DeviceUtils.getAndroidID()
                     result = GsonUtils.toJson(CallResponse<JsonObject>(code = 0, data = JsonObject().apply {
