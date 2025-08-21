@@ -11,6 +11,7 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import androidx.core.view.isVisible
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.DeviceUtils
 import com.blankj.utilcode.util.GsonUtils
@@ -202,6 +203,9 @@ class ASJavascriptInterface(val webView: WebView) {
                                         webView.loadUrl(url)
                                     }.root
                                 ).apply {
+                                    viewBinding.ivWebBack.isVisible = true
+                                    viewBinding.ivWebForward.isVisible = true
+                                    viewBinding.ivWebRefresh.isVisible = true
                                     this.minWidth = minWidth
                                     this.minHeight = minHeight
                                     this.initialCenter = initialCenter
