@@ -126,9 +126,16 @@ object WindowMinimizeManager : AssistsServiceListener {
                 if (TimeUtils.getNowMills() - downTime < 250) {
 
                     if (AssistsWindowManager.viewList.size <= 1) {
-                        CoroutineWrapper.launch { "当天未添加浮窗".overlayToast() }
+                        CoroutineWrapper.launch { "当前未添加浮窗".overlayToast() }
                     } else {
-                        CoroutineWrapper.launch { AssistsWindowManager.showAll(isTouchable = true) }
+                        CoroutineWrapper.launch {
+                            val invisibleViews = AssistsWindowManager.viewList.filter { it.value.view.isInvisible }
+                            if (invisibleViews.isEmpty()) {
+                                AssistsWindowManager.hideAll(isTouchable = false, filterViews = viewBinding?.root?.let { listOf(it) } ?: listOf())
+                            } else {
+                                AssistsWindowManager.showAll(isTouchable = true)
+                            }
+                        }
                     }
 
                 }

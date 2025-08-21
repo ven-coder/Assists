@@ -88,9 +88,12 @@ object AssistsWindowManager {
      * 隐藏所有浮窗
      * @param isTouchable 隐藏后是否可触摸，默认为true
      */
-    suspend fun hideAll(isTouchable: Boolean = true) {
+    suspend fun hideAll(isTouchable: Boolean = true, filterViews: List<View> = arrayListOf()) {
         withContext(Dispatchers.Main) {
             viewList.values.forEach {
+                if (filterViews.contains(it.view)) {
+                    return@forEach
+                }
                 it.view.isInvisible = true
                 if (isTouchable) {
                     it.touchableByWrapper()
@@ -309,7 +312,7 @@ object AssistsWindowManager {
                 viewList.remove(it.uniqueId)
             }
 
-            if (viewList.size==1&&viewList.values.first().view== WindowMinimizeManager.viewBinding?.root){
+            if (viewList.size == 1 && viewList.values.first().view == WindowMinimizeManager.viewBinding?.root) {
                 WindowMinimizeManager.hide()
             }
 
