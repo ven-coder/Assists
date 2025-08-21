@@ -192,20 +192,25 @@ class ASJavascriptInterface(val webView: WebView) {
                             val minWidth = request.arguments?.get("minWidth")?.asInt ?: (ScreenUtils.getScreenHeight() * 0.5).toInt()
                             val minHeight = request.arguments?.get("minHeight")?.asInt ?: (ScreenUtils.getScreenHeight() * 0.5).toInt()
                             val initialCenter = request.arguments?.get("initialCenter")?.asBoolean ?: true
-
+                            val webWindowBinding = WebFloatingWindowBinding.inflate(LayoutInflater.from(AssistsService.instance)).apply {
+                                webView.loadUrl(url)
+                            }
                             AssistsWindowManager.add(
                                 windowWrapper = AssistsWindowWrapper(
                                     wmLayoutParams = AssistsWindowManager.createLayoutParams().apply {
                                         width = initialWidth
                                         height = initialHeight
                                     },
-                                    view = WebFloatingWindowBinding.inflate(LayoutInflater.from(AssistsService.instance)).apply {
-                                        webView.loadUrl(url)
-                                    }.root
+                                    view = webWindowBinding.root
                                 ).apply {
                                     viewBinding.ivWebBack.isVisible = true
+                                    viewBinding.ivWebBack.setOnClickListener { webWindowBinding.webView.goBack() }
                                     viewBinding.ivWebForward.isVisible = true
+                                    viewBinding.ivWebForward.setOnClickListener { webWindowBinding.webView.goBack() }
+
                                     viewBinding.ivWebRefresh.isVisible = true
+                                    viewBinding.ivWebRefresh.setOnClickListener { webWindowBinding.webView.reload() }
+
                                     this.minWidth = minWidth
                                     this.minHeight = minHeight
                                     this.initialCenter = initialCenter
