@@ -840,6 +840,10 @@ object AssistsCore {
         return false
     }
 
+    fun AccessibilityNodeInfo.focus(): Boolean{
+        return performAction(AccessibilityNodeInfo.ACTION_FOCUS)
+    }
+
     /**
      * 长按当前节点并自动粘贴
      * ⚠️当前仅对小米10，澎湃OS 1.0.5.0进行测试，其他机型系统版本请自行测试

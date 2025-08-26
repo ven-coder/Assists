@@ -115,13 +115,10 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
 //        if (event.eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
 //
 //        }
-
     }
 
     override fun onServiceConnected(service: AssistsService) {
-//        onBackApp()
         checkServiceEnable()
-        AssistsCore.getAllNodes().forEach { it.logNode() }
         if (AssistsCore.getPackageName() != AppUtils.getAppPackageName()) {
             CoroutineWrapper.launch { AssistsCore.launchApp(AppUtils.getAppPackageName()) }
         }
