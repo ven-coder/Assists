@@ -29,6 +29,7 @@ import com.ven.assists.AssistsCore.findByTags
 import com.ven.assists.AssistsCore.findByText
 import com.ven.assists.AssistsCore.findFirstParentByTags
 import com.ven.assists.AssistsCore.findFirstParentClickable
+import com.ven.assists.AssistsCore.focus
 import com.ven.assists.AssistsCore.getAllText
 import com.ven.assists.AssistsCore.getBoundsInParent
 import com.ven.assists.AssistsCore.getBoundsInScreen
@@ -611,6 +612,11 @@ class ASJavascriptInterface(val webView: WebView) {
 
                 CallMethod.paste -> {
                     val isSuccess = NodeCacheManager.get(request.node?.nodeId ?: "")?.paste(request.arguments?.get("text")?.asString ?: "") == true
+                    result = GsonUtils.toJson(CallResponse<Boolean>(code = 0, data = isSuccess))
+                }
+
+                CallMethod.focus -> {
+                    val isSuccess = NodeCacheManager.get(request.node?.nodeId ?: "")?.focus() == true
                     result = GsonUtils.toJson(CallResponse<Boolean>(code = 0, data = isSuccess))
                 }
 

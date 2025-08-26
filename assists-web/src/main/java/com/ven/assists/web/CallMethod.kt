@@ -23,6 +23,7 @@ object CallMethod {
     const val notifications = "notifications"
     const val recentApps = "recentApps"
     const val paste = "paste"
+    const val focus = "focus"
     const val selectionText = "selectionText"
     const val scrollForward = "scrollForward"
     const val scrollBackward = "scrollBackward"
