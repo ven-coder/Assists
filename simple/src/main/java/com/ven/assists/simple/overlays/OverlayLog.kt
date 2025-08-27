@@ -62,9 +62,10 @@ object OverlayLog : AssistsServiceListener {
     var showed = false
         private set
         get() {
-            assistWindowWrapper?.let {
+            field = assistWindowWrapper?.let {
                 return AssistsWindowManager.isVisible(it.getView())
             } ?: return false
+            return field
         }
 
     var assistWindowWrapper: AssistsWindowWrapper? = null
@@ -75,7 +76,10 @@ object OverlayLog : AssistsServiceListener {
                     field = AssistsWindowWrapper(it.root, wmLayoutParams = AssistsWindowManager.createLayoutParams().apply {
                         width = (ScreenUtils.getScreenWidth() * 0.8).toInt()
                         height = (ScreenUtils.getScreenHeight() * 0.5).toInt()
-                    }, onClose = { hide() }).apply {
+                    }, onClose = {
+                        hide()
+                        onClose?.invoke(it)
+                    }).apply {
                         minWidth = (ScreenUtils.getScreenWidth() * 0.6).toInt()
                         minHeight = (ScreenUtils.getScreenHeight() * 0.4).toInt()
                         initialCenter = true

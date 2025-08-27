@@ -1,5 +1,5 @@
 package com.ven.assists.stepper
-
+@Deprecated("已弃用，请使用com.ven.assists.stepperx.Step")
 interface StepListener {
     fun onStepStart(step: StepOperator) {}
     fun onStepStop() {}

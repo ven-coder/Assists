@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">AssistsSimple</string>
-    <string name="assists_description">这是AssistsSimple说明项，在字符串资源中定义assists_description可进行覆盖</string>
+    <string name="app_name">Assists示例</string>
+    <string name="assists_description">这是Assists示例说明项，在字符串资源中定义assists_description可进行覆盖</string>
 </resources>

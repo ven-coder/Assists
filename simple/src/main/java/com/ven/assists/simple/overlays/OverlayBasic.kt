@@ -241,6 +241,9 @@ object OverlayBasic : AssistsServiceListener {
                             "仅支持Android12及以上版本".overlayToast()
                         }
                     }
+                    btnToast.setOnClickListener {
+                        "这是浮窗级别Toast：${TimeUtils.getNowString()}".overlayToast(delay = 3000)
+                    }
                 }
             }
             return field

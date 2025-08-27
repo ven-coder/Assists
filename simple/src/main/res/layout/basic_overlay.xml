@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -84,6 +85,7 @@
                 android:backgroundTint="@color/colorAccent"
                 android:text="显示通知" />
 
+
             <Button
                 android:id="@+id/btn_task"
                 android:layout_width="wrap_content"
@@ -130,9 +132,9 @@
                 android:id="@+id/btn_toggle_split_screen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:backgroundTint="@color/colorAccent"
-                android:text="切换分屏模式" />
+                android:text="切换分屏模式"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btn_lock_screen"
@@ -146,55 +148,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/colorAccent"
-                android:text="截取屏幕截图" />
+                android:text="调用系统截图" />
+
+            <Button
+                android:id="@+id/btn_toast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:text="浮窗级别Toast"
+                android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn_1"
                 android:layout_width="wrap_content"
-                android:visibility="gone"
-
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/colorAccent"
-                android:text="模拟耳机按钮操作" />
+                android:text="模拟耳机按钮操作"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btn_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-
                 android:backgroundTint="@color/colorAccent"
-                android:text="打开所有应用列表" />
 
-            <!--        <Button-->
-
-            <!--            android:layout_width="wrap_content"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:backgroundTint="@color/colorAccent"-->
-            <!--            android:text="请求屏幕录制" />-->
-            <!--        <Button-->
-            <!--            android:layout_width="wrap_content"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:backgroundTint="@color/colorAccent"-->
-            <!--            android:text="截取屏幕" />-->
-            <!--        <Button-->
-            <!--            android:layout_width="wrap_content"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:backgroundTint="@color/colorAccent"-->
-            <!--            android:text="禁止下拉通知栏" />-->
-
-            <!--        <Button-->
-            <!--            android:layout_width="wrap_content"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:backgroundTint="@color/colorAccent"-->
-            <!--            android:text="通知监听（包括Toast）"-->
-            <!--            android:textAllCaps="false" />-->
-            <!--        <Button-->
-            <!--            android:layout_width="wrap_content"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:backgroundTint="@color/colorAccent"-->
-            <!--            android:text="蚂蚁森林能量自动收集"-->
-            <!--            android:textAllCaps="false" />-->
+                android:text="打开所有应用列表"
+                android:visibility="gone" />
         </com.google.android.flexbox.FlexboxLayout>
 
     </androidx.core.widget.NestedScrollView>

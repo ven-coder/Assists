@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
  * 用于实现自动化脚本的基础类，提供步骤实现的框架和协程执行环境
  * 继承此类的子类需要实现onImpl方法来定义具体的步骤逻辑
  */
+@Deprecated("已弃用，请使用com.ven.assists.stepperx.Step")
 abstract class StepImpl {
 
     /**

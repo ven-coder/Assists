@@ -12,6 +12,7 @@ import kotlinx.coroutines.cancel
  * 用于管理和执行自动化步骤的核心类。提供步骤注册、执行、监听等功能，
  * 支持协程异步执行和步骤间延时控制。
  */
+@Deprecated("已弃用，请使用com.ven.assists.stepperx.Step")
 object StepManager {
     /**
      * 步骤默认间隔时长（毫秒）

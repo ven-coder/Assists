@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * 步骤收集器
  */
+@Deprecated("已弃用，请使用com.ven.assists.stepperx.Step")
 class StepCollector(private val implClassName: String) {
 
     private val stepOperatorMap: ConcurrentHashMap<Int, StepOperator> = ConcurrentHashMap()

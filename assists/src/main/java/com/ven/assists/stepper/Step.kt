@@ -1,5 +1,5 @@
 package com.ven.assists.stepper
-
+@Deprecated("已弃用，请使用com.ven.assists.stepperx.Step")
 class Step private constructor(
     val tag: Int,
     val stepImplClass: String? = null,
