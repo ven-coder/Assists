@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import com.blankj.utilcode.util.ScreenUtils
+import com.ven.assists.AssistsCore
 import com.ven.assists.AssistsCore.click
 import com.ven.assists.AssistsCore.containsText
 import com.ven.assists.AssistsCore.getBoundsInScreen
@@ -24,7 +25,9 @@ import com.ven.assists.simple.step.OpenWechatSocial
 import com.ven.assists.simple.step.PublishSocial
 import com.ven.assists.simple.step.ScrollContacts
 import com.ven.assists.simple.step.StepTag
+import com.ven.assists.simple.step.WxUnfollow
 import com.ven.assists.stepper.StepManager
+import com.ven.assists.stepperx.Step
 import com.ven.assists.utils.CoroutineWrapper
 
 @SuppressLint("StaticFieldLeak")
@@ -40,6 +43,9 @@ object OverlayAdvanced : AssistsServiceListener {
                         if (!AssistsService.listeners.contains(answerWechatCallListener)) {
                             AssistsService.listeners.add(answerWechatCallListener)
                         }
+                        OverlayLog.onClose = {
+                            AssistsService.listeners.remove(answerWechatCallListener)
+                        }
                         CoroutineWrapper.launch(isMain = true) {
                             OverlayLog.show()
                             "微信电话自动接听监听中...".logAppend()
@@ -48,6 +54,7 @@ object OverlayAdvanced : AssistsServiceListener {
                     btnOpenSocial.setOnClickListener {
                         OverlayLog.show()
                         StepManager.execute(OpenWechatSocial::class.java, StepTag.STEP_1, begin = true)
+
                     }
                     btnScrollSocial.setOnClickListener {
                         OverlayLog.show()
