@@ -66,19 +66,19 @@
             android:name=".ImageGalleryActivity"
             android:exported="false" />
 
-<!--        <service-->
-<!--            android:name="com.ven.assists.service.AssistsService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="true"-->
-<!--            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">-->
-<!--            &lt;!&ndash;android:priority="10000" 可提高服务在设置中的权重，排在前面     &ndash;&gt;-->
-<!--            <intent-filter android:priority="10000">-->
-<!--                <action android:name="android.accessibilityservice.AccessibilityService" />-->
-<!--            </intent-filter>-->
-<!--            <meta-data-->
-<!--                android:name="android.accessibilityservice"-->
-<!--                android:resource="@xml/assists_service" />-->
-<!--        </service>-->
+        <!--        <service-->
+        <!--            android:name="com.ven.assists.service.AssistsService"-->
+        <!--            android:enabled="true"-->
+        <!--            android:exported="true"-->
+        <!--            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">-->
+        <!--            &lt;!&ndash;android:priority="10000" 可提高服务在设置中的权重，排在前面     &ndash;&gt;-->
+        <!--            <intent-filter android:priority="10000">-->
+        <!--                <action android:name="android.accessibilityservice.AccessibilityService" />-->
+        <!--            </intent-filter>-->
+        <!--            <meta-data-->
+        <!--                android:name="android.accessibilityservice"-->
+        <!--                android:resource="@xml/assists_service" />-->
+        <!--        </service>-->
         <service
             android:name="com.google.android.accessibility.selecttospeak.SelectToSpeakService"
             android:enabled="true"
@@ -92,6 +92,8 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/assists_service" />
         </service>
+        <service android:name="com.ven.assists.simple.ForegroundService" />
+
     </application>
 
 </manifest>

@@ -82,7 +82,9 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
             }
         }
     }
-
+    private val foregroundServiceIntent: Intent by lazy {
+        Intent(this, ForegroundService::class.java)
+    }
     private var disableNotificationView: View? = null
 
 
@@ -102,9 +104,13 @@ class MainActivity : AppCompatActivity(), AssistsServiceListener {
     private fun checkServiceEnable() {
         if (!isActivityResumed) return
         if (AssistsCore.isAccessibilityServiceEnabled()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(foregroundServiceIntent)
+            }
             viewBind.btnEnable.isVisible = false
             viewBind.llOption.isVisible = true
         } else {
+            stopService(foregroundServiceIntent)
             viewBind.btnEnable.isVisible = true
             viewBind.llOption.isVisible = false
         }
