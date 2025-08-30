@@ -3,6 +3,7 @@ package com.ven.assists.web
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -42,24 +43,30 @@ class ASWebView @JvmOverloads constructor(
 
     val assistsServiceListener = object : AssistsServiceListener {
         override fun onAccessibilityEvent(event: AccessibilityEvent) {
-            runCatching {
-                val node = event.source?.toNode()
-                val jsonObject = JsonObject().apply {
-                    addProperty("packageName", event.packageName?.toString() ?: "")
-                    addProperty("className", event.className?.toString() ?: "")
-                    addProperty("eventType", event.eventType)
-                    addProperty("action", event.action)
-                    add("texts", JsonArray().apply {
-                        event.text.forEach { text -> this.add(text.toString()) }
-                    })
-                    node?.let {
-                        val element = GsonUtils.getGson().toJsonTree(node)
-                        add("node", element.asJsonObject)
+            coroutineScope.launch(Dispatchers.IO) {
+                runCatching {
+                    val node = event.source?.toNode()
+                    val jsonObject = JsonObject().apply {
+                        addProperty("packageName", event.packageName?.toString() ?: "")
+                        addProperty("className", event.className?.toString() ?: "")
+                        addProperty("eventType", event.eventType)
+                        addProperty("action", event.action)
+                        add("texts", JsonArray().apply {
+                            event.text.forEach { text -> this.add(text.toString()) }
+                        })
+                        node?.let {
+                            val element = GsonUtils.getGson().toJsonTree(node)
+                            add("node", element.asJsonObject)
+                        }
                     }
+                    if (LogUtils.getConfig().isLogSwitch) {
+                        Log.d(LogUtils.getConfig().globalTag, jsonObject.toString())
+                    }
+                    onAccessibilityEvent(CallResponse(code = 0, data = jsonObject))
+                }.onFailure {
+                    LogUtils.e(it)
                 }
-                onAccessibilityEvent(CallResponse(code = 0, data = jsonObject))
-            }.onFailure {
-                LogUtils.e(it)
+
             }
         }
     }
@@ -111,10 +118,11 @@ class ASWebView @JvmOverloads constructor(
         AssistsService.listeners.add(assistsServiceListener)
     }
 
-    fun <T> onAccessibilityEvent(result: CallResponse<T>) {
+    suspend fun <T> onAccessibilityEvent(result: CallResponse<T>) {
         runCatching {
             val json = GsonUtils.toJson(result)
-            evaluateJavascript("javascript:onAccessibilityEvent('${json}')", null)
+            runMain { evaluateJavascript("javascript:onAccessibilityEvent('${json}')", null) }
+
         }.onFailure {
             LogUtils.e(it)
         }
