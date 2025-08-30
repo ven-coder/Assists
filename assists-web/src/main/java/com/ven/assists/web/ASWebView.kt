@@ -32,6 +32,7 @@ class ASWebView @JvmOverloads constructor(
 
     var onReceivedTitle: ((title: String) -> Unit)? = null
     val javascriptInterface = ASJavascriptInterface(webView = this)
+    val javascriptInterfaceAsync = ASJavascriptInterfaceAsync(webView = this)
 
     var callIntercept: ((json: String) -> CallInterceptResult)? = null
         set(value) {
@@ -106,6 +107,7 @@ class ASWebView @JvmOverloads constructor(
         isFocusableInTouchMode = true
         isFocusable = true
         addJavascriptInterface(javascriptInterface, "assistsx")
+        addJavascriptInterface(javascriptInterfaceAsync, "assistsxAsync")
         AssistsService.listeners.add(assistsServiceListener)
     }
 
