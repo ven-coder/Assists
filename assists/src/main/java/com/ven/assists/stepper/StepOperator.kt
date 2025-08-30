@@ -20,7 +20,7 @@ import kotlin.coroutines.cancellation.CancellationException
  * @property isRunCoroutineIO 是否在IO线程执行，默认为false（在主线程执行）
  * @property data 步骤执行时的附加数据
  */
-@Deprecated("已弃用，请使用com.ven.assists.stepperx.Step")
+
 class StepOperator(
     val implClassName: String,
     val step: Int,
