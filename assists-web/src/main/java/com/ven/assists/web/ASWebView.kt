@@ -59,9 +59,9 @@ class ASWebView @JvmOverloads constructor(
                             add("node", element.asJsonObject)
                         }
                     }
-                    if (LogUtils.getConfig().isLogSwitch) {
-                        Log.d(LogUtils.getConfig().globalTag, jsonObject.toString())
-                    }
+//                    if (LogUtils.getConfig().isLogSwitch) {
+//                        Log.d(LogUtils.getConfig().globalTag, jsonObject.toString())
+//                    }
                     onAccessibilityEvent(CallResponse(code = 0, data = jsonObject))
                 }.onFailure {
                     LogUtils.e(it)

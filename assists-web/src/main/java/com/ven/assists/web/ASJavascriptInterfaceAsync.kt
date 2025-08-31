@@ -306,9 +306,13 @@ class ASJavascriptInterfaceAsync(val webView: WebView) {
                 }
 
                 CallMethod.clickByGesture -> {
+                    val switchWindowIntervalDelay = request.arguments?.get("switchWindowIntervalDelay")?.asLong ?: 250
+                    val clickDuration = request.arguments?.get("clickDuration")?.asLong ?: 25
+                    AssistsWindowManager.nonTouchableByAll()
+                    delay(switchWindowIntervalDelay)
                     val result =
-                        AssistsCore.gestureClick(x = request.arguments?.get("x")?.asFloat ?: 0f, y = request.arguments?.get("y")?.asFloat ?: 0f)
-
+                        AssistsCore.gestureClick(x = request.arguments?.get("x")?.asFloat ?: 0f, y = request.arguments?.get("y")?.asFloat ?: 0f, duration = clickDuration)
+                    AssistsWindowManager.touchableByAll()
                     val response = request.createResponse(if (result) 0 else -1, data = result)
                     response
                 }
