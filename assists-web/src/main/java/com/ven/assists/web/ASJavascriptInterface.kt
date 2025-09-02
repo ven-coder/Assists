@@ -60,7 +60,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.net.NetworkInterface
+import java.nio.charset.StandardCharsets
 import java.util.Collections
+import kotlin.text.toByteArray
 
 class ASJavascriptInterface(val webView: WebView) {
     var callIntercept: ((json: String) -> CallInterceptResult)? = null
@@ -70,7 +72,9 @@ class ASJavascriptInterface(val webView: WebView) {
         coroutineScope.launch {
             runCatching {
                 val json = GsonUtils.toJson(result)
-                webView.evaluateJavascript("javascript:assistsxCallback('${json}')", null)
+                val encoded = Base64.encodeToString(json.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
+                val js = String.format("javascript:assistsxCallback('%s')", encoded)
+                webView.evaluateJavascript(js, null)
             }.onFailure {
                 LogUtils.e(it)
             }
@@ -346,14 +350,14 @@ class ASJavascriptInterface(val webView: WebView) {
                 CallMethod.clickByGesture -> {
                     CoroutineWrapper.launch {
                         val switchWindowIntervalDelay = request.arguments?.get("switchWindowIntervalDelay")?.asLong ?: 250
-                        val clickDuration = request.arguments?.get("clickDuration")?.asLong ?: 25
+                        val duration = request.arguments?.get("duration")?.asLong ?: 25
                         AssistsWindowManager.nonTouchableByAll()
                         delay(switchWindowIntervalDelay)
                         val result =
                             AssistsCore.gestureClick(
                                 x = request.arguments?.get("x")?.asFloat ?: 0f,
                                 y = request.arguments?.get("y")?.asFloat ?: 0f,
-                                duration = clickDuration
+                                duration = duration
                             )
                         AssistsWindowManager.touchableByAll()
                         if (result) {

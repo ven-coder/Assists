@@ -54,6 +54,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+import java.nio.charset.StandardCharsets
 
 class ASJavascriptInterfaceAsync(val webView: WebView) {
     var callIntercept: ((json: String) -> CallInterceptResult)? = null
@@ -71,7 +72,9 @@ class ASJavascriptInterfaceAsync(val webView: WebView) {
     }
 
     fun callback(result: String) {
-        webView.evaluateJavascript("javascript:assistsxCallback('${result}')", null)
+        val encoded = Base64.encodeToString(result.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
+        val js = String.format("javascript:assistsxCallback('%s')", encoded)
+        webView.evaluateJavascript(js, null)
     }
 
     @JavascriptInterface
