@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.LogUtils
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
@@ -39,6 +40,8 @@ class CustomFileProvider : FileProvider() {
                         }
 
                         clearIds.forEach { NodeCacheManager.cache.remove(it) }
+
+                        LogUtils.dTag("NodeCacheManager", "cache size",NodeCacheManager.cache.size)
                     }
 
                     delay(1000)

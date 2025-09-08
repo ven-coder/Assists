@@ -302,6 +302,7 @@ object AssistsWindowManager {
      * 移除指定浮窗
      * @param view 要移除的视图
      */
+    @Deprecated("使用removeWindow")
     fun removeView(view: View?) {
         view ?: return
         try {
@@ -316,6 +317,40 @@ object AssistsWindowManager {
                 WindowMinimizeManager.hide()
             }
 
+        } catch (e: Throwable) {
+            LogUtils.e(e)
+        }
+    }
+
+    /**
+     * 移除指定浮窗
+     * @param view 要移除的视图
+     */
+    fun removeWindow(view: View?) {
+        view ?: return
+        try {
+            windowManager.removeView(view)
+            viewList.values.find {
+                return@find view == it.view
+            }?.let {
+                viewList.remove(it.uniqueId)
+            }
+
+            if (viewList.size == 1 && viewList.values.first().view == WindowMinimizeManager.viewBinding?.root) {
+                WindowMinimizeManager.hide()
+            }
+
+        } catch (e: Throwable) {
+            LogUtils.e(e)
+        }
+    }
+
+    fun removeAllWindow() {
+        try {
+            viewList.forEach {
+                windowManager.removeView(it.value.view)
+            }
+            viewList.clear()
         } catch (e: Throwable) {
             LogUtils.e(e)
         }

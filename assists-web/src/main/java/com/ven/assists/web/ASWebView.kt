@@ -3,6 +3,7 @@ package com.ven.assists.web
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Base64
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.webkit.WebView
@@ -21,9 +22,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.nio.charset.StandardCharsets
 
 @SuppressLint("SetJavaScriptEnabled")
-class ASWebView @JvmOverloads constructor(
+open class ASWebView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -121,12 +123,28 @@ class ASWebView @JvmOverloads constructor(
     suspend fun <T> onAccessibilityEvent(result: CallResponse<T>) {
         runCatching {
             val json = GsonUtils.toJson(result)
-            runMain { evaluateJavascript("javascript:onAccessibilityEvent('${json}')", null) }
 
+            val encoded = Base64.encodeToString(json.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
+
+            runMain {
+                evaluateJavascript(
+                    """
+            try {
+                if (typeof onAccessibilityEvent === 'function') {
+                    onAccessibilityEvent("$encoded");
+                }
+            } catch (e) {
+                console.error('Error calling onAccessibilityEvent:', e);
+            }
+            """.trimIndent(),
+                    null
+                )
+            }
         }.onFailure {
-            LogUtils.e(it)
+            LogUtils.e("Failed to call onAccessibilityEvent: ${it.message}")
         }
     }
+
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
