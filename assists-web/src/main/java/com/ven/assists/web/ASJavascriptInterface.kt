@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.util.Base64
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import androidx.core.view.isVisible
@@ -201,13 +202,25 @@ class ASJavascriptInterface(val webView: WebView) {
                                 webView.loadUrl(url)
                                 webView.setBackgroundColor(0)
                             }
+
                             AssistsWindowManager.add(
                                 windowWrapper = AssistsWindowWrapper(
                                     wmLayoutParams = AssistsWindowManager.createLayoutParams().apply {
                                         width = initialWidth
                                         height = initialHeight
                                     },
-                                    view = webWindowBinding.root
+                                    view = webWindowBinding.root,
+                                    onClose = {
+                                        webWindowBinding.webView.loadUrl("about:blank")
+                                        webWindowBinding.webView.stopLoading()
+                                        webWindowBinding.webView.clearHistory()
+                                        webWindowBinding.webView.removeAllViews()
+                                        webWindowBinding.webView.destroy()
+                                        webWindowBinding.root.removeAllViews()
+                                        val viewGroup=it as ViewGroup
+                                        viewGroup.removeAllViews()
+                                        AssistsWindowManager.removeWindow(it)
+                                    }
                                 ).apply {
                                     viewBinding.ivWebBack.isVisible = true
                                     viewBinding.ivWebBack.setOnClickListener { webWindowBinding.webView.goBack() }

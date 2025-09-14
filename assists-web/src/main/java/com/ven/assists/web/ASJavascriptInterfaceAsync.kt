@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.os.Build
 import android.util.Base64
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import androidx.core.view.isVisible
@@ -192,7 +193,18 @@ class ASJavascriptInterfaceAsync(val webView: WebView) {
                                 width = initialWidth
                                 height = initialHeight
                             },
-                            view = webWindowBinding.root
+                            view = webWindowBinding.root,
+                            onClose = {
+                                webWindowBinding.webView.loadUrl("about:blank")
+                                webWindowBinding.webView.stopLoading()
+                                webWindowBinding.webView.clearHistory()
+                                webWindowBinding.webView.removeAllViews()
+                                webWindowBinding.webView.destroy()
+                                webWindowBinding.root.removeAllViews()
+                                val viewGroup = it as ViewGroup
+                                viewGroup.removeAllViews()
+                                AssistsWindowManager.removeWindow(it)
+                            }
                         ).apply {
                             viewBinding.ivWebBack.isVisible = true
                             viewBinding.ivWebBack.setOnClickListener { webWindowBinding.webView.goBack() }
@@ -315,7 +327,11 @@ class ASJavascriptInterfaceAsync(val webView: WebView) {
                     AssistsWindowManager.nonTouchableByAll()
                     delay(switchWindowIntervalDelay)
                     val result =
-                        AssistsCore.gestureClick(x = request.arguments?.get("x")?.asFloat ?: 0f, y = request.arguments?.get("y")?.asFloat ?: 0f, duration = clickDuration)
+                        AssistsCore.gestureClick(
+                            x = request.arguments?.get("x")?.asFloat ?: 0f,
+                            y = request.arguments?.get("y")?.asFloat ?: 0f,
+                            duration = clickDuration
+                        )
                     AssistsWindowManager.touchableByAll()
                     val response = request.createResponse(if (result) 0 else -1, data = result)
                     response
