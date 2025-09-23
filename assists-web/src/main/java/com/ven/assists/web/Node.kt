@@ -1,11 +1,9 @@
 package com.ven.assists.web
 
 import android.graphics.Rect
+import android.os.Build
 import android.view.accessibility.AccessibilityNodeInfo
-import com.ven.assists.AssistsCore.getBoundsInScreen
 import com.ven.assists.web.Node.Bounds
-import com.ven.assists.web.utils.UniqueIdGenerator
-import java.util.UUID
 
 class Node(
     val nodeId: String,
@@ -18,6 +16,16 @@ class Node(
     val isClickable: Boolean,
     val isEnabled: Boolean,
     val boundsInScreen: Bounds,
+    val hintText: String,
+    val isCheckable: Boolean,
+    val isChecked: Boolean,
+    val isFocusable: Boolean,
+    val isFocused: Boolean,
+    val isLongClickable: Boolean,
+    val isPassword: Boolean,
+    val isSelected: Boolean,
+    val isVisibleToUser: Boolean,
+    val drawingOrder: Int,
 ) {
 
     data class Bounds(val left: Int, val top: Int, val right: Int, val bottom: Int)
@@ -58,6 +66,16 @@ fun AccessibilityNodeInfo.toNode(): Node {
         isScrollable = this.isScrollable,
         isClickable = this.isClickable,
         isEnabled = this.isEnabled,
+        hintText = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) this.hintText?.toString() ?: "" else "",
+        isCheckable = this.isCheckable,
+        isChecked = this.isChecked,
+        isFocusable = this.isFocusable,
+        isFocused = this.isFocused,
+        isLongClickable = this.isLongClickable,
+        isPassword = this.isPassword,
+        isSelected = this.isSelected,
+        isVisibleToUser = this.isVisibleToUser,
+        drawingOrder = this.drawingOrder,
         boundsInScreen = Node.Bounds(
             left = boundsInScreenRect.left,
             top = boundsInScreenRect.top,
