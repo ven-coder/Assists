@@ -13,6 +13,7 @@ import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.LogUtils
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import com.ven.assists.AssistsCore
 import com.ven.assists.service.AssistsService
 import com.ven.assists.service.AssistsServiceListener
@@ -34,42 +35,113 @@ open class ASWebView @JvmOverloads constructor(
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     var onReceivedTitle: ((title: String) -> Unit)? = null
-    val javascriptInterface = ASJavascriptInterface(webView = this)
-    val javascriptInterfaceAsync = ASJavascriptInterfaceAsync(webView = this)
 
     var callIntercept: ((json: String) -> CallInterceptResult)? = null
-        set(value) {
-            field = value
-            javascriptInterface.callIntercept = value
+
+    val eventFilters = arrayListOf<AccessibilityEventFilter>()
+
+    val javascriptCallIntercept: (json: String) -> CallInterceptResult = intercept@{ json: String ->
+        var requestJson = json
+
+        callIntercept?.invoke(requestJson)?.let {
+            if (it.intercept) {
+                return@intercept it
+            } else {
+                requestJson = it.result
+            }
         }
+
+        val request = GsonUtils.fromJson<CallRequest<JsonObject>>(requestJson, object : TypeToken<CallRequest<JsonObject>>() {}.type)
+        var callInterceptResult = CallInterceptResult(false, requestJson)
+        when (request.method) {
+            CallMethod.setAccessibilityEventFilters -> {
+
+                request.arguments?.get("value")?.asJsonArray?.let {
+
+                    GsonUtils.fromJson<List<AccessibilityEventFilter>>(
+                        GsonUtils.toJson(it),
+                        GsonUtils.getListType(AccessibilityEventFilter::class.java)
+                    ).apply {
+                        eventFilters.clear()
+                        eventFilters.addAll(this)
+                    }
+
+                }
+                var result = GsonUtils.toJson(CallResponse<Any>(code = -1))
+
+                callInterceptResult = CallInterceptResult(true, result)
+            }
+
+            CallMethod.addAccessibilityEventFilter -> {
+                request.arguments?.get("value")?.asJsonObject?.let {
+                    GsonUtils.fromJson(
+                        GsonUtils.toJson(it),
+                        AccessibilityEventFilter::class.java
+                    ).apply {
+                        eventFilters.add(this)
+                    }
+                }
+                var result = GsonUtils.toJson(CallResponse<Any>(code = -1))
+
+                callInterceptResult = CallInterceptResult(true, result)
+            }
+        }
+
+
+        callInterceptResult
+    }
+    val javascriptInterface = ASJavascriptInterface(webView = this).apply {
+        callIntercept = javascriptCallIntercept
+    }
+    val javascriptInterfaceAsync = ASJavascriptInterfaceAsync(webView = this).apply {
+        callIntercept = javascriptCallIntercept
+    }
+
 
     val assistsServiceListener = object : AssistsServiceListener {
         override fun onAccessibilityEvent(event: AccessibilityEvent) {
-            coroutineScope.launch(Dispatchers.IO) {
-                runCatching {
-                    val node = event.source?.toNode()
-                    val jsonObject = JsonObject().apply {
-                        addProperty("packageName", event.packageName?.toString() ?: "")
-                        addProperty("className", event.className?.toString() ?: "")
-                        addProperty("eventType", event.eventType)
-                        addProperty("action", event.action)
-                        add("texts", JsonArray().apply {
-                            event.text.forEach { text -> this.add(text.toString()) }
-                        })
-                        node?.let {
-                            val element = GsonUtils.getGson().toJsonTree(node)
-                            add("node", element.asJsonObject)
-                        }
+            if (eventFilters.isEmpty()) return
+            eventFilters.find {
+                val eventType = event.eventType
+                val eventTypeValue = it.eventTypes?.contains(eventType)
+                val packageName = event.packageName
+//                Log.d(LogUtils.getConfig().globalTag, "$eventType/$eventTypeValue, $packageName/${it.packageName}")
+                return@find it.packageName == packageName && eventTypeValue == true
+            }?.let {
+                if (it.processInBackground) {
+                    coroutineScope.launch(Dispatchers.IO) {
+                        processEvent(event)?.let { runMain { onAccessibilityEvent(CallResponse(code = 0, data = it)) } }
                     }
+                } else {
+                    processEvent(event)?.let { onAccessibilityEvent(CallResponse(code = 0, data = it)) }
+                }
+            }
+        }
+
+        private fun processEvent(event: AccessibilityEvent): JsonObject? {
+            return runCatching {
+                val node = event.source?.toNode()
+                val jsonObject = JsonObject().apply {
+                    addProperty("packageName", event.packageName?.toString() ?: "")
+                    addProperty("className", event.className?.toString() ?: "")
+                    addProperty("eventType", event.eventType)
+                    addProperty("action", event.action)
+                    add("texts", JsonArray().apply {
+                        event.text.forEach { text -> this.add(text.toString()) }
+                    })
+                    node?.let {
+                        val element = GsonUtils.getGson().toJsonTree(node)
+                        add("node", element.asJsonObject)
+                    }
+                }
 //                    if (LogUtils.getConfig().isLogSwitch) {
 //                        Log.d(LogUtils.getConfig().globalTag, jsonObject.toString())
 //                    }
-                    onAccessibilityEvent(CallResponse(code = 0, data = jsonObject))
-                }.onFailure {
-                    LogUtils.e(it)
-                }
+                jsonObject
+            }.onFailure {
+                LogUtils.e(it)
+            }.getOrNull()
 
-            }
         }
     }
 
@@ -120,15 +192,14 @@ open class ASWebView @JvmOverloads constructor(
         AssistsService.listeners.add(assistsServiceListener)
     }
 
-    suspend fun <T> onAccessibilityEvent(result: CallResponse<T>) {
+    fun <T> onAccessibilityEvent(result: CallResponse<T>) {
         runCatching {
             val json = GsonUtils.toJson(result)
 
             val encoded = Base64.encodeToString(json.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
 
-            runMain {
-                evaluateJavascript(
-                    """
+            evaluateJavascript(
+                """
             try {
                 if (typeof onAccessibilityEvent === 'function') {
                     onAccessibilityEvent("$encoded");
@@ -137,9 +208,8 @@ open class ASWebView @JvmOverloads constructor(
                 console.error('Error calling onAccessibilityEvent:', e);
             }
             """.trimIndent(),
-                    null
-                )
-            }
+                null
+            )
         }.onFailure {
             LogUtils.e("Failed to call onAccessibilityEvent: ${it.message}")
         }

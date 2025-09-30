@@ -50,4 +50,8 @@ object CallMethod {
     const val getAndroidID = "getAndroidID"
     const val getUniqueDeviceId = "getUniqueDeviceId"
 
+    const val setAccessibilityEventFilters = "setAccessibilityEventFilters"
+
+    const val addAccessibilityEventFilter = "addAccessibilityEventFilter"
+
 }

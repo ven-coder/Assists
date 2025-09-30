@@ -217,7 +217,7 @@ class ASJavascriptInterface(val webView: WebView) {
                                         webWindowBinding.webView.removeAllViews()
                                         webWindowBinding.webView.destroy()
                                         webWindowBinding.root.removeAllViews()
-                                        val viewGroup=it as ViewGroup
+                                        val viewGroup = it as ViewGroup
                                         viewGroup.removeAllViews()
                                         AssistsWindowManager.removeWindow(it)
                                     }
@@ -229,10 +229,11 @@ class ASJavascriptInterface(val webView: WebView) {
 
                                     viewBinding.ivWebRefresh.isVisible = true
                                     viewBinding.ivWebRefresh.setOnClickListener { webWindowBinding.webView.reload() }
-
+                                    webWindowBinding.webView.onReceivedTitle = { viewBinding.tvTitle.text = it }
                                     this.minWidth = minWidth
                                     this.minHeight = minHeight
                                     this.initialCenter = initialCenter
+
                                 }
                             )
                         }.onSuccess {

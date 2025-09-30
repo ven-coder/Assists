@@ -41,7 +41,7 @@ class CustomFileProvider : FileProvider() {
 
                         clearIds.forEach { NodeCacheManager.cache.remove(it) }
 
-                        LogUtils.dTag("NodeCacheManager", "cache size",NodeCacheManager.cache.size)
+//                        LogUtils.dTag("NodeCacheManager", "cache size",NodeCacheManager.cache.size)
                     }
 
                     delay(1000)
